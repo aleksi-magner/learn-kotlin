@@ -1,35 +1,49 @@
 import java.util.*
 
 fun main() {
+    readStandardInput()
+    readHandleString()
+    readCustomDelimiter()
+}
+
+fun readStandardInput() {
     val inputScanner = Scanner(System.`in`)
+
+    val result = mutableListOf<String>()
 
     // Вызовы методов сканера ждут ввода для всех вызовов
     if (inputScanner.hasNextLine()) {
-        val line = inputScanner.nextLine() // Читает всю строку. Например, "Hello, Kotlin"
+        val parsedLine = inputScanner.nextLine() // Читает всю строку. Например, "Hello, Kotlin"
 
-        println("Line: $line")
+        result.add("Line: $parsedLine")
     }
 
     if (inputScanner.hasNextInt()) {
-        val num = inputScanner.nextInt() // Читает число. Например, 123
+        val parsedNumber = inputScanner.nextInt() // Читает число. Например, 123
 
-        println("Number: $num")
+        result.add("Number: $parsedNumber")
     }
 
     if (inputScanner.hasNext()) {
-        val string = inputScanner.next() // Читает одно слово. Например, "Hello"
+        val parsedWord = inputScanner.next() // Читает одно слово. Например, "Hello"
 
-        println("Word: $string")
+        result.add("Word: $parsedWord")
     }
 
     inputScanner.close()
 
+    println(result.joinToString(separator = "\n"))
+}
+
+fun readHandleString() {
     val handleScanner = Scanner("Hello, Kotlin")
 
     println("Language: ${handleScanner.findInLine("Kotlin")}") // Kotlin
 
     handleScanner.close()
+}
 
+fun readCustomDelimiter() {
     val customDelimiterScanner = Scanner("123_456")
 
     customDelimiterScanner.useDelimiter("_")
