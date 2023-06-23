@@ -1,46 +1,36 @@
 fun main() {
-    println("Enter any string:")
+    print("Enter any string: ")
 
     val string = readln()
 
-    print("You entered the string: ")
-    print(string)
-    println()
+    println("You entered the string: $string")
 
-    println("Enter any number:")
+    print("Enter any number: ")
 
     val number = readln().toInt()
 
-    print("You entered the number: ")
-    print(number)
-    println()
+    println("You entered the number: $number")
 
-    println("Enter any big number:")
+    print("Enter any big number: ")
 
     val bigNumber = readln().toLong()
 
-    print("You entered the big number: ")
-    print(bigNumber)
-    println()
+    println("You entered the big number: $bigNumber")
 
-    println("Enter any double type number:")
+    print("Enter any double type number: ")
 
     val doubleNumber = readln().toDouble()
 
-    print("You entered the double type number: ")
-    print(doubleNumber)
-    println()
+    println("You entered the double type number: $doubleNumber")
 
-    println("Enter true or false:")
+    print("Enter true or false: ")
 
     val boolean = readln().toBoolean()
 
-    print("You entered: ")
-    print(boolean)
-    println()
+    println("You entered: $boolean")
 
     // Reading multiple values in one line
-    println("Enter message:")
+    print("Enter message: ")
 
     val (a, b) = readln().split(" ")
 
