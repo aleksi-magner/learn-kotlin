@@ -19,6 +19,31 @@ fun main() {
     val floatPostfix = 1.51F
     val double: Double = 3.1415 // 8 байт, 14-16 цифр после запятой
 
+    /**
+     * Any? - супер тип Any, допускающий null
+     * │
+     * └───Any - супер тип всех типов
+     * │   │
+     * │   └───Number - супер тип чисел
+     * │   │   │
+     * │   │   └───Byte
+     * │   │   └───UByte
+     * │   │   └───Short
+     * │   │   └───UShort
+     * │   │   └───Int
+     * │   │   └───UInt
+     * │   │   └───Long
+     * │   │   └───ULong
+     * │   │   └───Float
+     * │   │   └───Double
+     * │   │
+     * │   └───Unit - Ничего не возвращает. Аналог void или undefined
+     * │
+     * └───Nothing? - не имеет экземпляров. Любой код, следующий за выражением этого типа, недоступен.
+     *     │
+     *     └───Nothing
+     */
+
     // Min and max values
     println("Byte: ${Byte.MIN_VALUE}..${Byte.MAX_VALUE}")
     println("U Byte: ${UByte.MIN_VALUE}..${UByte.MAX_VALUE}")
@@ -51,4 +76,9 @@ fun main() {
     // Strings
     val text: String = "Hello, I am studying Kotlin now."
     val creditCardNumber = "1234 5678 9012 3456"
+}
+
+// Не возвращает управление, выполнение кода останавливается. Поэтому тип Nothing
+fun fail(): Nothing {
+    throw Exception("Fail!")
 }
