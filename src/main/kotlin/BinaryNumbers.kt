@@ -16,7 +16,7 @@ fun convertingBinaryNumbersToDecimal(number: String): Int {
 
     repeat(number.length) {
         if (reverseNumber[it].digitToInt() > 0) {
-            result += 2.0.pow(it.toDouble()).toInt()
+            result += 2.toDouble().pow(it).toInt()
         }
     }
 
