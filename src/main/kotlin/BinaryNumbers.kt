@@ -1,6 +1,15 @@
 import kotlin.math.pow
 
 fun main() {
+    /**
+     * 128  64  32  16   8   4   2   1
+     *  0    1   0   0   1   1   0   1
+     *  |    |   |   |   |   |   |   |
+     *  0   64   0   0   8   4   0   1
+     *
+     *  64 + 8 + 4 + 1 = 77
+     */
+
     println(convertingBinaryNumbersToDecimal("")) // 0
     println(convertingBinaryNumbersToDecimal("100010")) // 34
     println(convertingBinaryNumbersToDecimal("100110")) // 38
