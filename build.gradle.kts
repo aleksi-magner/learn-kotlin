@@ -1,22 +1,24 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-	kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.8.22"
 }
 
 group = "ru.magner"
 version = "1.0-SNAPSHOT"
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	testImplementation(kotlin("test"))
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
-kotlin {
-	jvmToolchain(11)
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "19"
 }

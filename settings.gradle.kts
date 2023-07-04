@@ -1,1 +1,1 @@
-rootProject.name = "LearnKotlin"
+rootProject.name = "learn-kotlin"
