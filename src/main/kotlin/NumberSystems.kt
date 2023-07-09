@@ -168,13 +168,13 @@ fun binaryToHex(number: Long): String {
         return ""
     }
 
-    var hex = ""
-
     val amountLeadingZeroes: Int = value.length % 4
 
     repeat(amountLeadingZeroes) {
         value = "0$value"
     }
+
+    var hex = ""
 
     while (value.isNotEmpty()) {
         val sequence = value.substring(0, 4)

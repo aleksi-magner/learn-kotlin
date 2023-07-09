@@ -1,3 +1,5 @@
+import kotlin.math.pow
+
 fun main() {
     /**
      * Compile-time errors.
@@ -21,6 +23,10 @@ fun main() {
     hierarchyOfExceptions()
 
     // Handle exceptions
+    println(calculateBrakingDistance("6", "-1")) // 18
+    println(calculateBrakingDistance("10", "0")) // -1, The car does not slow down!
+    println(calculateBrakingDistance("nine", "one")) // -1, For input string: "nine"
+
     calculateSpentMoney(-10, 4)
     makeAnException()
 }
@@ -112,4 +118,16 @@ fun returnValue(): Int {
     }
 
     return value
+}
+
+fun calculateBrakingDistance(initialSpeed: String, acceleration: String): Int {
+    try {
+        return -initialSpeed.toDouble().pow(2).toInt() / (2 * acceleration.toInt())
+    } catch (error: ArithmeticException) {
+        println("The car does not slow down!")
+    } catch (error: Exception) {
+        println(error.message)
+    }
+
+    return -1
 }

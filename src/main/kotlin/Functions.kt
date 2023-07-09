@@ -1,3 +1,5 @@
+import kotlin.math.hypot
+
 fun main() {
     /**
      * Объявление функций
@@ -39,6 +41,17 @@ fun main() {
 
     println(colorNumber1) // 2
     println(colorNumber2) // -1
+
+    /**
+     * Аргументы по умолчанию и именованные аргументы
+     */
+    printLine() // пустая строка, как println()
+    printLine("Kotlin") // "Kotlin" с завершающим символом новой строки
+    printLine("Hello, Kotlin", "!!!\n") // "Hello, Kotlin!!!"
+    printLine(end = "!!!\n", line = "Hello, Kotlin") // "Hello, Kotlin!!!"
+
+    println(perimeter()) // 0.0
+    println(perimeter(0.0, 0.0, 12.0, 0.0, 0.0, 5.0)) // 30.0
 }
 
 /**
@@ -98,7 +111,7 @@ fun transform2(color: String): Int = when (color) {
 fun calculatorWithFourFunctions() {
     print("Calc: ")
 
-    val (value1, operator, value2) = readln().split(" ")
+    val (_, value1, operator, value2) = readln().split("")
 
     val number1: Long = value1.toLong()
     val number2: Long = value2.toLong()
@@ -130,3 +143,28 @@ fun multiplyTwoNumbers(a: Long, b: Long) = println(a * b)
  * Целочисленное деление
  */
 fun divideTwoNumbers(a: Long, b: Long) = println(if (b == 0L) "Division by 0!" else a / b)
+
+fun printLine(line: String = "", end: String = "\n") = print("$line$end")
+
+/**
+ * Функция для вычисления периметра многоугольника с 3 или 4 вершинами, представленного координатами X и Y. Вершины проходятся последовательно.
+ *
+ * Функция Math.hypot(x, y) для вычисления длины отрезка по теореме Пифагора.
+ */
+fun perimeter(
+    x1: Double = 0.0,
+    y1: Double = 0.0,
+    x2: Double = 0.0,
+    y2: Double = 0.0,
+    x3: Double = 0.0,
+    y3: Double = 0.0,
+    x4: Double = x1,
+    y4: Double = y1
+): Double {
+    val segment1: Double = hypot(x2 - x1, y2 - y1)
+    val segment2: Double = hypot(x3 - x2, y3 - y2)
+    val segment3: Double = hypot(x4 - x3, y4 - y3)
+    val segment4: Double = hypot(x1 - x4, y1 - y4)
+
+    return segment1 + segment2 + segment3 + segment4
+}
