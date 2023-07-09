@@ -127,24 +127,24 @@ fun calculatorWithFourFunctions() {
 /**
  * Сложение
  */
-fun sumTwoNumbers(a: Long, b: Long) = println(a + b)
+fun sumTwoNumbers(a: Long, b: Long): Unit = println(a + b)
 
 /**
  * Вычитание
  */
-fun subtractTwoNumbers(a: Long, b: Long) = println(a - b)
+fun subtractTwoNumbers(a: Long, b: Long): Unit = println(a - b)
 
 /**
  * Умножение
  */
-fun multiplyTwoNumbers(a: Long, b: Long) = println(a * b)
+fun multiplyTwoNumbers(a: Long, b: Long): Unit = println(a * b)
 
 /**
  * Целочисленное деление
  */
-fun divideTwoNumbers(a: Long, b: Long) = println(if (b == 0L) "Division by 0!" else a / b)
+fun divideTwoNumbers(a: Long, b: Long): Unit = println(if (b == 0L) "Division by 0!" else a / b)
 
-fun printLine(line: String = "", end: String = "\n") = print("$line$end")
+fun printLine(line: String = "", end: String = "\n"): Unit = print("$line$end")
 
 /**
  * Функция для вычисления периметра многоугольника с 3 или 4 вершинами, представленного координатами X и Y. Вершины проходятся последовательно.
