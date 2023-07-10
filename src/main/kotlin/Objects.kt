@@ -290,4 +290,24 @@ fun main() {
     val size6 = SizeWithInit(6, 4)
 
     println(size6.area) // 24
+
+    /**
+     * Функции-члены
+     *
+     * Иногда вам нужно хранить в объектах не только сами данные, но и поведение. Функции-члены реализуют общее поведение для всего набора объектов, принадлежащих одному классу.
+     *
+     * Обратите внимание, что функция-член — это официальное название Kotlin для функций, которые помещаются внутри класса. Такие функции часто называют методами.
+     */
+    class MyClass(var property: Int) {
+        fun print(): Unit = println("Hello from print")
+
+        fun printProperty(): Unit = println(this.property)
+    }
+
+    val myClass1 = MyClass(42)
+    val myClass2 = MyClass(13)
+
+    myClass1.print()
+    myClass1.printProperty()
+    myClass2.printProperty()
 }
