@@ -71,5 +71,21 @@ fun main() {
 
     val input = readlnOrNull() ?: throw IllegalStateException()
 
-    print("Elvis says: $input")
+    println("Elvis says: $input")
+
+    println(reverse(654)) // 456
+    println(reverse(null)) // -1
+}
+
+/**
+ * Обращает заданное значение Int. Если данный Int равен нулю, возвращает -1.
+ */
+fun reverse(input: Int?): Int {
+    val number: Int = input ?: 0
+
+    if (number == 0) {
+        return -1
+    }
+
+    return number.toString().reversed().toInt()
 }
