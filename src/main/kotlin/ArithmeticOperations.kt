@@ -51,4 +51,17 @@ fun main() {
      * 3. Умножение, деление, остаток от деления
      * 4. Сложение, вычитание
      */
+
+    sumOfDigits()
+}
+
+/**
+ * Существует трёхзначное целое число (от 100 до 999).
+ *
+ * Найдите сумму его цифр.
+ */
+fun sumOfDigits() {
+    val number: Int = readln().sumOf { it.digitToInt() }
+
+    println(number)
 }

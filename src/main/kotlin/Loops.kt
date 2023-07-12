@@ -51,6 +51,8 @@ fun whileLoop() {
      * } while (condition)
      */
     do {
+        print("Введите число: ")
+
         val n = readln().toInt()
 
         println(n)
@@ -140,10 +142,66 @@ fun forLoop() {
         println(char)
     }
 
+    println("--- Lists loop ---")
+
+    val daysOfWeek = mutableListOf("Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat")
+
+    println("Весь список")
+
+    for (day in daysOfWeek){
+        println(day)
+    }
+
+    println("Весь список с индексами")
+
+    for (index in daysOfWeek.indices){
+        println("$index: ${daysOfWeek[index]}")
+    }
+
+    println("Весь список с индекса 1 по 5")
+
+    for (index in 1..5) {
+        println("$index: ${daysOfWeek[index]}")
+    }
+
+    println("Весь список с 1 индекса по предпоследний")
+
+    for (index in 1 until daysOfWeek.lastIndex) {
+        println("$index: ${daysOfWeek[index]}")
+    }
+
+    println("Список с конца с шагом 2")
+
+    for (index in daysOfWeek.lastIndex downTo 0 step 2) {
+        println("$index: ${daysOfWeek[index]}")
+    }
+
+    println("Чтение элементов списка из стандартного ввода")
+
+    print("Введите размер списка: ")
+
+    val size = readln().toInt()
+
+    val mutList: MutableList<Int> = mutableListOf()
+
+    for (i in 0 until size) {
+        print("Введите число: ")
+
+        mutList.add(readln().toInt())
+    }
+
+    for (i in mutList.lastIndex downTo 0) {
+        print("${mutList[i]} ")
+    }
+
+    println()
+
     factorialOfANumber()
     multiplicationTableOfEvenNumbers()
     sumOfIntegersFromAtoB()
     rootsOfEquation(START_RANGE, END_RANGE)
+    individualTaxes()
+    numberInASet()
 }
 
 
@@ -240,4 +298,80 @@ fun rootsOfEquation(start: Int, end: Int) {
             println(number)
         }
     }
+}
+
+/**
+ * Первым числом считывает количество компаний.
+ *
+ * Следующими N числами считывает годовой доход каждой компании.
+ *
+ * Следующими N числами считывает налоговую ставку для каждой компании.
+ *
+ * Числа являются неотрицательными целыми числами.
+ *
+ * Налоговая стоимость представляет собой годовой доход компании, умноженный на налоговую ставку.
+ *
+ * Выводит номер первой компании, которая платит наибольший налог.
+ */
+fun individualTaxes() {
+    print("Введите количество компаний в стране: ")
+
+    val numberOfCompanies: Int = readln().toInt()
+
+    val incomeList: MutableList<Int> = mutableListOf()
+    val taxPercentagesList: MutableList<Int> = mutableListOf()
+
+    for (number in 1..numberOfCompanies) {
+        print("Введите годовой доход компании ${number}: ")
+
+        incomeList.add(readln().toInt())
+    }
+
+    for (number in 1..numberOfCompanies) {
+        print("Введите налоговую ставку компании ${number}: ")
+
+        taxPercentagesList.add(readln().toInt())
+    }
+
+    val taxValues: MutableList<Int> = mutableListOf()
+
+    for (index in 0 until numberOfCompanies) {
+        val income: Int = incomeList[index]
+        val taxPercentage: Int = taxPercentagesList[index]
+
+        val tax: Int = income * taxPercentage
+
+        taxValues.add(tax)
+    }
+
+    val maxTax: Int = taxValues.max()
+    val maxTaxIndex: Int = taxValues.indexOf(maxTax)
+
+    println("Номер компании с наибольшим налогом: ${maxTaxIndex + 1}")
+}
+
+/**
+ * Проверяет, содержит ли набор из N чисел число M.
+ *
+ * Первая строка содержит число N.
+ * Следующие N строк содержат набор чисел, по одному числу в строке.
+ *
+ * В последней строке записано одно целое число M.
+ *
+ *  Нужно вывести YES или NO
+ */
+fun numberInASet() {
+    print("Введите количество чисел в списке: ")
+
+    val inputNumbers: List<Int> = List(readln().toInt()) {
+        print("Введите число: ")
+
+        readln().toInt()
+    }
+
+    print("Введите искомое число: ")
+
+    val searchNumber: Int = readln().toInt()
+
+    println(if (inputNumbers.contains(searchNumber)) "YES" else "NO")
 }
