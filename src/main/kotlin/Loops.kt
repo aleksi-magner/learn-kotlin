@@ -202,8 +202,8 @@ fun forLoop() {
     rootsOfEquation(START_RANGE, END_RANGE)
     individualTaxes()
     numberInASet()
+    fizzBuzz()
 }
-
 
 /**
  * Вычисляет факториал заданного целого числа.
@@ -374,4 +374,33 @@ fun numberInASet() {
     val searchNumber: Int = readln().toInt()
 
     println(if (inputNumbers.contains(searchNumber)) "YES" else "NO")
+}
+
+/**
+ * Принимает на вход два целых числа: начало и конец интервала (оба числа принадлежат интервалу).
+ *
+ * Программа должна вывести числа из этого интервала, но если число делится на 3, вместо него следует вывести Fizz; если число делится на 5, выведите Buzz, а если оно делится и на 3, и на 5, выведите FizzBuzz.
+ *
+ * Выведите каждое число или слово на отдельной строке.
+ */
+fun fizzBuzz() {
+    print("Введите начало диапазона: ")
+
+    val startRange: Int = readln().toInt()
+
+    print("Введите окончание диапазона: ")
+
+    val endRange: Int = readln().toInt()
+
+    for (number in startRange..endRange) {
+        val moduloBy3: Int = number % 3
+        val moduloBy5: Int = number % 5
+
+        when {
+            moduloBy3 == 0 && moduloBy5 == 0 -> println("FizzBuzz")
+            moduloBy3 == 0 -> println("Fizz")
+            moduloBy5 == 0 -> println("Buzz")
+            else -> println(number)
+        }
+    }
 }
