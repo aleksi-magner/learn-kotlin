@@ -1,6 +1,105 @@
+/**
+ * Коллекции — это контейнеры, которые поддерживают различные способы хранения и организации различных объектов и делают их легко доступными.
+ *
+ * Коллекция обычно содержит некоторое количество объектов (это число может быть равно нулю) одного и того же типа.
+ *
+ * Объекты в коллекции называются элементами.
+ *
+ * Коллекции — это реализация абстрактных структур данных, которые могут поддерживать следующие операции:
+ *
+ * - получение элемента;
+ *
+ * - удаление элемента;
+ *
+ * - изменение или замена элемента;
+ *
+ * - добавление нового элемента.
+ *
+ * Коллекции могут быть изменяемыми или неизменяемыми.
+ *
+ * Такие операции, как добавление, удаление и изменение элементов, применяются только к изменяемым коллекциям.
+ *
+ * Стандартная библиотека Kotlin обеспечивает реализацию основных типов коллекций: list, set и map. Все три существуют в изменяемых и неизменяемых вариациях.
+ *
+ * - List хранит элементы в указанном порядке и обеспечивает индексированный доступ к ним.
+ *
+ * - Set хранит уникальные элементы, порядок которых обычно не определен.
+ *
+ * - Map хранит пары ключ-значение (записи); ключи уникальны, но разные ключи могут сочетаться с одинаковыми значениями.
+ *
+ * Общие свойства и методы для коллекций:
+ *
+ * - size возвращает размер вашей коллекции.
+ *
+ * - contains(element) проверяет, находится ли элемент в вашей коллекции. Рекомендуется использовать ключевое слово in вместо contains. Например, element in collection
+ *
+ * - containsAll(elements) проверяет, все ли элементы коллекции elements находятся в вашей коллекции.
+ *
+ * - isEmpty() и isNotEmpty() показывает, пуста коллекция или нет.
+ *
+ * - joinToString() преобразует коллекцию в строку.
+ *
+ * - indexOf(element) возвращает индекс первой записи элемента или -1, если элемента нет в коллекции.
+ *
+ * Все изменяемые коллекции имеют некоторые общие методы:
+ *
+ * - clear() удаляет все элементы из коллекции.
+ *
+ * - remove(element) удаляет первое вхождение элемента из вашей коллекции.
+ *
+ * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
+ */
 fun main() {
+    immutableLists()
     mutableLists()
+
+    immutableSets()
+    mutableSets()
+
+    immutableMaps()
+    mutableMaps()
 }
+
+/**
+ * List — это неизменяемая коллекция. Его размер не может быть изменён после инициализации. Этот тип позволяет дублировать и хранить элементы в определённом порядке.
+ */
+fun immutableLists() {
+    val cars: List<String> = listOf("BMW", "Honda", "Mercedes")
+
+    println("Cars list: $cars") // [BMW, Honda, Mercedes]
+    println("Second car: ${cars[1]}") // Honda
+    println("Last car: ${cars[cars.size - 1]}") // Mercedes
+    println("Last car: ${cars.last()}") // Mercedes
+
+    /**
+     * Пустой список
+     */
+    val staff = emptyList<String>()
+
+    println("Empty list: $staff") // []
+    println("Empty list is empty: ${staff.isEmpty()}") // true
+
+    /**
+     * Другой способ создания списка — вызов функции — buildList()
+     */
+    val names = listOf<String>("Emma", "Kim")
+
+    val list = buildList {
+        add("Marta")
+        addAll(names)
+        add("Kira")
+    }
+
+    println("Build list: $list") // [Marta, Emma, Kim, Kira]
+    println("Build list is not empty: ${list.isNotEmpty()}") // true
+    println("Build list size: ${list.size}") // 4
+    println("Has Emma in list: ${"Emma" in list}") // true
+    println("Emma position in list: ${list.indexOf("Emma")}") // 1
+
+    println("Sum of numbers: ${sumOfNumbers(listOf(3, 2, 15))}") // 20
+}
+
+fun sumOfNumbers(numbers: List<Int>): Int = numbers.sum()
 
 /**
  * MutableList — это упорядоченный изменяемый список переменных одного типа. Вы можете получить доступ к элементам списка по их индексам.
@@ -154,7 +253,7 @@ fun mutableLists() {
     /**
      * В Kotlin нет функций для копирования существующих списков. Однако вы можете сделать это с помощью функции toMutableList():
      */
-    val listOfNumbers = mutableListOf(1, 2, 3, 4, 5)
+    val listOfNumbers = listOf(1, 2, 3, 4, 5)
     val copyList = listOfNumbers.toMutableList()
 
     // Copy list: [1, 2, 3, 4, 5]
@@ -232,3 +331,23 @@ fun mutableLists() {
     println("Source variable list: $variableList")
     println("Sort variable list: $sortVariableList")
 }
+
+/**
+ *
+ */
+fun immutableSets() {}
+
+/**
+ *
+ */
+fun mutableSets() {}
+
+/**
+ *
+ */
+fun immutableMaps() {}
+
+/**
+ *
+ */
+fun mutableMaps() {}

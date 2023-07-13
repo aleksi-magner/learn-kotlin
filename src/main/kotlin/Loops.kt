@@ -51,7 +51,7 @@ fun whileLoop() {
      * } while (condition)
      */
     do {
-        print("Введите число: ")
+        print("Введите число (0 для остановки): ")
 
         val n = readln().toInt()
 
@@ -59,6 +59,7 @@ fun whileLoop() {
     } while (n > 0)
 
     sequence()
+    firstPositionOfLargestElement()
 }
 
 fun sequence() {
@@ -82,6 +83,38 @@ fun sequence() {
 
         number += 1
     }
+}
+
+/**
+ * Первая позиция самого большого элемента
+ *
+ * Считывает последовательность чисел неопределённого размера и выводит наибольшее число и позицию его первого появления. Позиция начинается с 1.
+ *
+ * Обратите внимание, что числа могут быть отрицательными.
+ *
+ * Вы можете перестать печатать в консоли, нажав Ctrl+D после того, как вы ввели последнее число и нажали Enter.
+ */
+fun firstPositionOfLargestElement() {
+    var currentPosition = 0
+    var positionOfMax = 0
+    var max: Int? = null
+
+    do {
+        print("Введите число (Ctrl+D для остановки): ")
+
+        val number: Int? = readlnOrNull()?.toInt()
+
+        if (number !== null) {
+            currentPosition += 1
+
+            if (max == null || number > max) {
+                max = number
+                positionOfMax = currentPosition
+            }
+        }
+    } while (number != null)
+
+    println("$max $positionOfMax")
 }
 
 const val START_RANGE: Int = 0
