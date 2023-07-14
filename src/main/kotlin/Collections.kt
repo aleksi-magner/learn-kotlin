@@ -335,9 +335,67 @@ fun mutableLists() {
 }
 
 /**
- *
+ * Set — это неупорядоченная коллекция элементов, которая не допускает дублирования. Это неизменяемая коллекция, что означает, что её размер и отдельные элементы не могут быть изменены после инициализации набора.
  */
-fun immutableSets() {}
+fun immutableSets() {
+    val visitors: Set<String> = setOf("Vlad", "Vanya", "Liza", "Liza")
+
+    println(visitors) // [Vlad, Vanya, Liza]
+    println("Has Vlad in Set: ${"Vlad" in visitors}") // true
+    println("Has Vanya in Set: ${visitors.contains("Vanya")}") // true
+    println("And what is Liza index? ${visitors.indexOf("Liza")}" ) // 2
+    println("First visitor: ${visitors.first()}") // Vlad
+    println("Visitor by index 1: ${visitors.elementAt(1)}") // Vanya
+    println("Visitor by index 7: ${visitors.elementAtOrNull(7)}") // null
+    println("Last visitor: ${visitors.last()}") // Liza
+
+    val joinToString = visitors.joinToString()
+
+    println(joinToString) // Vlad, Vanya, Liza
+
+    val empty: Set<Int> = emptySet()
+
+    println(empty) // []
+    println("Empty Set is empty: ${empty.isEmpty()}") // true
+
+    val letters: Set<Char> = setOf('b', 'c')
+
+    val set: Set<Char> = buildSet {
+        add('a')
+        addAll(letters)
+        add('d')
+    }
+
+    println(set) // output: [a, b, c, d]
+    println("Build Set is not empty: ${set.isNotEmpty()}") // true
+    println("Build Set size: ${set.size}") // 4
+
+    val studentsOfAGroup = setOf("Bob", "Larry", "Vlad")
+    val studentsInClass = setOf("Vlad")
+
+    println("Are all the students in the group in class today? It's ${studentsInClass.containsAll(studentsOfAGroup)}") // false
+
+    val productsList1 = setOf("Banana", "Lime", "Strawberry")
+    val productsList2 = setOf("Strawberry")
+
+    val finalProductsList1 = productsList1 + productsList2
+
+    println(finalProductsList1) // [Banana, Lime, Strawberry]
+
+    val finalProductsList2 = productsList1 - productsList2
+
+    println(finalProductsList2) // [Banana, Lime]
+
+    val visitorsList: List<String> = listOf("Vlad", "Vanya", "Liza", "Liza")
+    val visitorsSet: Set<String> = visitorsList.toSet()
+
+    println("Visitors list: $visitorsList") // [Vlad, Vanya, Liza, Liza]
+    println("Visitors set: $visitorsSet") // [Vlad, Vanya, Liza]
+
+    for (visitor in visitorsSet) {
+        println("Hello $visitor!")
+    }
+}
 
 /**
  *
