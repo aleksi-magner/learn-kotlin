@@ -1,4 +1,6 @@
 /**
+ * Doc: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/
+ *
  * Коллекции — это контейнеры, которые поддерживают различные способы хранения и организации различных объектов и делают их легко доступными.
  *
  * Коллекция обычно содержит некоторое количество объектов (это число может быть равно нулю) одного и того же типа.
@@ -345,7 +347,142 @@ fun mutableSets() {}
 /**
  *
  */
-fun immutableMaps() {}
+fun immutableMaps() {
+    val students: Map<String, Int> = mapOf(
+        "Zhenya" to 5,
+        "Vlad" to 4,
+        Pair("Nina", 5),
+    )
+
+    println(students) // {Zhenya=5, Vlad=4, Nina=5}
+
+    val gradeNina = students["Nina"]
+
+    println("Nina's grade is: $gradeNina") // Nina's grade is: 5
+
+    /**
+     * Запись в Map представлена специальным типом Pair, предназначенным для общих пар двух значений.
+     */
+    // Простой способ получить первое и второе значения
+    val (name, gradeZhenya) = Pair("Zhenya", 12)
+
+    // Student name is: Zhenya And their grade is: 12
+    println("Student name is: $name And their grade is: $gradeZhenya")
+
+    val p = Pair(2, 3)
+
+    println("${p.first} ${p.second}") // 2 3
+
+    val (first, second) = p
+
+    println("$first $second") // 2 3
+
+    /**
+     * Мы используем конструкцию to для создания записи на карте. Здесь to — это упрощенная конструкция для создания пары:
+     */
+    val (nameVlad, gradeVlad) = "Vlad" to 4
+
+    // output: Student name is: Vlad And their grade is: 4
+    println("Student name is: $nameVlad And their grade is: $gradeVlad")
+
+    // Если нужно инициализировать пустую карту, emptyMap<K, V>
+    val emptyStringToDoubleMap = emptyMap<String, Double>()
+
+    // Создание через buildMap()
+    val values = mapOf<String, Int>("Second" to 2, "Third" to 3)
+
+    val map = buildMap<String, Int> {
+        put("First", 1)
+        putAll(values)
+        put("Fourth", 4)
+    }
+
+    println(map) // {First=1, Second=2, Third=3, Fourth=4}
+
+    if (map.isNotEmpty()) {
+        println("Number of map: ${map.size}")
+        println("Third: ${map["Third"]}")
+    }
+
+    // Проверка наличия ключа в карте
+    println("Vlad is student: ${students.containsKey("Vlad")}")
+    println("Jim is student: ${students.containsKey("Jim")}")
+
+    // Проверка наличия значения в карте
+    println("Has value 4 in students: ${students.containsValue(4)}")
+    println("Has value 7 in students: ${students.containsValue(7)}")
+
+    // Итерация по карте
+    for (student in students) {
+        println("${student.key} ${student.value}")
+    }
+
+    for ((k, v) in students) {
+        println("$k $v")
+    }
+
+    val intMap: Map<Int, Int> = mapOf(1 to 2, 2 to 3, 3 to 4, 4 to 5, 5 to 6)
+
+    println("Map summator: ${summator1(intMap)}") // 8
+    println("Map summator: ${summator2(intMap)}") // 8
+
+    val priceList1: Map<String, Int> = mapOf("Cola" to 500, "Apple" to 1500, "Banana" to 300)
+    val shoppingList1: MutableList<String> = mutableListOf("Cola", "Apple")
+
+    println("bill: ${bill1(priceList1, shoppingList1)}") // 2000
+    println("bill: ${bill2(priceList1, shoppingList1)}") // 2000
+
+    val priceList2: Map<String, Int> = mapOf("Pen" to 1, "Ananas" to 2, "Sheet" to 0)
+    val shoppingList2: MutableList<String> = mutableListOf()
+
+    println("bill: ${bill1(priceList2, shoppingList2)}") // 0
+    println("bill: ${bill2(priceList2, shoppingList2)}") // 0
+
+    val priceList3: Map<String, Int> = mapOf("Sprite" to 150, "Lays" to 200, "Milk" to 600, "Snickers" to 100)
+    val shoppingList3: MutableList<String> = mutableListOf("Sprite", "Lays", "Coffee")
+
+    println("bill: ${bill1(priceList3, shoppingList3)}") // 350
+    println("bill: ${bill2(priceList3, shoppingList3)}") // 350
+}
+
+/**
+ * На входе карта число-число.
+ *
+ * Вернуть сумму значений с чётными ключами
+ */
+fun summator1(map: Map<Int, Int>): Int {
+    var sum = 0
+
+    for ((key, value) in map) {
+        if (key % 2 == 0) {
+            sum += value
+        }
+    }
+
+    return sum
+}
+
+fun summator2(map: Map<Int, Int>): Int = map.filter { it.key % 2 == 0 }.values.sum()
+
+/**
+ * В магазине все товары хранятся в карте Map<String, Int>, которая содержит пары имя-цена.
+ * Клиент приходит со списком покупок и хочет знать, какова будет общая стоимость продуктов в списке.
+ */
+fun bill1(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
+    var totalPrice = 0
+
+    for (product in shoppingList) {
+        if (priceList.containsKey(product)) {
+            totalPrice += priceList[product]!!
+        }
+    }
+
+    return totalPrice
+}
+
+fun bill2(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
+    return shoppingList.sumOf { priceList[it] ?: 0 }
+}
 
 /**
  *
