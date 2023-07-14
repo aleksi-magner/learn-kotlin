@@ -345,7 +345,7 @@ fun immutableSets() {}
 fun mutableSets() {}
 
 /**
- *
+ * Map является неизменяемой коллекцией с парами ключ-значение.
  */
 fun immutableMaps() {
     val students: Map<String, Int> = mapOf(
@@ -485,6 +485,98 @@ fun bill2(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
 }
 
 /**
- *
+ * MutableMap является изменяемой или модифицируемой коллекцией: вы можете свободно добавлять и удалять пары объектов.
  */
-fun mutableMaps() {}
+fun mutableMaps() {
+    val staff: MutableMap<String, Int> = mutableMapOf(
+        "John" to 500,
+        "Mike" to 1000,
+        "Lara" to 1300
+    )
+
+    staff["Nika"] = 999
+
+    println(staff) // {John=500, Mike=1000, Lara=1300, Nika=999}
+
+    // Преобразование обычной карты в мутабельную
+    val mapCarsPerYear: Map<Int, Int> = mapOf(1999 to 30000, 2021 to 202111)
+    val carsPerYear: MutableMap<Int, Int> = mapCarsPerYear.toMutableMap()
+
+    carsPerYear[2020] = 2020
+
+    println(carsPerYear) // {1999=30000, 2021=202111, 2020=2020}}
+
+    /**
+     * MutableMap имеет те же свойства и методы, что и Map: size, isEmpty(), containsKey(key), containsValue(element) и так далее.
+     *
+     * Также MutableMap предлагает дополнительный функционал для изменения содержимого:
+     *
+     * - put(key, value) связывает указанное значение с указанным ключом в карте;
+     * короткая форма mutableMap[key] = value;
+     *
+     * - putAll(Map) обновляет карту парами ключ/значение из указанной карты;
+     *
+     * - putIfAbsent(key, value) поместить значение, если ключа нет в карте, в противном случае он оставит карту без изменений.
+     */
+    val groupOfStudents = mutableMapOf<String, Int>() // empty mutable map
+
+    groupOfStudents.put("John", 4)
+    groupOfStudents["Mike"] = 5
+    groupOfStudents += mapOf("Anastasia" to 10)
+    groupOfStudents += "Alexa" to 3
+
+    val studentsFromOregon = mapOf("Alexa" to 7)
+
+    groupOfStudents.putAll(studentsFromOregon)
+
+    groupOfStudents["John"] = 7 // Перезапишет значение ключа
+    groupOfStudents.putIfAbsent("Mike", 9) // Оставит 5, т.к. такой ключ уже есть
+
+    println(groupOfStudents) // {John=7, Mike=5, Anastasia=10, Alexa=7}
+
+    /**
+     * Удаление элементов
+     *
+     * - remove(key) удаляет указанный ключ и соответствующее ему значение с карты;
+     *
+     * - clear() удаляет все элементы с карты.
+     */
+    groupOfStudents -= "John"
+
+    println(groupOfStudents) // {Mike=5, Anastasia=10, Alexa=7}
+
+    groupOfStudents.remove("Alexa")
+
+    println(groupOfStudents) // {Mike=5, Anastasia=10}
+
+    groupOfStudents.clear()
+
+    println(groupOfStudents) // {}
+
+    examMarks()
+}
+
+/**
+ * Считывает имена студентов и их экзаменационные оценки, добавляет их в MutableMap и печатает результат. В этой MutableMap имена являются ключами, а оценки — значениями. Гарантируется, что ключи являются строками, а значения имеют тип Int.
+ *
+ * Ключи и значения должны считываться с новой строки каждое. Ввод окончен, когда программа вместо следующей клавиши получает слово «stop». Если один и тот же ключ вводится более одного раза, MutableMap должен сохранить значение, которое было введено первым.
+ */
+fun examMarks() {
+    val studentsMarks: MutableMap<String, Int> = mutableMapOf<String, Int>()
+
+    do {
+        print("Введите имя студента (stop для остановки): ")
+
+        val key = readln()
+
+        if (key != "stop") {
+            print("Введите оценку студента: ")
+
+            val value: Int = readln().toInt()
+
+            studentsMarks.putIfAbsent(key, value)
+        }
+    } while (key != "stop")
+
+    println(studentsMarks)
+}
