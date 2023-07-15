@@ -52,14 +52,14 @@
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    // immutableLists()
-    // mutableLists()
-    //
-    // immutableSets()
+    immutableLists()
+    mutableLists()
+
+    immutableSets()
     mutableSets()
 
-    // immutableMaps()
-    // mutableMaps()
+    immutableMaps()
+    mutableMaps()
 }
 
 /**
