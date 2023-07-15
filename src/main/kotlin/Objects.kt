@@ -310,4 +310,86 @@ fun main() {
     myClass1.print()
     myClass1.printProperty()
     myClass2.printProperty()
+
+    secondaryConstructor()
+}
+
+/**
+ * Первичные конструкторы имеют свои ограничения. Вам может понадобиться создать несколько разных конструкторов для одного и того же класса, но вы не сможете сделать это с помощью одного основного конструктора. Вот где вторичные или пользовательские конструкторы пригодятся.
+ *
+ * Создать несколько конструкторов для класса почти так же просто, как создать только один, но необходимо помнить об одном конкретном ограничении. Каждый вторичный конструктор должен иметь уникальную подпись. Вы не можете использовать одну и ту же подпись для основного или любого другого конструктора.
+ *
+ * Сигнатура конструктора состоит из числа, типов и порядка параметров. Чтобы создать допустимый конструктор, необходимо убедиться, что он имеет уникальный список параметров.
+ */
+fun secondaryConstructor() {
+    /**
+     * Помните, что сигнатуры определяются типами параметров, а не их именами. Например, компилятор не может отличить эти два конструктора, даже если для человека они выглядят по-разному:
+     *
+     * constructor(width: Int, height: Int) {}
+     * constructor(x: Int, y: Int) {}
+     */
+    class Size {
+        val width: Int
+        val height: Int
+
+        constructor(height: Int) {
+            this.width = 1
+            this.height = height
+        }
+
+        constructor(width: Int, height: Int) {
+            this.width = width
+            this.height = height
+        }
+
+        constructor(width: Int, height: Double) {
+            this.width = width
+            this.height = height.toInt()
+        }
+
+        constructor(height: Double, width: Int) {
+            this.width = width
+            this.height = height.toInt()
+        }
+    }
+
+    val size1 = Size(7) // uses 1st constructor
+    val size2 = Size(2, 7) // uses 2nd constructor
+    val size3 = Size(3,  7.0) // uses 3rd constructor
+    val size4 = Size(7.0,  4) // uses 4th constructor
+
+    println("Size 1: ${size1.width}x${size1.height}")
+    println("Size 2: ${size2.width}x${size2.height}")
+    println("Size 3: ${size3.width}x${size3.height}")
+    println("Size 4: ${size4.width}x${size4.height}")
+
+    /**
+     * Если у класса есть первичный конструктор, каждый вторичный конструктор должен вызывать первичный прямо или косвенно через другой вторичный конструктор(ы). Это называется делегированием.
+     *
+     * Делегирование другому конструктору того же класса выполняется с помощью ключевого слова this, помещаемого после аргументов конструктора и перед телом конструктора.
+     *
+     * Делегирование первичному конструктору становится первым оператором вторичного конструктора, поэтому свойства инициализируются до выполнения кода вторичного конструктора. Блоки инициализатора, если они есть, также выполняются перед вторичным конструктором. Если класс не имеет первичного конструктора, делегирование происходит неявно.
+     */
+    class Size2(val width: Int, val height: Int) {
+        var area: Int = width * height
+
+        init {
+            println("Object with area equal to $area is created")
+        }
+
+        constructor(width: Int, height: Int, outerSize: Size2): this(width, height) {
+            outerSize.area -= this.area
+
+            println("Updated outer object's area is equal to ${outerSize.area}")
+        }
+    }
+
+    val outerObject = Size2(5, 8)
+    val innerObject = Size2(2, 3, outerObject)
+
+    // outerObject: 5x8, area 34
+    println("outerObject: ${outerObject.width}x${outerObject.height}, area ${outerObject.area}")
+
+    // innerObject: 2x3, area 6
+    println("innerObject: ${innerObject.width}x${innerObject.height}, area ${innerObject.area}")
 }
