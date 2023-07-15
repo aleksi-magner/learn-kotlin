@@ -52,14 +52,14 @@
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    immutableLists()
-    mutableLists()
-
-    immutableSets()
+    // immutableLists()
+    // mutableLists()
+    //
+    // immutableSets()
     mutableSets()
 
-    immutableMaps()
-    mutableMaps()
+    // immutableMaps()
+    // mutableMaps()
 }
 
 /**
@@ -398,9 +398,95 @@ fun immutableSets() {
 }
 
 /**
- *
+ * MutableSet — это неупорядоченная коллекция элементов, не допускающая дублирования. Её можно изменять или модифицировать: добавлять и удалять элементы.
  */
-fun mutableSets() {}
+fun mutableSets() {
+    val points = mutableSetOf<Int>()
+
+    println(points) // []
+
+    val students = setOf("Joe", "Elena", "Bob").toMutableSet()
+
+    students.add("Bob")
+
+    println(students) // [Joe, Elena, Bob]
+
+    /**
+     * MutableSet имеет те же свойства и методы, что и Set: size, isEmpty(), indexOf(element), contains(element), first(), last() и так далее.
+     *
+     * Также MutableSet предлагает дополнительный функционал для изменения содержимого:
+     *
+     * - add(element) — добавляет указанный элемент в набор;
+     *
+     * - addAll(elements) добавляет в набор все элементы указанной коллекции.
+     */
+    val words = mutableSetOf("Apple", "Coke")
+    val friendsWords = mutableSetOf("Banana", "Coke")
+
+    words.add("Phone")
+    words.add("Controller")
+
+    friendsWords.add("Phone")
+    friendsWords.add("Pasta")
+    friendsWords.add("Pizza")
+
+    words.addAll(friendsWords)
+
+    println(words) // [Apple, Coke, Phone, Controller, Banana, Pasta, Pizza]
+
+    /**
+     * Вам также может понадобиться удалить некоторые или все элементы из вашего набора
+     *
+     * - remove(element) удаляет указанный элемент;
+     *
+     * - clear() удаляет все элементы из текущей коллекции;
+     *
+     * - removeAll(elements) удаляет все элементы, которые также содержатся в указанной коллекции.
+     */
+    val groceries = mutableSetOf("Apple", "Water", "Banana", "Pen")
+
+    groceries.remove("Apple")
+
+    println(groceries) // [Water, Banana, Pen]
+
+    val uselessGroceries = setOf("Banana", "Pen")
+
+    groceries.removeAll(uselessGroceries)
+
+    println(groceries) // [Water]
+
+    groceries.clear()
+
+    println(groceries) // []
+
+    for (word in words) {
+        println(word)
+    }
+
+    val set1 = setOf(10, 11, 14, 16, 2, 1)
+    val set2 = setOf(2, 1)
+
+    println("Division problem: ${divisionProblem(set1, set2)}") // [10 14 16 2]
+
+    println("To clear or not to clear ${clearOrNotClear(set1.toMutableSet(), 2)}")
+    println("To clear or not to clear ${clearOrNotClear(set1.toMutableSet(), 22)}")
+}
+
+/**
+ * Получает два набора Int. Возвращает новый набор элементов в первом наборе, кратный размеру второго набора.
+ */
+fun divisionProblem(first: Set<Int>, second: Set<Int>): Set<Int> {
+    val result: List<Int> = first.filter { it % second.size == 0 }
+
+    return result.toSet()
+}
+
+/**
+ * Дан MutableSet целых чисел и целое число в качестве входных данных. Проверьте, присутствует ли данное целое число в MutableSet. Если это так, верните пустой набор. Если нет, просто верните тот же набор.
+ */
+fun clearOrNotClear(elements: MutableSet<Int>, element: Int): MutableSet<Int> {
+    return if (element in elements) mutableSetOf() else elements
+}
 
 /**
  * Map является неизменяемой коллекцией с парами ключ-значение.
