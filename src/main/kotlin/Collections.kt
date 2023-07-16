@@ -52,14 +52,16 @@
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    immutableLists()
-    mutableLists()
+    // immutableLists()
+    // mutableLists()
+    //
+    // immutableSets()
+    // mutableSets()
+    //
+    // immutableMaps()
+    // mutableMaps()
 
-    immutableSets()
-    mutableSets()
-
-    immutableMaps()
-    mutableMaps()
+    arrays()
 }
 
 /**
@@ -723,4 +725,153 @@ fun examMarks() {
     } while (key != "stop")
 
     println(studentsMarks)
+}
+
+fun arrays() {
+    /**
+     * Kotlin может обрабатывать множество типов массивов: IntArray, LongArray, DoubleArray, FloatArray, CharArray, ShortArray, ByteArray, BooleanArray. Обратите внимание, что нет типа StringArray по умолчанию.
+     *
+     * Чтобы создать массив указанного типа, нам нужно вызвать специальную функцию *ArrayOf()
+     *
+     * Вы не можете изменить размер массива после его создания.
+     *
+     * Основные отличия от списка:
+     * - Имеет фиксированный размер
+     * - Нельзя добавлять и удалять элементы
+     * - Оптимизирован под примитивы
+     * - Нет прямого сравнения значений через ==
+     */
+    val numbers1: IntArray = intArrayOf(1, 2, 3, 4, 5)
+
+    println("Numbers: $numbers1") // [I@452b3a41 - только ссылка н массив
+    println("Numbers join to string: ${numbers1.joinToString()}") // 1, 2, 3, 4, 5
+    println("Numbers size: ${numbers1.size}") // 5
+
+    /**
+     * Независимо от того, используете ли вы val или var, вы можете редактировать значения существующих элементов через их индекс
+     */
+    numbers1[2] = 42
+    numbers1[3] = numbers1[0] + numbers1[numbers1.size - 1]
+
+    println("Numbers after replace items: ${numbers1.joinToString()}") // 1, 2, 42, 6, 5
+
+    // println(numbers1[42]) // ArrayIndexOutOfBoundsException
+
+    println("Numbers first: ${numbers1.first()}") // 1
+    println("Numbers last: ${numbers1.last()}") // 5
+    println("Numbers last index: ${numbers1.lastIndex}") // 4
+
+    val stringArray: Array<String> = arrayOf("array", "of", "strings")
+
+    println("Array of strings: ${stringArray.joinToString()}")
+
+    /**
+     * Однако существует большая разница между val и var, когда дело доходит до переназначения. Когда у вас есть массив var, вы можете изменить его, добавив в него новые элементы.
+     *
+     *  В Kotlin массивы в каком-то смысле неизменяемы. Даже если массив объявлен с помощью var, его нельзя редактировать. В обоих примерах массив был фактически воссоздан. По сути, мы буквально удалили массив и вместо него создали другой.
+     */
+    var newEmptyArray: Array<String> = emptyArray<String>()
+
+    println("Empty array (before): ${newEmptyArray.joinToString()}")
+    println("Empty array size (before): ${newEmptyArray.size}")
+
+    newEmptyArray += "Acrux"
+    newEmptyArray += "Gacrux"
+    newEmptyArray += "Imai"
+
+    println("Empty array (after): ${newEmptyArray.joinToString()}")
+    println("Empty array size (after): ${newEmptyArray.size}")
+
+    val characters: CharArray = charArrayOf('K', 't', 'l')
+
+    println(characters.joinToString()) // K, t, l
+
+    val doubles1: DoubleArray = doubleArrayOf(1.25, 0.17, 0.4)
+
+    println(doubles1.joinToString()) // 1.25, 0.17, 0.4
+
+    /**
+     * Создание массива заданного размера
+     */
+    val numbers2 = IntArray(5) // an array of 5 integer numbers
+
+    println(numbers2.joinToString()) // 0, 0, 0, 0, 0
+
+    val doubles2 = DoubleArray(7) // an array of 7 doubles
+
+    println(doubles2.joinToString()) // 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+
+    val numbers3 = IntArray(3) { i -> i + 1 }
+
+    println("Numbers: ${numbers3.joinToString()}") // 1, 2, 3
+
+    val onlyOne = IntArray(3) { 1 }
+
+    println("Only 1: ${onlyOne.joinToString()}") // 1, 1, 1
+
+    val onlyMinusOne = IntArray(3).apply { fill(-1) }
+
+    println("Only -1: ${onlyMinusOne.joinToString()}") // -1, -1, -1
+
+    /**
+     * Чтение массива из ввода
+     */
+    val numbers4 = IntArray(5) {
+        print("Введите число - элемент массива: ")
+
+        readln().toInt()
+    }
+
+    println(numbers4.joinToString()) // 1, 2, 3, 4, 5
+
+    print("Введите числа - элементы массива через пробел: ")
+
+    val numbers5: Array<Int> = readln().split(" ").map { it.toInt() }.toTypedArray()
+
+    println(numbers5.joinToString()) // 1, 2, 3, 4, 5
+
+    /**
+     * С помощью этого регулярного выражения вы можете игнорировать пробелы и табуляции во входной строке
+     */
+    val regex: Regex = "\\s+".toRegex()
+    val str = "1 2\t\t3  4\t5    6"
+
+    val nums: Array<Int> = str.split(regex).map { it.toInt() }.toTypedArray()
+
+    println(nums.joinToString()) // 1, 2, 3, 4, 5, 6
+
+    /**
+     * Сравнение массивов
+     *
+     * Возвращает true только в том случае, если элементы двух массивов полностью совпадают и расположены в одном порядке
+     */
+    val nums1: IntArray = intArrayOf(1, 2, 3, 4)
+    val nums2: IntArray = intArrayOf(1, 2, 3, 4)
+    val nums3: IntArray = intArrayOf(1, 2, 3)
+
+    println(nums1.contentEquals(nums2)) // true
+    println(nums1.contentEquals(nums3)) // false
+
+    /**
+     * Операторы == и != не сравнивают содержимое массивов, они сравнивают только те переменные, которые указывают на один и тот же объект
+     */
+    val simpleArray = intArrayOf(1, 2, 3, 4)
+    val similarArray = intArrayOf(1, 2, 3, 4)
+
+    println(simpleArray == simpleArray)  // true, указывает на тот же объект
+    println(simpleArray === simpleArray)  // true, указывает на тот же объект
+
+    println(simpleArray == similarArray) // false, указывает на другой объект
+    println(simpleArray === similarArray) // false, указывает на другой объект
+
+    /**
+     * Работа с несколькими массивами
+     */
+    val southernCross: Array<String> = arrayOf("Acrux", "Gacrux", "Imai", "Mimosa")
+    val stars: Array<String> = arrayOf("Ginan", "Mu Crucis")
+
+    val newArray: Array<String> = southernCross + stars
+
+    // Acrux, Gacrux, Imai, Mimosa, Ginan, Mu Crucis
+    println("Concatenate: ${newArray.joinToString()}")
 }
