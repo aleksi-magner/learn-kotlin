@@ -52,14 +52,14 @@
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    // immutableLists()
-    // mutableLists()
-    //
-    // immutableSets()
-    // mutableSets()
-    //
-    // immutableMaps()
-    // mutableMaps()
+    immutableLists()
+    mutableLists()
+
+    immutableSets()
+    mutableSets()
+
+    immutableMaps()
+    mutableMaps()
 
     arrays()
 }
@@ -700,6 +700,19 @@ fun mutableMaps() {
     println(groupOfStudents) // {}
 
     examMarks()
+
+    val userMap: Map<String, String> = mapOf(
+        "user1@mail.com" to "qwerty123",
+        "hi_john@mail.com" to "abcdef00",
+        "dr_mike@mail.com" to "000000"
+    )
+
+    // {user1@mail.com=qwerty123, hi_john@mail.com=abcdef00, dr_mike@mail.com=000000, new_login=new_password}
+    println(addUser(userMap, "new_login", "new_password"))
+
+    // User with this login is already registered!
+    // {user1@mail.com=qwerty123, hi_john@mail.com=abcdef00, dr_mike@mail.com=000000}
+    println(addUser(userMap, "user1@mail.com", "qwerty123"))
 }
 
 /**
@@ -725,6 +738,25 @@ fun examMarks() {
     } while (key != "stop")
 
     println(studentsMarks)
+}
+
+/**
+ * Начинающий программист является администратором сайта. У него есть карта, где для каждого пользователя есть ключ (логин) и значение (пароль). Теперь ему нужно добавить данные нового пользователя.
+ *
+ * Напишите функцию addUser, которая берёт карту с пользовательскими данными userMap, логином и паролем и добавляет последние два в userMap.
+ *
+ * Если userMap уже содержит пользователя с таким логином, сначала выведите следующую строку: «Пользователь с таким логином уже зарегистрирован!». После этого выведите userMap без изменений.
+ */
+fun addUser(userMap: Map<String, String>, login: String, password: String): MutableMap<String, String> {
+    val users: MutableMap<String, String> = userMap.toMutableMap()
+
+    if (users.containsKey(login)) {
+        println("User with this login is already registered!")
+    }
+
+    users.putIfAbsent(login, password)
+
+    return users
 }
 
 fun arrays() {
@@ -874,4 +906,152 @@ fun arrays() {
 
     // Acrux, Gacrux, Imai, Mimosa, Ginan, Mu Crucis
     println("Concatenate: ${newArray.joinToString()}")
+
+    /**
+     * Итерация по массиву
+     */
+    for (star in southernCross){
+        println("Star: $star")
+    }
+
+    /**
+     * Итерация по индексам
+     */
+    for (index in southernCross.indices){
+        println("Star (indexes): $index: ${southernCross[index]}")
+    }
+
+    /**
+     * Итерация по индексам диапазона
+     */
+    for (index in 2..3) {
+        println("Star (range indexes): $index: ${southernCross[index]}")
+    }
+
+    for (index in 2 until southernCross.lastIndex) {
+        println("Star (until lastIndex): $index: ${southernCross[index]}")
+    }
+
+    for (index in southernCross.lastIndex downTo 0 step 2) {
+        println("Star (lastIndex downTo step 2): $index: ${southernCross[index]}")
+    }
+
+    /**
+     * Чтение элементов массива
+     */
+    print("Укажите длину массива: ")
+
+    val size = readln().toInt()
+    val array = IntArray(size)
+
+    for (index in 0..array.lastIndex) {
+        print("Введите число - элемент массива: ")
+
+        array[index] = readln().toInt()
+    }
+
+    print("Результат в обратном порядке: ")
+
+    for (index in array.lastIndex downTo 0) {
+        print("${array[index]} ")
+    }
+
+    println()
+
+    counting()
+    rightRotation()
+    isItHere()
+}
+
+/**
+ * Считает, сколько раз число M встречается в N числах.
+ *
+ * Первая строка содержит число N.
+ * Следующие N строк содержат числа.
+ * Последняя строка содержит число M.
+ *
+ * Выведите только одно неотрицательное целое число.
+ */
+fun counting() {
+    print("Укажите длину массива: ")
+
+    val size: Int = readln().toInt()
+    val array = IntArray(size)
+
+    for (index in 0..array.lastIndex) {
+        print("Введите число - элемент массива: ")
+
+        array[index] = readln().toInt()
+    }
+
+    print("Введите искомое число: ")
+
+    val query: Int = readln().toInt()
+    val count: Int = array.count { it == query }
+
+    println("Количество искомых чисел в массиве: $count")
+}
+
+/**
+ * Правое вращение — это операция, которая сдвигает каждый элемент массива вправо.
+ *
+ * Если правое вращение равно 1 с массивом {1,2,3,4,5}, новый массив будет {5,1,2,3,4}.
+ *
+ * Другой пример, если поворот равен 2, массив равен {1,2,3,4,5}, новый массив будет {4,5,1,2,3}, потому что
+ * {1,2,3,4,5} -> {5,1,2,3,4} -> {4,5,1,2,3}.
+ *
+ * Первая строка входных данных содержит количество элементов в массиве N.
+ * Следующие N строк содержат элементы массива.
+ * Последнее — это значение вращения.
+ *
+ * Выходные данные содержат сдвинутые элементы массива. Разделяйте элементы пробелом.
+ */
+fun rightRotation() {
+    print("Укажите длину массива: ")
+
+    val size: Int = readln().toInt()
+    val array = IntArray(size)
+
+    for (index in 0..array.lastIndex) {
+        print("Введите число - элемент массива: ")
+
+        array[index] = readln().toInt()
+    }
+
+    print("Введите количество смещений массива: ")
+
+    val rotationValue: Int = readln().toInt() % size
+
+    val start: IntArray = array.sliceArray(size - rotationValue..array.lastIndex)
+    val end: IntArray = array.sliceArray(0 until size - rotationValue)
+
+    println("Массив со смещением: ${(start + end).joinToString(" ")}")
+}
+
+/**
+ * Проверяет, содержит ли набор из N чисел число M.
+ *
+ * Первая строка содержит число N.
+ * Следующие N строк содержат числа.
+ * В последней строке записано одно целое число M.
+ *
+ * Вам нужно вывести YES или NO.
+ */
+fun isItHere() {
+    print("Укажите длину массива: ")
+
+    val size: Int = readln().toInt()
+    val array = IntArray(size)
+
+    for (index in 0..array.lastIndex) {
+        print("Введите число - элемент массива: ")
+
+        array[index] = readln().toInt()
+    }
+
+    print("Введите искомое число: ")
+
+    val query: Int = readln().toInt()
+
+    println(if (array.contains(query)) "YES" else "NO")
 }
