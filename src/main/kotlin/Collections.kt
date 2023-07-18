@@ -495,8 +495,8 @@ fun clearOrNotClear(elements: MutableSet<Int>, element: Int): MutableSet<Int> {
  */
 fun immutableMaps() {
     val students: Map<String, Int> = mapOf(
-        "Zhenya" to 5,
-        "Vlad" to 4,
+        Pair("Zhenya", 5),
+        "Vlad" to 4, // infix function. Инфиксная функция вместо Pair(a, b)
         Pair("Nina", 5),
     )
 
@@ -524,7 +524,7 @@ fun immutableMaps() {
     println("$first $second") // 2 3
 
     /**
-     * Мы используем конструкцию to для создания записи на карте. Здесь to — это упрощенная конструкция для создания пары:
+     * Мы используем конструкцию to для создания записи на карте. Здесь to — это упрощенная конструкция для создания пары (инфиксная функция):
      */
     val (nameVlad, gradeVlad) = "Vlad" to 4
 
@@ -535,7 +535,7 @@ fun immutableMaps() {
     val emptyStringToDoubleMap = emptyMap<String, Double>()
 
     // Создание через buildMap()
-    val values = mapOf<String, Int>("Second" to 2, "Third" to 3)
+    val values = mapOf<String, Int>(Pair("Second", 2), Pair("Third", 3))
 
     val map = buildMap<String, Int> {
         put("First", 1)
@@ -567,24 +567,46 @@ fun immutableMaps() {
         println("$k $v")
     }
 
-    val intMap: Map<Int, Int> = mapOf(1 to 2, 2 to 3, 3 to 4, 4 to 5, 5 to 6)
+    val intMap: Map<Int, Int> = mapOf(
+        Pair(1, 2),
+        Pair(2, 3),
+        Pair(3, 4),
+        Pair(4, 5),
+        Pair(5, 6)
+    )
 
     println("Map summator: ${summator1(intMap)}") // 8
     println("Map summator: ${summator2(intMap)}") // 8
 
-    val priceList1: Map<String, Int> = mapOf("Cola" to 500, "Apple" to 1500, "Banana" to 300)
+    val priceList1: Map<String, Int> = mapOf(
+        Pair("Cola", 500),
+        Pair("Apple", 1500),
+        Pair("Banana", 300)
+    )
+
     val shoppingList1: MutableList<String> = mutableListOf("Cola", "Apple")
 
     println("bill: ${bill1(priceList1, shoppingList1)}") // 2000
     println("bill: ${bill2(priceList1, shoppingList1)}") // 2000
 
-    val priceList2: Map<String, Int> = mapOf("Pen" to 1, "Ananas" to 2, "Sheet" to 0)
+    val priceList2: Map<String, Int> = mapOf(
+        Pair("Pen", 1),
+        Pair("Ananas", 2),
+        Pair("Sheet", 0)
+    )
+
     val shoppingList2: MutableList<String> = mutableListOf()
 
     println("bill: ${bill1(priceList2, shoppingList2)}") // 0
     println("bill: ${bill2(priceList2, shoppingList2)}") // 0
 
-    val priceList3: Map<String, Int> = mapOf("Sprite" to 150, "Lays" to 200, "Milk" to 600, "Snickers" to 100)
+    val priceList3: Map<String, Int> = mapOf(
+        Pair("Sprite", 150),
+        Pair("Lays", 200),
+        Pair("Milk", 600),
+        Pair("Snickers", 100)
+    )
+
     val shoppingList3: MutableList<String> = mutableListOf("Sprite", "Lays", "Coffee")
 
     println("bill: ${bill1(priceList3, shoppingList3)}") // 350
@@ -635,9 +657,9 @@ fun bill2(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
  */
 fun mutableMaps() {
     val staff: MutableMap<String, Int> = mutableMapOf(
-        "John" to 500,
-        "Mike" to 1000,
-        "Lara" to 1300
+        Pair("John", 500),
+        Pair("Mike", 1000),
+        Pair("Lara", 1300)
     )
 
     staff["Nika"] = 999
@@ -645,7 +667,7 @@ fun mutableMaps() {
     println(staff) // {John=500, Mike=1000, Lara=1300, Nika=999}
 
     // Преобразование обычной карты в мутабельную
-    val mapCarsPerYear: Map<Int, Int> = mapOf(1999 to 30000, 2021 to 202111)
+    val mapCarsPerYear: Map<Int, Int> = mapOf(Pair(1999, 30000), Pair(2021, 202111))
     val carsPerYear: MutableMap<Int, Int> = mapCarsPerYear.toMutableMap()
 
     carsPerYear[2020] = 2020
@@ -668,10 +690,10 @@ fun mutableMaps() {
 
     groupOfStudents.put("John", 4)
     groupOfStudents["Mike"] = 5
-    groupOfStudents += mapOf("Anastasia" to 10)
-    groupOfStudents += "Alexa" to 3
+    groupOfStudents += mapOf(Pair("Anastasia", 10))
+    groupOfStudents += Pair("Alexa", 3)
 
-    val studentsFromOregon = mapOf("Alexa" to 7)
+    val studentsFromOregon = mapOf(Pair("Alexa", 7))
 
     groupOfStudents.putAll(studentsFromOregon)
 
@@ -702,9 +724,9 @@ fun mutableMaps() {
     examMarks()
 
     val userMap: Map<String, String> = mapOf(
-        "user1@mail.com" to "qwerty123",
-        "hi_john@mail.com" to "abcdef00",
-        "dr_mike@mail.com" to "000000"
+        Pair("user1@mail.com", "qwerty123"),
+        Pair("hi_john@mail.com", "abcdef00"),
+        Pair("dr_mike@mail.com", "000000")
     )
 
     // {user1@mail.com=qwerty123, hi_john@mail.com=abcdef00, dr_mike@mail.com=000000, new_login=new_password}
