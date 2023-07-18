@@ -54,6 +54,9 @@ fun main() {
     println(perimeter(0.0, 0.0, 12.0, 0.0, 0.0, 5.0)) // 30.0
 
     extensionFunctions()
+    infixFunctions()
+    functionsAsObjects()
+    lambdaExpressions()
 }
 
 /**
@@ -218,4 +221,114 @@ fun extensionFunctions() {
      *
      * Если вы хотите дать функции расширения имя, которое уже существует, вы должны изменить сигнатуру функции, например, изменить её аргументы. Это не сломает уже существующий код.
      */
+}
+
+/**
+ * Инфиксные функции
+ *
+ * add(2, 4) -> 2 add 4
+ */
+fun infixFunctions() {
+    infix fun Int.add(x: Int): Int = this + x
+
+    println(1 add 2)  // 3
+
+    val listOfShip: List<String> = listOf("Ford-11", "Bismarck-200", "Titanic-340", "HMS-44")
+
+    infix fun List<String>.battle(ammunitionLimit: Int): List<String> {
+        val validShips: MutableSet<String> = mutableSetOf()
+
+        for (ship in this) {
+            val (name, ammunition) = ship.split("-")
+
+            if (ammunition.toInt() > ammunitionLimit) {
+                validShips.add(name)
+            }
+        }
+
+        return validShips.toList()
+    }
+
+    println(listOfShip battle 50) // [Bismarck, Titanic]
+}
+
+fun getRealGrade(x: Double): Double = x
+fun getGradeWithPenalty(x: Double): Double = x - 1
+
+fun getScoringFunction(isCheater: Boolean): (Double) -> Double = if (isCheater) ::getGradeWithPenalty else ::getRealGrade
+
+fun same(x: Int): Int = x
+fun square(x: Int): Int = x * x
+fun triple(x: Int): Int = 3 * x
+
+fun applyAndSum(a: Int, b: Int, transform: (Int) -> Int): Int = transform(a) + transform(b)
+
+fun isNotDot(c: Char): Boolean = c != '.'
+
+/**
+ * Ссылки на функции как объекты.
+ *
+ * Kotlin позволяет получать ссылки на функции. Чтобы получить ссылку на функцию верхнего уровня, нам просто нужно написать двойное двоеточие (::) перед ее именем, и мы не пишем круглые скобки и аргументы после имени.
+ */
+fun functionsAsObjects() {
+    val sumObject: (Int, Int) -> Int = ::sum
+
+    println(sum(10, 20)) // 30
+    println(sumObject(10, 20)) // 30
+
+    /**
+     * Функции, возвращающие другие функции
+     */
+    val wantedFunction: (Double) -> Double = getScoringFunction(false)
+
+    println(wantedFunction(9.0)) // 9.0
+
+    /**
+     * Ссылки на функции как параметры функций
+     */
+    println(applyAndSum(1, 2, ::same)) // 3 = 1 + 2
+    println(applyAndSum(1, 2, ::square)) // 5 = 1 * 1 + 2 * 2
+    println(applyAndSum(1, 2, ::triple)) // 9 = 3 * 1 + 3 * 2
+
+    val originalText = "I don't know... what to say..."
+    val textWithoutDots: String = originalText.filter(::isNotDot)
+
+    println(textWithoutDots) // I don't know what to say
+}
+
+/**
+ * Лямбда-выражения
+ *
+ * Функция создаваемая во время выполнения и без предопределенного имени. Lambda — одна из наиболее важных функций, широко используемая в современном программировании.
+ *
+ * Чтобы создать функцию Kotlin, которая не привязана к своему имени, вы можете использовать либо анонимную функцию, либо лямбда-выражение:
+ * - fun(arguments): ReturnType { body } – это обычно называют «анонимной функцией».
+ * - { arguments -> body } - это обычно называют «лямбда-выражением»
+ * - { body } - «лямбда-выражение» без аргументов
+ *
+ * Иногда ссылка на функцию более читабельна, чем лямбда, и нет правильного ответа, какой из них предпочтительнее. Однако, если код довольно сложный, вместо копирования и вставки некоторых лямбда-выражений может быть лучше использовать ссылку на функцию для упрощения обслуживания и повторного использования.
+ */
+fun lambdaExpressions() {
+    val anonymous: (Int, Int) -> Int = fun(a: Int, b: Int): Int = a * b
+    val lambda: (Int, Int) -> Int = { a: Int, b: Int -> a * b }
+    val lambdaWithoutArguments: () -> Int = { 40 + 2 }
+
+    println(anonymous(2, 3)) // 6
+    println(lambda(2, 3)) // 6
+    println(lambdaWithoutArguments()) // 42
+
+    val originalText = "I don't know... what to say..."
+
+    /**
+     * Бывают ситуации, когда лямбда передается последним аргументом. В таком случае Kotlin предоставляет способ исключить скобочные последовательности ({ }) и записать лямбду вне круглых скобок:
+     * - originalText.someFunction(a, b) { c -> c != '.' }
+     */
+    val textWithoutDots: String = originalText.filter { c: Char -> c != '.' }
+
+    println(textWithoutDots) // I don't know what to say
+
+    /**
+     * Когда в лямбде есть один параметр, есть возможность его пропустить. Параметр доступен под именем it. Его тип выводится из типа аргумента, передаваемого в лямбду.
+     */
+    println(originalText.filter { it != '.' }) // I don't know what to say
 }
