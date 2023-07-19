@@ -4,6 +4,7 @@ import kotlin.math.pow
 fun main() {
     whileLoop()
     forLoop()
+    iterator()
 }
 
 fun whileLoop() {
@@ -436,4 +437,120 @@ fun fizzBuzz() {
             else -> println(number)
         }
     }
+}
+
+/**
+ * Итератор обеспечивает последовательный доступ к элементам коллекции, независимо от их типа. Его можно рассматривать как подвижный указатель на элемент коллекции
+ *
+ * Итераторы можно вызывать для различных типов коллекций: List, Map и Set.
+ *
+ * Если вы попытаетесь вызвать next() из итератора после передачи последнего элемента в коллекции (или для пустой коллекции), будет сгенерировано исключение NoSuchElementException
+ */
+fun iterator() {
+    val set: Set<String> = setOf("cat", "dog", "crocodile", "snake")
+    val setIterator: Iterator<String> = set.iterator()
+
+    while (setIterator.hasNext()) {
+        print("${setIterator.next()} ") // cat dog crocodile snake
+    }
+
+    println()
+
+    /**
+     * Вместо использования цикла for итераторы поддерживают функцию forEach(). Эта функция принимает действие и выполняет его для каждой записи коллекции.
+     *
+     * Внутри него можно использовать лямбда-выражения и ссылки на методы
+     */
+    val map: Map<String, String> = mapOf(
+        Pair("John", "chocolate"),
+        Pair("Mary", "sweets"),
+        Pair("Sara", "marmalade")
+    )
+
+    val mapIterator: Iterator<Map.Entry<String, String>> = map.iterator()
+
+    /*
+      John likes chocolate
+      Mary likes sweets
+      Sara likes marmalade
+    */
+    mapIterator.forEach { (key: String, value: String) ->
+        println("$key likes $value")
+    }
+
+    /**
+     * Итераторы и изменяемые коллекции
+     *
+     * MutableIterator расширяет Iterator и предоставляет функцию remove(), которая удаляет последний элемент коллекции, возвращенный итератором.
+     *
+     * Чтобы иметь возможность удалить элемент из коллекции, нужно вызвать next(), потому что мы можем удалить только элемент, возвращенный итератором.
+     */
+    val food: MutableSet<String> = mutableSetOf("donuts", "cakes", "tarts")
+    val mutableIterator: MutableIterator<String> = food.iterator()
+
+    mutableIterator.next()
+    mutableIterator.remove()
+
+    println("Result: $food") // Result: [cakes, tarts]
+
+    /**
+     * Списки имеют специальный тип итератора, именуемый ListIterator. Он позволяет выполнять итерацию по списку в обоих направлениях: вперёд и назад, в то время как итераторы для Set или Map могут выполнять итерацию только вперёд.
+     *
+     * В дополнение к обычным методам Iterator, ListIterator имеет следующие собственные методы:
+     * - fun nextIndex(): Int - возвращает индекс элемента, который был бы возвращён вызовом функции next();
+     * - fun previous(): T - возвращает предыдущий элемент списка и перемещает указатель итератора назад;
+     * - fun hasPrevious(): Boolean - возвращает "true", если в итерации есть элементы перед текущим элементом;
+     * - fun previousIndex(): Int - возвращает индекс элемента, который будет возвращён при вызове функции previous().
+     */
+    val strings: List<String> = listOf("i", "like", "donuts")
+    val listIterator: ListIterator<String> = strings.listIterator()
+
+    println("Iterating forwards:")
+
+    // Проход по списку вперёд
+    while (listIterator.hasNext()) {
+        listIterator.next()
+    }
+
+    println("Iterating backwards:")
+
+    // Проход по списку назад
+    while (listIterator.hasPrevious()) {
+        println("index: ${listIterator.previousIndex()}, value: ${listIterator.previous()}")
+    }
+
+    /**
+     * У изменяемых списков есть собственная версия Iterator, которая называется MutableListIterator. MutableListIterator уникален тем, что может не только удалять элементы, но и заменять их и добавлять новые при обходе коллекции.
+     */
+    val words: MutableList<String> = mutableListOf("i", "know", "Claire")
+    val mutableListIterator: MutableListIterator<String> = words.listIterator()
+
+    mutableListIterator.next()
+    mutableListIterator.next()
+
+    mutableListIterator.set("don't know")// i, don't know, Claire
+    mutableListIterator.add("John")
+
+    println(words)// i, don't know, John, Claire
+
+    rollerCoasters()
+}
+
+fun checkHeight(iterator: Iterator<Int>) {
+    iterator.forEach { height: Int ->
+        println(if (height in 145..210) "You can go!"  else "Sorry, not today")
+    }
+}
+
+/**
+ * Вы решили автоматизировать процесс контроля доступа к горкам. Для этого вы написали функцию checkHeight(height: Int). Если рост человека меньше 145 см или больше 210 см, он не может попасть на американские горки.
+ *
+ * Если человек может войти в американские горки, checkHeight должен вывести "You can go!" на новой строке; в противном случае, если их высота не подходит, печатается «Sorry, not today».
+ */
+fun rollerCoasters() {
+    print("Введите через пробел рост посетителей: ")
+
+    val list: List<Int> = readln().split(" ").map(String::toInt).toList()
+
+    checkHeight(list.iterator())
 }
