@@ -55,7 +55,7 @@ fun main() {
 
     extensionFunctions()
     infixFunctions()
-    functionsAsObjects()
+    functionReferences()
     lambdaExpressions()
 }
 
@@ -266,11 +266,20 @@ fun applyAndSum(a: Int, b: Int, transform: (Int) -> Int): Int = transform(a) + t
 fun isNotDot(c: Char): Boolean = c != '.'
 
 /**
- * Ссылки на функции как объекты.
+ * Ссылки на функции.
  *
- * Kotlin позволяет получать ссылки на функции. Чтобы получить ссылку на функцию верхнего уровня, нам просто нужно написать двойное двоеточие (::) перед ее именем, и мы не пишем круглые скобки и аргументы после имени.
+ * Kotlin позволяет получать ссылки на функции. Чтобы получить ссылку на функцию верхнего уровня, нам просто нужно написать двойное двоеточие (::) перед её именем, и мы не пишем круглые скобки и аргументы после имени.
+ *
+ * Существует четыре вида ссылок на функции:
+ * - ссылка на функцию (::functionName);
+ * - ссылка по классу (ClassName::functionName);
+ * - ссылка по объекту (objectName::functionName);
+ * - ссылка на конструктор (::ClassName).
  */
-fun functionsAsObjects() {
+fun functionReferences() {
+    /**
+     * Ссылки на функции как объекты.
+     */
     val sumObject: (Int, Int) -> Int = ::sum
 
     println(sum(10, 20)) // 30
@@ -294,6 +303,62 @@ fun functionsAsObjects() {
     val textWithoutDots: String = originalText.filter(::isNotDot)
 
     println(textWithoutDots) // I don't know what to say
+
+    /**
+     * Вы можете ссылаться на функции, принадлежащие классу. Базовый синтаксис в таких случаях выглядит так:
+     * - objectOrClass::functionName
+     *
+     * objectOrClass может быть именем класса или конкретным экземпляром класса.
+     */
+    class Person(val name: String, val lastname: String) {
+        fun printFullName(): String = "full name: $name $lastname"
+    }
+
+    val person = Person("Sara", "Rogers")
+    val personFun: () -> String = person::printFullName
+
+    println(personFun())
+
+    /**
+     * Ссылки на функции также работают с функциями из стандартных классов Kotlin
+     *
+     * Создаем ссылку на стандартную функцию dec класса Int. Функция dec уменьшает число на единицу (декремент).
+     */
+    val dec: (Int) -> Int = Int::dec
+
+    println(dec(4)) // 3
+
+    /**
+     * Альтернативный способ создать тот же объект с помощью лямбда-выражения
+     */
+    val dec2: (Int) -> Int = { x: Int -> x.dec() }
+
+    println(dec2(4)) // 3
+
+    /**
+     * Ссылка по объекту
+     */
+    val whatsGoingOnText = "What's going on here?"
+
+    /**
+     * Функция находит индекс первого вхождения элемента в текст. Эта функция принимает строку для поиска, индекс, с которого мы начинаем поиск, и логическое значение, определяющее, будет ли игнорироваться регистр при сопоставлении с символом (по умолчанию оно равно false)
+     */
+    val indexWithinWhatsGoingOnText: (String, Int, Boolean) -> Int = whatsGoingOnText::indexOf
+
+    println(indexWithinWhatsGoingOnText("going", 0, true)) // 7
+    println(indexWithinWhatsGoingOnText("Hi", 0, true))  // -1
+    println(indexWithinWhatsGoingOnText("what's", 0, false))  // -1
+    println(indexWithinWhatsGoingOnText("what's", 0, true))  // 0
+
+    /**
+     * Ссылка на конструктор
+     */
+    class User (val name: String)
+
+    val personGenerator: (String) -> User = ::User
+    val johnFoster: User = personGenerator("John Foster")
+
+    println(johnFoster.name) // John Foster
 }
 
 /**
