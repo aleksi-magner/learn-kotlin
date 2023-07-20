@@ -84,6 +84,8 @@ fun sequence() {
 
         number += 1
     }
+
+    println()
 }
 
 /**
@@ -93,7 +95,7 @@ fun sequence() {
  *
  * Обратите внимание, что числа могут быть отрицательными.
  *
- * Вы можете перестать печатать в консоли, нажав Ctrl+D после того, как вы ввели последнее число и нажали Enter.
+ * Вы можете перестать печатать в консоли, нажав 0 после того, как вы ввели последнее число и нажали Enter.
  */
 fun firstPositionOfLargestElement() {
     var currentPosition = 0
@@ -101,11 +103,11 @@ fun firstPositionOfLargestElement() {
     var max: Int? = null
 
     do {
-        print("Введите число (Ctrl+D для остановки): ")
+        print("Введите число (0 для остановки): ")
 
         val number: Int? = readlnOrNull()?.toInt()
 
-        if (number !== null) {
+        if (number != null) {
             currentPosition += 1
 
             if (max == null || number > max) {
@@ -113,7 +115,7 @@ fun firstPositionOfLargestElement() {
                 positionOfMax = currentPosition
             }
         }
-    } while (number != null)
+    } while (number != 0)
 
     println("$max $positionOfMax")
 }
@@ -534,6 +536,7 @@ fun iterator() {
     println(words)// i, don't know, John, Claire
 
     rollerCoasters()
+    frequencyWordBook()
 }
 
 fun checkHeight(iterator: Iterator<Int>) {
@@ -553,4 +556,22 @@ fun rollerCoasters() {
     val list: List<Int> = readln().split(" ").map(String::toInt).toList()
 
     checkHeight(list.iterator())
+}
+
+/**
+ * Нужно подсчитать вхождение слов в текст.
+ *
+ * Читает строку слов и распечатывает карту, где ключ представляет слово, а значение представляет его вхождение.
+ *
+ * Ключи должны идти в том порядке, в котором они расположены в исходной строке.
+ */
+fun frequencyWordBook() {
+    val input = "little brown fox brown fog"
+    val list: List<String> = input.split(" ")
+
+    val map: Map<String, Int> = list.groupingBy { it }.eachCount()
+
+    for ((key, value) in map) {
+        println("$key $value")
+    }
 }

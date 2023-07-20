@@ -4,9 +4,13 @@ fun main() {
     readStandardInput()
     readHandleString()
     readCustomDelimiter()
+
+    printingEachWordInANewLine()
 }
 
 fun readStandardInput() {
+    println("---Read standard input---")
+
     val inputScanner = Scanner(System.`in`)
 
     val result = mutableListOf<String>()
@@ -36,6 +40,8 @@ fun readStandardInput() {
 }
 
 fun readHandleString() {
+    println("---Read handle string---")
+
     val handleScanner = Scanner("Hello, Kotlin")
 
     println("Language: ${handleScanner.findInLine("Kotlin")}") // Kotlin
@@ -44,6 +50,8 @@ fun readHandleString() {
 }
 
 fun readCustomDelimiter() {
+    println("---Read custom delimiter---")
+
     val customDelimiterScanner = Scanner("123_456")
 
     customDelimiterScanner.useDelimiter("_")
@@ -52,4 +60,27 @@ fun readCustomDelimiter() {
     println("Second number: ${customDelimiterScanner.nextInt()}") // 456
 
     customDelimiterScanner.close()
+}
+
+/**
+ * Считывает пять слов из стандартного ввода и выводит каждое слово на новой строке
+ */
+fun printingEachWordInANewLine() {
+    print("Введите 5 слов: ")
+
+    val scanner = Scanner(System.`in`)
+
+    val result: MutableList<String> = mutableListOf()
+
+    repeat(5) {
+        if (scanner.hasNext()) {
+            result.add(scanner.next())
+        }
+    }
+
+    scanner.close()
+
+    for (word in result) {
+        println(word)
+    }
 }

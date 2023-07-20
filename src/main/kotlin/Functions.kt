@@ -57,6 +57,8 @@ fun main() {
     infixFunctions()
     functionReferences()
     lambdaExpressions()
+    testPredicates()
+    lambdaWithReceiver()
 }
 
 /**
@@ -396,4 +398,151 @@ fun lambdaExpressions() {
      * Когда в лямбде есть один параметр, есть возможность его пропустить. Параметр доступен под именем it. Его тип выводится из типа аргумента, передаваемого в лямбду.
      */
     println(originalText.filter { it != '.' }) // I don't know what to say
+}
+
+/**
+ * Тестовые предикаты: проверка элементов в коллекции
+ *
+ * При работе с коллекциями часто требуется проверять, соответствуют ли элементы коллекции какому-либо условию.
+ *
+ * Фильтрация коллекции по определённым критериям или проверка наличия в коллекции элемента с определёнными свойствами — одни из самых распространенных задач, и важно сделать это наиболее эффективным способом.
+ *
+ * Предикат — это функция, которая возвращает истину или ложь в зависимости от входных данных. Мы получим true, если условие соответствует предикату, и false в противном случае.
+ *
+ * Один предикат всегда проверяет одно и то же условие; разные условия проверяются разными предикатами.
+ */
+fun testPredicates() {
+    // Lambdas as predicates (T) -> Boolean
+    val isEven: (Int) -> Boolean = { x -> x % 2 == 0 }
+    val isPalindrome: (String) -> Boolean = { x -> x.reversed() == x }
+
+    println("2 is even: ${isEven(2)}") // true
+    println("3 is even: ${isEven(3)}") // false
+
+    println("racecar is palindrome: ${isPalindrome("racecar")}") // true
+    println("potatoes is palindrome: ${isPalindrome("potatoes")}") // false
+
+    val numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    val emptyList = emptyList<Int>()
+
+    println("---Any---")
+
+    // Вернёт true, если хотя бы один элемент коллекции соответствует предикату
+    // any number is even?
+    println(numbers.any { x -> x % 2 == 0 }) // true
+    println(numbers.any { isEven(it) }) // true
+    println(numbers.any(isEven)) // true
+    println(emptyList.any(isEven)) // false
+
+    println("---None---")
+
+    // Вернёт true, если ни один из элементов коллекции не соответствует предикату
+    // none of the numbers is even?
+    println(numbers.none(isEven)) // false
+    println(emptyList.none(isEven)) // true
+
+    // none of the numbers is greater than 100
+    println(numbers.none { x -> x > 100 }) // true
+
+    println("---All---")
+
+    // Вернёт true, если все элементы коллекции удовлетворяют заданному предикату.
+    // Особенностью этой функции является то, что она всегда возвращает true для пустой коллекции; эта черта также называется пустой правдой в математике.
+    println(numbers.all(isEven)) // false
+    println(emptyList.all(isEven)) // true
+
+    println("Has the spell been invoked?")
+
+    print("Введите через пробел список слов: ")
+
+    val list: List<String> = readln().split(" ")
+
+    val hasSpell: Boolean = checkSpell(list)
+
+    println("Заклинание произнесено: $hasSpell")
+}
+
+/**
+ * Волшебник произнес список слов, но мы знаем, что только «abracadabra» произносит заклинание.
+ *
+ * Это было сказано?
+ *
+ * Верните true, если список содержит слово «abracadabra» в верхнем, нижнем или смешанном регистре.
+ */
+fun checkSpell(words: List<String>): Boolean {
+    val spell = "abracadabra"
+
+    return words.any { word -> word.lowercase() == spell }
+}
+
+/**
+ * Расширение лямбда-функций (Lambda with receiver)
+ *
+ * Чтобы преобразовать лямбду в лямбду с получателем, можно присвоить одному из параметров лямбды специальный статус получателя, что позволяет обращаться к ее членам напрямую без каких-либо квалификаторов.
+ *
+ * Типы функций могут опционально иметь дополнительный тип приемника, который указывается перед точкой в нотации: A.(B) -> C { body } представляет функции, которые могут быть вызваны на объекте-приемнике A с параметром B, возвращают значение C, и выполнять любые действия в body.
+ *
+ * Внутри body литерала функции вы можете получить доступ к членам объекта-приемника, используя выражение this.
+ */
+fun lambdaWithReceiver() {
+    // Обычная лямбда
+    val lambdaSum: (Int, Int) -> Int = { a, b -> a + b }
+
+    println(lambdaSum(1, 2)) // 3
+
+    // lambda with a receiver
+    val lambdaReceiverSum: Int.(Int) -> Int = { a ->
+        println("this: $this") // 1
+
+        this + a
+    }
+
+    println(lambdaReceiverSum(1, 2)) // 3
+    println(1.lambdaReceiverSum(2)) // 3
+
+    fun Int.opp(f: Int.() -> Int): Int = f()
+
+    var res = 10.opp { this.times(2) }
+
+    println(res) // 20
+
+    // We can omit this
+    res = 10.opp { plus(10) }
+
+    println(res) // 20
+
+    res = 10.opp { this * 2 }
+
+    println(res) // 20
+
+    /**
+     * В следующем коде показано, как использовать типобезопасные построители с классом StringBuilder, которые можно применять для эффективного выполнения нескольких операций над строками. Например, используя метод append, мы можем добавить указанную последовательность символов; в итоге после всех манипуляций возвращаем конечную строку.
+     */
+    // Safe Builder String with Lambda with receiver
+    fun myString(init: StringBuilder.() -> Unit): String {
+        return StringBuilder().apply(init).toString()
+    }
+
+    val str = myString {
+        append("Hello, ".uppercase())
+        append("World!")
+    }
+
+    println(str) // HELLO, World!
+
+    fun <T> T.apply(block: T.() -> Unit): T {
+        block()
+        return this
+    }
+
+    data class Student(var name: String, var age: Int)
+
+    val student = Student("John", 20)
+
+    student.apply {
+        name = this.name.uppercase()
+        age += 1
+    }
+
+    println(student) // Student(name=JOHN, age=21)
 }
