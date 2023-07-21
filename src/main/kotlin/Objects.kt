@@ -312,6 +312,10 @@ fun main() {
     myClass2.printProperty()
 
     secondaryConstructor()
+
+    createTable()
+
+    typeSafeBuilders()
 }
 
 /**
@@ -392,4 +396,167 @@ fun secondaryConstructor() {
 
     // innerObject: 2x3, area 6
     println("innerObject: ${innerObject.width}x${innerObject.height}, area ${innerObject.area}")
+}
+
+class Table(rows: Int, columns: Int) {
+    val html: String
+
+    init {
+        val columnTags: String = createTag("td", columns)
+        val rowTags: String = createTag("tr", rows, columnTags)
+        val tableTags: String = createTag("table", 1, rowTags)
+
+        html = tableTags
+    }
+
+    private fun createTag(name: String, count: Int, children: String = ""): String {
+        return "<$name>$children</$name>".repeat(count)
+    }
+}
+
+fun createTable() {
+    val table = Table(1, 2)
+
+    println(table.html) // <table><tr><td></td><td></td></tr></table>
+}
+
+/**
+ * В Kotlin аннотация @DslMarker используется для определения интерфейса маркера DSL или аннотации. Он позволяет указать маркер, который указывает область действия DSL и помогает применять правила области действия в рамках DSL. При создании DSL часто желательно ограничить доступность определённых функций или компоновщиков в определённых областях. Аннотация @DslMarker позволяет определить интерфейс маркера или аннотацию, которая служит сигналом для компилятора и других разработчиков о том, что определённые функции или компоновщики предназначены для использования только в определённой области DSL.
+ */
+@DslMarker
+annotation class TreeNodeDslMarker
+
+@TreeNodeDslMarker
+data class TreeNode(val value: String) {
+    val children: MutableList<TreeNode> = mutableListOf()
+
+    fun addChild(child: TreeNode) {
+        children.add(child)
+    }
+}
+
+class TreeNodeBuilder {
+    private val root = TreeNode("")
+    private var currentNode: TreeNode = root
+
+    fun value(value: String) {
+        currentNode = TreeNode(value)
+
+        root.addChild(currentNode)
+    }
+
+    fun child(block: TreeNodeBuilder.() -> Unit) {
+        val childBuilder = TreeNodeBuilder()
+
+        childBuilder.block()
+
+        currentNode.addChild(childBuilder.build())
+    }
+
+    fun build(): TreeNode = root
+}
+
+fun buildTree(block: TreeNodeBuilder.() -> Unit): TreeNode {
+    val builder = TreeNodeBuilder()
+
+    builder.block()
+
+    return builder.build()
+}
+
+fun printTree(node: TreeNode, level: Int = 0) {
+    val indentation = "  ".repeat(level)
+
+    println("$indentation${node.value}")
+
+    for (child in node.children) {
+        printTree(child, level + 1)
+    }
+}
+
+/**
+ * Шаблоны построителя для реализации DSL (предметно-ориентированного языка) и создания типового построителя для нашего кода.
+ *
+ * Паттерн строителя — это творческий паттерн проектирования, который позволяет шаг за шагом создавать сложные объекты. Он предоставляет способ создания объектов путём отделения логики построения от представления, что приводит к более читабельному и удобному для сопровождения коду.
+ *
+ * Традиционный шаблон построителя обычно реализуется с использованием комбинации класса, представляющего объект, который нужно построить, и отдельного класса Builder. Класс Builder предоставляет методы для установки свойств создаваемого объекта, что позволяет осуществлять плавный и настраиваемый процесс построения. Паттерн построителя помогает повысить удобочитаемость и гибкость построения объектов, предоставляя чёткий и настраиваемый способ создания сложных объектов, избегая необходимости в нескольких конструкторах или больших списках параметров.
+ */
+fun typeSafeBuilders() {
+    data class Person(
+        val firstName: String,
+        val lastName: String,
+        val age: Int,
+        val address: String
+    )
+
+    data class PersonBuilder(
+        var firstName: String = "",
+        var lastName: String = "",
+        var age: Int = 0,
+        var address: String = ""
+    )
+
+    fun personBuilder(init: PersonBuilder.() -> Unit): Person {
+        val builder = PersonBuilder()
+
+        builder.init()
+
+        return Person(builder.firstName, builder.lastName, builder.age, builder.address)
+    }
+
+    val person: Person = personBuilder {
+        firstName = "John"
+        lastName = "Doe"
+        age = 30
+        address = "123 Main St"
+    }
+
+    println("Person builder: $person")
+    println("Person first name: ${person.firstName}")
+    println("Person last name: ${person.lastName}")
+    println("Person age: ${person.age}")
+    println("Person address: ${person.address}")
+
+    fun buildString(action: (StringBuilder).() -> Unit): String {
+        val stringBuilder = StringBuilder()
+
+        action(stringBuilder)
+
+        return stringBuilder.toString()
+    }
+
+    // I Love learning Kotlin with Hyperskill
+    println(buildString {
+        append("I Love ")
+        append("learning Kotlin")
+        append(" with Hyperskill")
+    })
+
+    /**
+     * В качестве примера мы кодируем древовидную структуру и элементы в иерархической структуре.
+     *
+     * Типобезопасный построитель TreeNodeBuilder предоставляет такие методы, как value и child, которые можно связать вместе для построения древовидной структуры. Это позволяет построить дерево декларативным и удобочитаемым способом. В итоге вы получите объект дерева, представляющий структуру данных дерева.
+     *
+     * Функция buildTree вне класса TreeNode используется для инициации процесса построения путём получения лямбда-выражения с получателем (TreeNodeBuilder.() -> Unit). Внутри класса TreeNodeBuilder значения и дочерние функции определены для настройки и построения древовидной структуры. Функция значения в классе TreeNodeBuilder используется для установки значения текущего узла. Он создаёт новый TreeNode с указанным значением и добавляет его как дочерний к корневому узлу. Дочерняя функция в классе TreeNodeBuilder используется для добавления дочернего узла к текущему узлу. Он принимает лямбду с приёмником (TreeNodeBuilder.() -> Unit), который определяет конфигурацию дочернего узла. Внутри лямбды создаётся новый TreeNodeBuilder, и лямбда-блок выполняется в рамках дочернего построителя. Полученный дочерний узел затем добавляется в список дочерних элементов текущего узла.
+     */
+    val tree = buildTree {
+        value("Root")
+        child {
+            value("Child 1")
+            child {
+                value("Grandchild 1.1")
+            }
+            child {
+                value("Grandchild 1.2")
+            }
+        }
+        child {
+            value("Child 2")
+            child {
+                value("Grandchild 2.1")
+            }
+        }
+    }
+
+    printTree(tree)
 }
