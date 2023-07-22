@@ -55,6 +55,7 @@ fun main() {
     println("abc" in "aab".."aac") // false
 
     workingHours()
+    countNumbers()
 }
 
 const val WORKS_FROM = 9
@@ -80,4 +81,25 @@ fun workingHours() {
     val isFreeTime: Boolean = desiredTime in workingHoursRange && desiredTime !in lunchRange
 
     println(if (isFreeTime) "Записываем на сегодня, в $desiredTime ч" else "Это время недоступно для записи")
+}
+
+/**
+ * Считывает числа a, b и n и выводит, сколько чисел в диапазоне от a до b (a < b) делятся на n
+ */
+fun countNumbers() {
+    print("Введите начало диапазона: ")
+
+    val startRange: Int = readln().toInt()
+
+    print("Введите окончание диапазона: ")
+
+    val endRange: Int = readln().toInt()
+
+    val range: IntRange = startRange..endRange
+
+    print("Введите делитель: ")
+
+    val divisor: Int = readln().toInt()
+
+    println(range.count { it % divisor == 0 })
 }

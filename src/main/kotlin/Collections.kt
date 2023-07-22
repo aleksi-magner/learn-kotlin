@@ -1,3 +1,5 @@
+import kotlin.random.Random
+
 /**
  * Doc: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/
  *
@@ -62,6 +64,9 @@ fun main() {
     mutableMaps()
 
     arrays()
+
+    orderingElementsInCollection()
+    retrieveSingleElement()
 }
 
 /**
@@ -1076,4 +1081,376 @@ fun isItHere() {
     val query: Int = readln().toInt()
 
     println(if (array.contains(query)) "YES" else "NO")
+}
+
+/**
+ * Kotlin предлагает вам возможность определять порядок элементов коллекции различными способами: в естественном, обратном, случайном или пользовательском порядке.
+ */
+fun orderingElementsInCollection() {
+    /**
+     * Sorting objects
+     *
+     * Есть две функции: sorted() и sortedDescending() для сортировки элементов коллекции в естественном порядке, определённом в интерфейсе Comparable.
+     * - sorted() даёт нам коллекцию, в которой элементы отсортированы в порядке возрастания.
+     * - sortedDescending() используется для применения порядка убывания.
+     */
+    val numbers = mutableListOf(3, 5, 6, 4, 1, 8, 2, 7)
+
+    println("--- Sorting ---")
+
+    println(numbers.sorted()) // [1, 2, 3, 4, 5, 6, 7, 8]
+    println(numbers.sortedDescending()) // [8, 7, 6, 5, 4, 3, 2, 1]
+
+    val words = listOf("racecar", "mom", "dad", "abracadabra", "MANDRAKE")
+
+    println(words.sorted()) // [MANDRAKE, abracadabra, dad, mom, racecar]
+    println(words.sortedDescending()) // [racecar, mom, dad, abracadabra, MANDRAKE]
+
+    /**
+     * Reverse order
+     *
+     * Мы можем получить коллекцию в обратном порядке (на основе позиций индекса) с помощью двух функций: reversed() и asReversed().
+     *
+     * - reversed() возвращает копию исходной коллекции в порядке, обратном индексу. Если вы измените исходную коллекцию, изменения не повлияют на копию.
+     * - asReversed() возвращает ссылку на исходную коллекцию в порядке, обратном индексу. Он легче, потому что не создаёт новую копию, но если исходная коллекция изменяется, изменения отражаются в перевёрнутом списке. Мы должны быть осторожны, если работаем с изменяемыми коллекциями.
+     */
+    val reversedNumbers = numbers.reversed()
+
+    println("--- Reverse ---")
+
+    println(numbers) // [3, 5, 6, 4, 1, 8, 2, 7]
+    println(reversedNumbers) // [7, 2, 8, 1, 4, 6, 5, 3]
+
+    numbers.add(9)
+
+    println(numbers) // [3, 5, 6, 4, 1, 8, 2, 7, 9]
+    println(reversedNumbers) // [7, 2, 8, 1, 4, 6, 5, 3]
+
+    val wordsReversed = words.reversed()
+
+    println(words) // [racecar, mom, dad, abracadabra, MANDRAKE]
+    println(wordsReversed) // [MANDRAKE, abracadabra, dad, mom, racecar]
+
+    val numbersAsReversed = numbers.asReversed()
+
+    println(numbers) // [3, 5, 6, 4, 1, 8, 2, 7, 9]
+    println(numbersAsReversed) // [9, 7, 2, 8, 1, 4, 6, 5, 3]
+
+    numbers.add(19)
+
+    println(numbers) // [3, 5, 6, 4, 1, 8, 2, 7, 9, 19]
+    println(numbersAsReversed) // [19, 9, 7, 2, 8, 1, 4, 6, 5, 3]
+
+    val wordsAsReversed = words.asReversed()
+
+    println(words) // [racecar, mom, dad, abracadabra, MANDRAKE]
+    println(wordsAsReversed) // [MANDRAKE, abracadabra, dad, mom, racecar]
+
+    /**
+     * Random order
+     *
+     * - shuffled() даёт новую коллекцию, в которой исходные элементы перемешиваются случайным образом. Вы можете использовать его без аргументов или с экземпляром Random в качестве источника случайности. Использование целого числа в качестве начального числа в генераторе случайных чисел перетасует элементы случайным образом, что можно воспроизвести, если вы продолжите использовать одно и то же начальное число.
+     */
+    val shuffledNumbers = numbers.shuffled()
+
+    println("--- Random ---")
+
+    println(numbers) // [3, 5, 6, 4, 1, 8, 2, 7, 9, 19]
+    println(shuffledNumbers) // [6, 2, 8, 7, 9, 19, 5, 1, 4, 3]
+
+    val shuffledWords = words.shuffled(Random(1))
+
+    println(words) // [racecar, mom, dad, abracadabra, MANDRAKE]
+    println(shuffledWords) // [MANDRAKE, abracadabra, mom, dad, racecar]
+
+    palindromeList()
+}
+
+fun palindromeList() {
+    val list = listOf("anne", "peter", "anne")
+
+    println(list == list.reversed())
+}
+
+fun retrieveSingleElement() {
+    /**
+     * Получение элемента по позиции
+     *
+     * Вызывают исключение IndexOutOfBoundsException, если индекс не находится в указанных пределах (0..size-1).
+     */
+    val charList: List<Char> = listOf('а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и')
+    val charSet: Set<Char> = setOf('а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и')
+
+    println("--- elementAt ---")
+
+    println(charList.elementAt(6)) // 'ё'
+    println(charSet.elementAt(6)) // 'ё'
+
+    println("--- get ---")
+
+    println(charList.get(7)) // 'ж'
+    // println(charSet.get(7)) // error: 'get' is not a member of 'Set'
+
+    println("--- [index] ---")
+
+    println(charList[3]) // 'г'
+    // println(charSet[3]) // error: 'get' is not a member of 'Set'
+
+    // Выдаст исключение, если индекс выходит за пределы
+    // println(charList[30]) // error: Index 30 out of bounds for length 10
+    // println(charSet.elementAt(30)) // error: Index 30 out of bounds for length 10
+
+    println("--- first ---")
+
+    println(charList.first()) // 'а'
+    println(charSet.first()) // 'а'
+
+    println("--- last ---")
+
+    println(charList.last()) // 'и'
+    println(charSet.last()) // 'и'
+
+    /**
+     * Чтобы не было проблем с исключениями при попытке получить недопустимый элемент индекса, мы можем использовать следующие безопасные вызовы
+     * - elementAtOrNull(): возвращает значение null, когда позиция индекса выходит за границы коллекции.
+     * - elementAtOrElse(): принимает лямбда-функцию, которая возвращает результат лямбда-выражения, если позиция индекса выходит за границы коллекции.
+     *
+     * - getOrNull(): эквивалентно elementAtOrNull() для списка.
+     * - getOrElse(): эквивалентно elementAtOrElse() для списка.
+     *
+     * - firstOrNull(): используется для получения первого элемента или null, если коллекция пуста.
+     * - lastOrNull(): используется для получения последнего элемента или null, если коллекция пуста.
+     */
+    val emptyList = listOf<Int>()
+    val emptySet = setOf<Int>()
+
+    println("--- firstOrNull ---")
+
+    println(charList.firstOrNull()) // 'а'
+    println(emptyList.firstOrNull()) // null
+    println(charSet.firstOrNull()) // 'а'
+    println(emptySet.firstOrNull()) // null
+
+    println("--- lastOrNull ---")
+
+    println(charList.lastOrNull()) // 'и'
+    println(emptyList.lastOrNull()) // null
+    println(charSet.lastOrNull()) // 'и'
+    println(emptySet.lastOrNull()) // null
+
+    println("--- elementAtOrNull ---")
+
+    println(charList.elementAtOrNull(6)) // 'ё'
+    println(charList.elementAtOrNull(30)) // null
+    println(charSet.elementAtOrNull(6)) // 'ё'
+    println(charSet.elementAtOrNull(30)) // null
+
+    println("--- getOrNull ---")
+
+    println(charList.getOrNull(7)) // 'ж'
+    println(charList.getOrNull(30)) // null
+    // println(charSet.getOrNull(30)) // error: 'getOrNull' is not a member of 'Set'
+
+    println("--- elementAtOrElse ---")
+
+    println(charList.elementAtOrElse(6) { "element not found" }) // 'ё'
+    println(charList.elementAtOrElse(30) { "element not found" }) // element not found
+    println(charSet.elementAtOrElse(6) { "element not found" }) // 'ё'
+    println(charSet.elementAtOrElse(30) { "element not found" }) // element not found
+
+    println("--- getOrElse ---")
+
+    println(charList.getOrElse(6) { "element not found" }) // 'ё'
+    println(charList.getOrElse(30) { "element not found" }) // element not found
+    // println(charSet.getOrElse(30) { "element not found" }) // error: 'getOrElse' is not a member of 'Set'
+
+    /**
+     * Получение элемента по условию
+     *
+     * - find() возвращает первый элемент коллекции в соответствии с предикатом или null, если он не существует.
+     *
+     * - findLast() возвращает последний элемент коллекции в соответствии с предикатом или null, если он не существует.
+     */
+    val numberList = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    val numberSet = setOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+    println("--- first() with a lambda predicate ---")
+
+    println(numberList.first { it > 5 }) // 6
+    println(numberSet.first { it > 5 }) // 6
+
+    println("--- last() with a lambda predicate ---")
+
+    println(numberList.last { it > 5 }) // 10
+    println(numberSet.last { it > 5 }) // 10
+
+    // println(numberList.first { it > 50 }) // error: NoSuchElementException
+    // println(numberSet.first { it > 50 }) // error: NoSuchElementException
+
+    // println(numberList.last { it > 50 }) // error: NoSuchElementException
+    // println(numberSet.last { it > 50 }) // error: NoSuchElementException
+
+    println("--- firstOrNull() with a lambda predicate ---")
+
+    println(charList.firstOrNull { it > 'г' }) // 'д'
+    println(emptyList.firstOrNull { it > 50 }) // null
+    println(charSet.firstOrNull { it > 'г' }) // 'д'
+    println(emptySet.firstOrNull { it > 50 }) // null
+
+    println("--- lastOrNull() with a lambda predicate ---")
+
+    println(charList.lastOrNull { it > 'г' }) // 'и'
+    println(emptyList.lastOrNull { it > 50 }) // null
+    println(charSet.lastOrNull { it > 'г' }) // 'и'
+    println(emptySet.lastOrNull { it > 50 }) // null
+
+    println("--- find() with a lambda predicate ---")
+
+    println(numberList.find { it > 5 }) // 6
+    println(emptyList.find { it > 50 }) // null
+    println(numberSet.find { it > 5 }) // 6
+    println(emptySet.find { it > 50 }) // null
+
+    println("--- findLast() with a lambda predicate ---")
+
+    println(numberList.findLast { it > 5 }) // 10
+    println(emptyList.findLast { it > 50 }) // null
+    println(numberSet.findLast { it > 5 }) // 10
+    println(emptySet.findLast { it > 50 }) // null
+
+    /**
+     * Получение элемента с помощью селектора
+     *
+     * - firstNotNullOf() сопоставляет коллекцию с функцией выбора и возвращает первое ненулевое значение в результате. Генерирует исключение NoSuchElementException, если нет ненулевого элемента.
+     * - firstNotNullOfOrNull() - аналогичен firstNotNullOf(), но возвращает null вместо исключения
+     */
+    val listOfNames = listOf("John", "Jane", "Mary", "Peter")
+
+    println("--- firstNotNullOf() ---")
+
+    fun getFirstNotNullName(length: Int): String {
+        return listOfNames.firstNotNullOf { item ->
+            item.uppercase().takeIf { it.length >= length }
+        }
+    }
+
+    println(getFirstNotNullName(4)) // JOHN
+    // println(getFirstNotNullName(10)) // Exception
+
+    println("--- firstNotNullOfOrNull() ---")
+
+    fun getFirstNotNullNameOrNull(length: Int): String? {
+        return listOfNames.firstNotNullOfOrNull { item ->
+            item.uppercase().takeIf { it.length >= length }
+        }
+    }
+
+    println(getFirstNotNullNameOrNull(4)) // JOHN
+    println(getFirstNotNullNameOrNull(10)) // null
+
+    /**
+     * Случайный элемент
+     *
+     * - random() - возвращает случайный элемент. Генерирует исключение NoSuchElementException, если список пуст
+     * - randomOrNull() - аналогичен random(), но возвращает null вместо исключения
+     */
+    val emptyListNames = listOf<String>()
+
+    println("--- random() ---")
+
+    println(listOfNames.random()) // Peter
+    // println(emptyListNames.random()) // Exception
+
+    println("--- randomOrNull() ---")
+
+    println(listOfNames.randomOrNull()) // Jane
+    println(emptyListNames.randomOrNull()) // null
+
+    /**
+     * Проверить, существует ли элемент или набор элементов
+     *
+     * - contains() возвращает true, если элемент найден в коллекции.
+     * - оператор in - аналогичен contains()
+     * - containsAll() возвращает true, если коллекция содержит несколько элементов
+     * - isEmpty - коллекция пуста
+     * - isNotEmpty - коллекция не пуста
+     */
+    println("--- contains() ---")
+
+    println(listOfNames.contains("John")) // true
+    println(listOfNames.contains("john")) // false
+
+    println("--- in operator ---")
+
+    println("John" in listOfNames) // true
+    println("john" in listOfNames) // false
+
+    println("--- containsAll() ---")
+
+    println(listOfNames.containsAll(listOf("John", "Jane"))) // true
+    println(listOfNames.containsAll(listOf("John", "Jane", "john"))) // false
+    println(listOfNames.containsAll(emptyListNames)) // true
+
+    println("--- isEmpty() ---")
+
+    println(listOfNames.isEmpty()) // false
+    println(emptyListNames.isEmpty()) // true
+
+    println("--- isNotEmpty() ---")
+
+    println(listOfNames.isNotEmpty()) // true
+    println(emptyListNames.isNotEmpty()) // false
+
+    harryAndSpellPower()
+    secretCodeToSaveCity()
+    studentsGrades()
+}
+
+data class Spell(val name: String, val power: Int)
+
+/**
+ * Гарри Поттер изучает различные заклинания. У него есть список заклинаний и значений их силы. Он должен найти первое заклинание с силой больше 50. Пожалуйста, помогите Гарри найти заклинание или напечатайте «No spell found», если оно не существует.
+ */
+fun harryAndSpellPower() {
+    val list = listOf("Expetum-98", "Patronus-83", "Axio-29", "Lithigum-23")
+
+    val spells: List<Spell> = list.map {
+        Spell(it.split("-")[0], it.split("-")[1].toInt())
+    }
+
+    val spell: Any = spells.find { it.power > 50 } ?: "No spell found"
+
+    println(spell) // Spell(name=Expetum, power=98)
+
+
+}
+
+/**
+ * Итан Хант готов к очередной «Миссия невыполнима». Чтобы предотвратить побег вируса из нелегальной лаборатории, он должен ввести правильный код.
+ *
+ * Он знает только, что код получается следующим образом: дан список слов, он должен взять первое перевёрнутое слово, начинающееся с «m», и ввести его.
+ */
+fun secretCodeToSaveCity() {
+    val list: List<String> = listOf("exilium", "gold", "silver", "bronze", "platinum")
+
+    val code: String = list.firstNotNullOfOrNull { item ->
+        item.reversed().takeIf { it.first() == 'm' }
+    } ?: "No code found"
+
+    println(code) // muilixe
+}
+
+/**
+ * У вас есть список оценок учеников (в порядке возрастания). Учащиеся должны получать уведомления об оценке, превышающей или равную 5.0 (если она существует, или null в противном случае) и их наивысшей оценке, разделённой двоеточием «:».
+ */
+fun studentsGrades() {
+    val list: List<Double> = listOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+
+    val gradeLimit = 5.0
+    val minGrade: Double? = list.find { it >= gradeLimit }
+    val maxGrade: Double? = list.findLast { it >= gradeLimit }
+
+    val notify: String? = if (minGrade != null) "$minGrade:$maxGrade" else minGrade
+
+    println(notify) // 5.0:10.0
 }
