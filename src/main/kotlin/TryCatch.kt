@@ -14,6 +14,7 @@ fun main() {
     gettingInfoAboutExceptions()
     multipleExceptions()
     handlerUnsuitable()
+    finallyBlock()
 }
 
 fun handlerSuitable() {
@@ -64,4 +65,34 @@ fun handlerUnsuitable() {
     }
 
     println("Handler unsuitable. After the try-catch block") // это будет напечатано
+}
+
+fun finallyBlock() {
+    /**
+     * Если убрать блок catch, код после finally не выполнится
+     */
+    try {
+        println("Inside the try block")
+        println(2 / 0) // throws ArithmeticException
+    }
+    catch (error: Exception) {
+        println("Inside the catch block")
+    }
+    finally {
+        println("Inside the finally block")
+    }
+
+    println("After the try-catch-finally block")
+
+    val string = "abc"
+
+    var number = 0 // try to avoid var if possible
+
+    try {
+        number = string.toInt()
+    } catch (e: NumberFormatException) {
+        number = -1
+    } finally {
+        println(number)
+    }
 }
