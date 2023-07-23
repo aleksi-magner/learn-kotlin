@@ -19,7 +19,6 @@ fun main() {
      *
      * Ключевое слово val означает, что вы не можете переназначить переменную, а не неизменность.
      */
-
      val msg = "Hi"
 
      println(msg.length) // 2
@@ -29,38 +28,16 @@ fun main() {
      */
      println(msg.repeat(3)) // "HiHiHi"
 
-    /**
-     * Копирование по ссылке
-     *
-     * Значения переменных ссылаются на значения по ссылкам.
-     *
-     * Например:
-     * val msg1 = "Hi"
-     * val msg2 = msg1
-     *
-     * И msg1, и msg2 ссылаются на одно и то же место в памяти, где хранится значение "Hi".
-     * Таким образом, оператор присвоения копирует не сам объект, а ссылку на него.
-     *
-     * Мутабельность
-     *
-     * Что произойдёт при изменении объекта у одной переменной, изменится ли она для другой?
-     * Примитивные типы данных, такие как Int, String, Float и Double являются не изменяемыми объектами.
-     * Мы не меняем её объект — переменной присваивается новая ссылка на объект с новым значением.
-     */
+    copingByReference()
 
     /**
      * Создание нового класса
-     */
-    class Emptiness
-
-    /**
-     * В Kotlin, когда класс имеет пустое тело, фигурные скобки можно опустить.
-     * Таким образом, один и тот же класс можно определить следующим образом:
      *
-     * class Emptiness
+     * Когда класс имеет пустое тело, фигурные скобки можно опустить.
      *
      * Обычно лучше объявить их на верхнем уровне файла, но вы можете объявить их и в других местах, даже внутри функции.
      */
+    class Emptiness
 
     /**
      * Создание объекта
@@ -68,21 +45,58 @@ fun main() {
     // Создаём экземпляр класса
     val empty = Emptiness()
 
+    writingClassProperties()
+    comparisonObjects()
+    defaultConstructor()
+    primaryConstructor()
+    secondaryConstructor()
+    initBlock()
+    memberFunctions()
+    finalMembers()
+
+    createTable()
+    animalSounds()
+
+    typeSafeBuilders()
+}
+
+/**
+ * Копирование по ссылке
+ *
+ * Значения переменных ссылаются на значения по ссылкам.
+ *
+ * Мутабельность
+ *
+ * Что произойдёт при изменении объекта у одной переменной, изменится ли она для другой?
+ * Примитивные типы данных, такие как Int, String, Float и Double являются не изменяемыми объектами.
+ * Мы не меняем её объект — переменной присваивается новая ссылка на объект с новым значением.
+ */
+fun copingByReference() {
+    val msg1 = "Hi"
+    val msg2: String = msg1
+
     /**
-     * Запись свойств класса
-     *
-     * Свойства очень похожи на переменные и значения.
-     * Если вы хотите присвоить значение свойству во время выполнения, вы объявляете его как var, в противном случае ваш выбор — val.
+     * И msg1, и msg2 ссылаются на одно и то же место в памяти, где хранится значение "Hi".
+     * Таким образом, оператор присвоения копирует не сам объект, а ссылку на него.
+     */
+    println(msg1 === msg2) // true
+ }
+
+/**
+ * Запись свойств класса
+ *
+ * Свойства очень похожи на переменные и значения.
+ * Если вы хотите присвоить значение свойству во время выполнения, вы объявляете его как var, в противном случае ваш выбор — val.
+ */
+fun writingClassProperties() {
+    /**
+     * Каждый объект класса имеет одинаковый набор полей, но значения полей могут отличаться от объекта к объекту.
      */
     class Patient {
         var name: String = "Unknown"
         var age: Int = 0
         var height: Double = 0.0
     }
-
-    /**
-     * Каждый объект класса имеет одинаковый набор полей, но значения полей могут отличаться от объекта к объекту.
-     */
 
     /**
      * Доступ к свойствам
@@ -107,8 +121,8 @@ fun main() {
     alice.age = 22
     alice.height = 165.0
 
-    println("${john.name}: ${john.age} yrs, ${john.height} cm")
-    println("${alice.name}: ${alice.age} yrs, ${alice.height} cm")
+    println("${john.name}: ${john.age} yrs, ${john.height} cm") // John: 30 yrs, 180.0 cm
+    println("${alice.name}: ${alice.age} yrs, ${alice.height} cm") // Alice: 22 yrs, 165.0 cm
 
     class OperatingSystem {
         var name: String = ""
@@ -132,14 +146,19 @@ fun main() {
     boot.primaryOs = mainOS
     boot.secondaryOs = secondaryOS
 
-    println("Main OS: ${mainOS.name}")
-    println("Secondary OS: ${secondaryOS.name}")
+    println("Main OS: ${mainOS.name}") // Main OS: Linux
+    println("Secondary OS: ${secondaryOS.name}") // Secondary OS: FreeBSD
+}
 
-    /**
-     * Сравнение. Структурное равенство
-     */
+/**
+ * Сравнение объектов
+ */
+fun comparisonObjects() {
     println("--- Comparison ---")
 
+    /**
+     * Структурное равенство
+     */
     val msg1 = "Hi"
     val msg2 = "Hi"
 
@@ -160,8 +179,8 @@ fun main() {
     val blueBox = Box(3) // коробка с 3 мячами
     val azureBox: Box = blueBox
 
-    println("Blue box (before): ${blueBox.amount} balls")
-    println("Azure box (before): ${azureBox.amount} balls")
+    println("Blue box (before): ${blueBox.amount} balls") // Blue box (before): 3 balls
+    println("Azure box (before): ${azureBox.amount} balls") // Azure box (before): 3 balls
 
     println(blueBox == azureBox) // true, это копия
 
@@ -169,8 +188,8 @@ fun main() {
 
     println(blueBox == azureBox) // true, во второй коробке тоже 4 мяча
 
-    println("Blue box (after): ${blueBox.amount} balls")
-    println("Azure box (after): ${azureBox.amount} balls")
+    println("Blue box (after): ${blueBox.amount} balls") // Blue box (after): 4 balls
+    println("Azure box (after): ${azureBox.amount} balls") // Azure box (after): 4 balls
 
     /**
      * Ссылочное равенство
@@ -188,8 +207,8 @@ fun main() {
 
     redBox.addBall()
 
-    println("redBox (${redBox.amount}) == cyanBox (${cyanBox.amount}): ${redBox == cyanBox}")   // true
-    println("redBox (${redBox.amount}) === cyanBox (${cyanBox.amount}): ${redBox === cyanBox}")  // false, cyanBox указывает на другой объект
+    println("redBox (${redBox.amount}) == cyanBox (${cyanBox.amount}): ${redBox == cyanBox}") // true
+    println("redBox (${redBox.amount}) === cyanBox (${cyanBox.amount}): ${redBox === cyanBox}") // false, cyanBox указывает на другой объект
 
     /**
      * Итак, blueBox и cyanBox имеют одинаковое состояние, но указывают на разные объекты.
@@ -197,8 +216,8 @@ fun main() {
      */
     redBox.addBall()
 
-    println("redBox (${redBox.amount}) == cyanBox (${cyanBox.amount}): ${redBox == cyanBox}")   // true
-    println("redBox (${redBox.amount}) === cyanBox (${cyanBox.amount}): ${redBox === cyanBox}")  // false, cyanBox указывает на другой объект
+    println("redBox (${redBox.amount}) == cyanBox (${cyanBox.amount}): ${redBox == cyanBox}") // false
+    println("redBox (${redBox.amount}) === cyanBox (${cyanBox.amount}): ${redBox === cyanBox}") // false, cyanBox указывает на другой объект
 
     println("--- MutableList ---")
 
@@ -209,16 +228,25 @@ fun main() {
 
     println("list1 $list1") // list1 [1]
     println("list2 $list2") // list2 [1]
+    println("list1 == list2: ${list1 == list2}") // true
 
     list2.add(5)
 
     println("list1 $list1") // list1 [1, 5]
     println("list2 $list2") // list2 [1, 5]
+    println("list1 == list2: ${list1 == list2}") // true
+}
 
+/**
+ * Конструктор по умолчанию
+ *
+ * Конструкторы — это члены класса, которые инициализируют новый объект класса. Другими словами, конструкторы устанавливают новое состояние объекта, определяя его свойства. Итак, когда вы создаёте объект, вы вызываете конструктор.
+ */
+fun defaultConstructor() {
     /**
-     * Конструктор по умолчанию
+     * На самом деле это вызов конструктора, и это похоже на вызов функции без аргументов.
      *
-     * Конструкторы — это члены класса, которые инициализируют новый объект класса. Другими словами, конструкторы устанавливают новое состояние объекта, определяя его свойства. Итак, когда вы создаёте объект, вы вызываете конструктор.
+     * Каждый класс должен иметь конструктор, поэтому если он не определён явно, компилятор автоматически генерирует конструктор по умолчанию, который только создаёт объект и не имеет внутри никакой логики.
      */
     class SizeWithDefaultConstructor {
         var width: Int = 1
@@ -226,22 +254,18 @@ fun main() {
     }
 
     val size1 = SizeWithDefaultConstructor()
+}
 
-    /**
-     * На самом деле это вызов конструктора, и это похоже на вызов функции без аргументов.
-     *
-     * Каждый класс должен иметь конструктор, поэтому если он не определён явно, компилятор автоматически генерирует конструктор по умолчанию, который только создаёт объект и не имеет внутри никакой логики.
-     */
-
-    /**
-     * Основной конструктор
-     *
-     * Вы можете поместить простые объявления свойств внутрь основного конструктора.
-     *
-     * Чтобы объявить свойство только для чтения, поместите ключевое слово val в круглые скобки перед именем аргумента.
-     *
-     * Для изменяемого свойства используйте ключевое слово var.
-     */
+/**
+ * Основной конструктор
+ *
+ * Вы можете поместить простые объявления свойств внутрь основного конструктора.
+ *
+ * Чтобы объявить свойство только для чтения, поместите ключевое слово val в круглые скобки перед именем аргумента.
+ *
+ * Для изменяемого свойства используйте ключевое слово var.
+ */
+fun primaryConstructor() {
     class SizeWithPrimaryConstructor(val width: Int = 1, val height: Int = 1) {
         val area: Int = width * height
     }
@@ -267,55 +291,6 @@ fun main() {
 
     println(size5.width) // 24
     println(size5.height) // 24
-
-    /**
-     * Инициализация
-     *
-     * Первичные конструкторы не могут содержать никакого кода: они только устанавливают значения свойств класса на основе переданных аргументов.
-     *
-     * Иногда мы хотим установить некоторые из наших свойств на основе значений других свойств или других источников информации.
-     *
-     * В таких случаях мы будем использовать блоки инициализации, перед которыми стоит ключевое слово init
-     *
-     * Ключевое слово init обозначает блок кода, который служит расширением основного конструктора и вызывается после того, как свойства объекта были установлены в основном конструкторе
-     */
-    class SizeWithInit(width: Int = 1, height: Int = 1) {
-        var area: Int = 0
-
-        init {
-            area = width * height
-        }
-    }
-
-    val size6 = SizeWithInit(6, 4)
-
-    println(size6.area) // 24
-
-    /**
-     * Функции-члены
-     *
-     * Иногда вам нужно хранить в объектах не только сами данные, но и поведение. Функции-члены реализуют общее поведение для всего набора объектов, принадлежащих одному классу.
-     *
-     * Обратите внимание, что функция-член — это официальное название Kotlin для функций, которые помещаются внутри класса. Такие функции часто называют методами.
-     */
-    class MyClass(var property: Int) {
-        fun print(): Unit = println("Hello from print")
-
-        fun printProperty(): Unit = println(this.property)
-    }
-
-    val myClass1 = MyClass(42)
-    val myClass2 = MyClass(13)
-
-    myClass1.print()
-    myClass1.printProperty()
-    myClass2.printProperty()
-
-    secondaryConstructor()
-
-    createTable()
-
-    typeSafeBuilders()
 }
 
 /**
@@ -398,6 +373,117 @@ fun secondaryConstructor() {
     println("innerObject: ${innerObject.width}x${innerObject.height}, area ${innerObject.area}")
 }
 
+/**
+ * Инициализация
+ *
+ * Первичные конструкторы не могут содержать никакого кода: они только устанавливают значения свойств класса на основе переданных аргументов.
+ *
+ * Иногда мы хотим установить некоторые из наших свойств на основе значений других свойств или других источников информации.
+ *
+ * В таких случаях мы будем использовать блоки инициализации, перед которыми стоит ключевое слово init
+ *
+ * Ключевое слово init обозначает блок кода, который служит расширением основного конструктора и вызывается после того, как свойства объекта были установлены в основном конструкторе
+ */
+fun initBlock() {
+    class SizeWithInit(width: Int = 1, height: Int = 1) {
+        var area: Int = 0
+
+        init {
+            area = width * height
+        }
+    }
+
+    val size6 = SizeWithInit(6, 4)
+
+    println(size6.area) // 24
+}
+
+/**
+ * Функции-члены
+ *
+ * Иногда вам нужно хранить в объектах не только сами данные, но и поведение. Функции-члены реализуют общее поведение для всего набора объектов, принадлежащих одному классу.
+ *
+ * Обратите внимание, что функция-член — это официальное название Kotlin для функций, которые помещаются внутри класса. Такие функции часто называют методами.
+ */
+fun memberFunctions() {
+    class MyClass(var property: Int) {
+        fun print(): Unit = println("Hello from print")
+
+        fun printProperty(): Unit = println(this.property)
+    }
+
+    val myClass1 = MyClass(42)
+    val myClass2 = MyClass(13)
+
+    myClass1.print()
+    myClass1.printProperty()
+    myClass2.printProperty()
+}
+
+/**
+ * В Kotlin все классы и методы по умолчанию окончательные (final).
+ *
+ * Это означает, что по умолчанию нельзя наследовать классы. Что открыть возможность наследования, нужно явно сделать класс открытым (open).
+ *
+ * Точно так же методы и свойства по умолчанию являются окончательными (final), и их нельзя переопределить в подклассах, пока они не будут объявлены открытыми (open).
+ */
+fun finalMembers() {
+    /**
+     * В этом примере мы не можем наследовать MyFinalClass или переопределить myFinalMethod, потому что оба они являются окончательными (final) по умолчанию.
+     */
+    class MyFinalClass {
+        fun myFinalMethod() {
+            println("This method cannot be overridden!")
+        }
+    }
+
+    /// Error
+    // class MyChildClass: MyFinalClass() {
+    //     override fun myFinalMethod() {
+    //         println("I'm trying to override your method!")
+    //     }
+    // }
+
+    /**
+     * Если вы хотите, чтобы ваш класс можно было наследовать или метод можно было переопределить, вам нужно использовать ключевое слово open.
+     */
+    open class MyBaseClass {
+        open fun myMethod() {
+            println("Basic implementation")
+        }
+    }
+
+    class MyDerivedClass : MyBaseClass() {
+        override fun myMethod() {
+            println("Overridden implementation")
+        }
+    }
+
+    val myDerived = MyDerivedClass()
+
+    myDerived.myMethod() // Overridden implementation
+
+    /**
+     * Вы можете использовать final для переопределённых методов или свойств, чтобы предотвратить их дальнейшее переопределение
+     */
+    open class MyIntermediateClass : MyBaseClass() {
+        final override fun myMethod() {
+            println("An overridden implementation that cannot be redefined further")
+        }
+    }
+
+    val myIntermediate = MyIntermediateClass()
+
+    myIntermediate.myMethod() // An overridden implementation that cannot be redefined further
+
+    /// Error! Cannot override myMethod
+    // class MyDerivedClass : MyIntermediateClass() {
+    //     override fun myMethod() {
+    //         println("I'm trying to override your method!")
+    //     }
+    // }
+}
+
 class Table(rows: Int, columns: Int) {
     val html: String
 
@@ -418,6 +504,29 @@ fun createTable() {
     val table = Table(1, 2)
 
     println(table.html) // <table><tr><td></td><td></td></tr></table>
+}
+
+/**
+ * Создайте класс с именем Animal с открытым методом makeSound(), который отображает сообщение «The animal makes a sound». Затем создайте подкласс Dog, который переопределяет этот метод, отображая сообщение «The dog barks».
+ */
+fun animalSounds() {
+    open class Animal {
+        open fun makeSound() {
+            println("The animal makes a sound")
+        }
+    }
+
+    class Dog : Animal() {
+        override fun makeSound() {
+            println("The dog barks")
+        }
+    }
+
+    val anyAnimal = Animal()
+    val myDog = Dog()
+
+    anyAnimal.makeSound() // The animal makes a sound
+    myDog.makeSound() // The dog barks
 }
 
 /**
