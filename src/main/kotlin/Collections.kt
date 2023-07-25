@@ -740,6 +740,8 @@ fun mutableMaps() {
     // User with this login is already registered!
     // {user1@mail.com=qwerty123, hi_john@mail.com=abcdef00, dr_mike@mail.com=000000}
     println(addUser(userMap, "user1@mail.com", "qwerty123"))
+
+    buySweets()
 }
 
 /**
@@ -765,6 +767,33 @@ fun examMarks() {
     } while (key != "stop")
 
     println(studentsMarks)
+}
+
+fun countSum(sweets: Map<String, Int>): Int = sweets.values.sum()
+
+/**
+ * У вас есть корзина со сладостями — она должна быть представлена в виде Map<String, Integer>, где ключ — название сладости, а значение — её цена. Вы должны заполнить Map<String, Integer> из консоли, а затем подсчитать общую стоимость корзины.
+ *
+ * Во-первых, вы получаете количество сладостей в корзине; затем вы получаете их имена и цены.
+ */
+fun buySweets() {
+    val cart = mutableMapOf<String, Int>()
+
+    print("Введите количество сладостей: ")
+
+    val amountOfSweets: Int = readln().toInt()
+
+    repeat(amountOfSweets) {
+        print("Введите через пробел сладость и цену: ")
+
+        val (name, price) = readln().split(' ')
+
+        cart[name] = price.toInt()
+    }
+
+    println(cart)
+
+    println(countSum(cart))
 }
 
 /**
@@ -885,7 +914,7 @@ fun arrays() {
 
     print("Введите числа - элементы массива через пробел: ")
 
-    val numbers5: Array<Int> = readln().split(" ").map { it.toInt() }.toTypedArray()
+    val numbers5: Array<Int> = readln().split(' ').map { it.toInt() }.toTypedArray()
 
     println(numbers5.joinToString()) // 1, 2, 3, 4, 5
 
@@ -1415,7 +1444,7 @@ fun harryAndSpellPower() {
     val list = listOf("Expetum-98", "Patronus-83", "Axio-29", "Lithigum-23")
 
     val spells: List<Spell> = list.map {
-        Spell(it.split("-")[0], it.split("-")[1].toInt())
+        Spell(it.split('-')[0], it.split('-')[1].toInt())
     }
 
     val spell: Any = spells.find { it.power > 50 } ?: "No spell found"

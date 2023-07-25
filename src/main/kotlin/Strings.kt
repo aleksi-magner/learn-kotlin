@@ -140,7 +140,7 @@ fun main() {
 fun personInformation() {
     print("Введите через пробел имя, фамилию и возраст: ")
 
-    val (firstName, lastName, age) = readln().split(" ")
+    val (firstName, lastName, age) = readln().split(' ')
 
     println("${firstName.first()}. $lastName, $age years old")
 }

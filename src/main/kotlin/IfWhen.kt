@@ -15,7 +15,7 @@ fun main() {
      */
     print("Введите операцию с двумя числами: ")
 
-    val (var1, op, var2) = readln().split(" ")
+    val (var1, op, var2) = readln().split(' ')
 
     val a = var1.toInt()
     val b = var2.toInt()

@@ -32,7 +32,7 @@ fun main() {
     // Reading multiple values in one line
     print("Enter message: ")
 
-    val (a, b) = readln().split(" ")
+    val (a, b) = readln().split(' ')
 
     println("First word: $a")
     println("Second word: $b")

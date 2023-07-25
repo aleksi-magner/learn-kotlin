@@ -239,6 +239,7 @@ fun forLoop() {
     individualTaxes()
     numberInASet()
     fizzBuzz()
+    triples()
 }
 
 /**
@@ -442,6 +443,42 @@ fun fizzBuzz() {
 }
 
 /**
+ * Читает список целых чисел, и выводит количество троек в списке.
+ *
+ * Тройка — это три последовательных целых числа в порядке возрастания: 3,4,5 — это тройка, а 5,4,3 и 2,4,6 — нет.
+ *
+ * Первая строка содержит размер списка.
+ * Остальные строки содержат элементы списка.
+ *
+ * Выведите одно целое число, представляющее количество троек в списке.
+ *
+ * Например, в списке: - 1, 2, 4, 5, 6, 7 две тройки: 4,5,6 и 5,6,7.
+ */
+fun triples() {
+    print("Введите количество чисел в списке: ")
+
+    val size: Int = readln().toInt()
+
+    println("Введите последовательность чисел, каждая с новой строки")
+
+    val numbers: List<Int> = List(size) { readln().toInt() }
+
+    var count = 0
+
+    for (index in numbers.indices) {
+        val first: Int = numbers.elementAt(index)
+        val second: Int = numbers.elementAtOrNull(index + 1) ?: first
+        val third: Int = numbers.elementAtOrNull(index + 2) ?: first
+
+        if (first + 1 == second && second + 1 == third) {
+            count += 1
+        }
+    }
+
+    println(count)
+}
+
+/**
  * Итератор обеспечивает последовательный доступ к элементам коллекции, независимо от их типа. Его можно рассматривать как подвижный указатель на элемент коллекции
  *
  * Итераторы можно вызывать для различных типов коллекций: List, Map и Set.
@@ -553,7 +590,7 @@ fun checkHeight(iterator: Iterator<Int>) {
 fun rollerCoasters() {
     print("Введите через пробел рост посетителей: ")
 
-    val list: List<Int> = readln().split(" ").map(String::toInt).toList()
+    val list: List<Int> = readln().split(' ').map(String::toInt).toList()
 
     checkHeight(list.iterator())
 }
@@ -567,7 +604,7 @@ fun rollerCoasters() {
  */
 fun frequencyWordBook() {
     val input = "little brown fox brown fog"
-    val list: List<String> = input.split(" ")
+    val list: List<String> = input.split(' ')
 
     val map: Map<String, Int> = list.groupingBy { it }.eachCount()
 

@@ -241,7 +241,7 @@ fun infixFunctions() {
         val validShips: MutableSet<String> = mutableSetOf()
 
         for (ship in this) {
-            val (name, ammunition) = ship.split("-")
+            val (name, ammunition) = ship.split('-')
 
             if (ammunition.toInt() > ammunitionLimit) {
                 validShips.add(name)
@@ -455,7 +455,7 @@ fun testPredicates() {
 
     print("Введите через пробел список слов: ")
 
-    val list: List<String> = readln().split(" ")
+    val list: List<String> = readln().split(' ')
 
     val hasSpell: Boolean = checkSpell(list)
 
