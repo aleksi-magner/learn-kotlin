@@ -6,8 +6,12 @@ fun main() {
     stringTemplates()
     getStringChars()
     checkEmpty()
+    substrings()
+    splittingString()
+    iteratingOverString()
 
     personInformation()
+    luckyNumber()
 }
 
 /**
@@ -170,6 +174,142 @@ fun checkEmpty() {
 }
 
 /**
+ * Получение новой строки из текущей.
+ *
+ * Функция подстроки принимает startIndex (включительно) и lastIndex (исключительно) в качестве аргументов и возвращает строку, которая начинается с startIndex и заканчивается непосредственно перед lastIndex.
+ */
+fun substrings() {
+    val greeting = "Hello"
+
+    println(greeting.substring(0, 3)) // "Hel"
+    println(greeting.substring(1, 3)) // "el"
+
+    // lastIndex можно не указывать, будет браться до конца строки
+    println(greeting.substring(2)) // "llo"
+
+    println(greeting.substring(4, 5)) // "o"
+    println(greeting.substring(4, greeting.lastIndex + 1)) // "o"
+    println(greeting.substring(4, greeting.length)) // "o"
+
+    /**
+     * Метод substring — не единственный способ получить часть строки. Вы также можете использовать функции substringAfter и substringBefore
+     *
+     * Эти функции принимают разделитель в качестве аргумента и возвращают строку до/после первого появления указанного разделителя. Если строка не содержит вхождений аргумента-разделителя, функция возвращает всю строку.
+     */
+    println(greeting.substringAfter('l'))  // "lo"
+    println(greeting.substringBefore('o')) // "Hell"
+    println(greeting.substringBefore('Я')) // "Hello"
+    println(greeting.substringBefore('Я', "can't find a character")) // "can't find a character"
+
+    /**
+     * Функции substringBeforeLast и substringAfterLast имеют логику, аналогичную substringBefore и substringAfter, но возвращают строку до или после последнего вхождения разделителя.
+     */
+    println(greeting.substringAfterLast('l'))  // "o"
+    println(greeting.substringBeforeLast('l')) // "Hel"
+
+    /**
+     * Замена частей строки
+     *
+     * Функция replace заменяет все вхождения первого аргумента в строке вторым аргументом.
+     */
+    val example = "Good morning..."
+
+    println(example.replace("o", "O")) // "GOOd mOrning..."
+    println(example.replace("morning", "bye")) // "Good bye..."
+    println(example.replace('.', '!')) // "Good morning!!!"
+
+    /**
+     * Если вам нужно заменить только первое вхождение аргумента, используйте replaceFirst.
+     */
+    val example2 = "one one two three"
+
+    println(example2.replaceFirst("one", "two")) // "two one two three"
+    println(example2.replaceFirst("ONE", "two", true)) // "two one two three"
+
+    println(example) // "Good morning..."
+    println(greeting) // "Hello"
+
+    /**
+     * Изменение регистра
+     */
+    val uppercaseString = "UPPERCASE String"
+
+    println(uppercaseString.lowercase()) // uppercase string
+
+    val lowercaseString = "Lowercase String"
+
+    println(lowercaseString.uppercase()) // LOWERCASE STRING
+}
+
+/**
+ * Строка может быть разделена разделителями на список строк.
+ */
+fun splittingString() {
+    val sentence = "a long text"
+
+    val wordsList: List<String> = sentence.split(' ')
+
+    println(wordsList) // ["a", "long", "text"]
+
+    val number = "+1-213-345-6789"
+
+    val parts = number.split('-')
+
+    println(parts) // ["+1", "213", "345", "6789"]
+
+    val text1 = "That's one small step for a man, one giant leap for mankind."
+
+    // ["That's one small step for a man", " one giant leap for mankind."]
+    println(text1.split(','))
+
+    val text2 = "I'm gonna be a programmer"
+
+    println(text2.split(" gonna be ")) // ["I'm", "a programmer"]
+}
+
+/**
+ * Можно перебирать символы строки с помощью цикла
+ */
+fun iteratingOverString() {
+    val scientistName = "Isaac Newton"
+
+    // I s a a c   N e w t o n
+    for (char in scientistName) {
+        print("$char ") // print the current character
+    }
+
+    println()
+
+    // Подсчитывает и печатает количество пробелов в строке str.
+    val str = "strings are not primitive types!"
+
+    var count = 0
+
+    for (ch in str) {
+        if (Character.isWhitespace(ch)) {
+            count += 1
+        }
+    }
+
+    println(count) // 4
+
+    val rainbow = "ROYGCBV"
+
+    /**
+     * 1: R
+     * 2: O
+     * 3: Y
+     * 4: G
+     * 5: C
+     * 6: B
+     * 7: V
+     */
+    for (index in rainbow.indices){
+        println("${index + 1}: ${rainbow[index]}")
+    }
+}
+
+/**
  * Считывает из одной строки ввода имя, фамилию и возраст человека, а затем выводит информацию по шаблону
  */
 fun personInformation() {
@@ -178,4 +318,18 @@ fun personInformation() {
     val (firstName, lastName, age) = readln().split(' ')
 
     println("${firstName.first()}. $lastName, $age years old")
+}
+
+/**
+ * Дано число N с четным количеством цифр. Если сумма первой половины цифр равна сумме второй половины цифр, то это число считается счастливым. Для заданного числа выведите «YES», если это число удачное, иначе выведите «NO».
+ */
+fun luckyNumber() {
+    print("Введите число с чётным количеством цифр: ")
+
+    val input = readln()
+
+    val first: Int = input.substring(0, input.length / 2).sumOf { it.digitToInt() }
+    val last: Int = input.substring(input.length / 2).sumOf { it.digitToInt() }
+
+    println(if (first == last) "YES" else "NO")
 }
