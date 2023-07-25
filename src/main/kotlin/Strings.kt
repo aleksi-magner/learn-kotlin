@@ -1,5 +1,19 @@
 fun main() {
-    // Длина строки
+    stringLength()
+    concatenation()
+    stringRepeat()
+    rawStrings()
+    stringTemplates()
+    getStringChars()
+    checkEmpty()
+
+    personInformation()
+}
+
+/**
+ * Длина строки
+ */
+fun stringLength() {
     val language = "Kotlin"
     val length: Int = language.length
 
@@ -8,8 +22,12 @@ fun main() {
     val empty = ""
 
     println(empty.length) // 0
+}
 
-    // Конкатенация
+/**
+ * Конкатенация строк
+ */
+fun concatenation() {
     val one = "1"
     val two = "2"
     val twelve = one + two
@@ -34,14 +52,22 @@ fun main() {
     val stringPlusChar = "de" + 'f'
 
     println(stringPlusChar) // def
+}
 
-    // Повтор строки
+/**
+ * Повтор строки
+ */
+fun stringRepeat() {
     print("Hello".repeat(4)) // HelloHelloHelloHello
     println()
 
     println("Eat. Sleep. Code.\n".repeat(7))
+}
 
-    // Необработанная строка
+/**
+ * Необработанная строка
+ */
+fun rawStrings() {
     // 'H' is the first letter of "Hello world!" string.
     println("\'H\' is the first letter of \"Hello world!\" string.")
 
@@ -58,24 +84,21 @@ fun main() {
         That lay in the house that Jack built.
     """.trimIndent() // removes the first and the last lines and trims indents
 
-    print(largeString)
-    println()
+    println(largeString)
 
     val unevenString = """
         123
          456
           789""".trimIndent()
 
-    print(unevenString)
-    println()
+    println(unevenString)
 
     val rawString = """123
          456
           789
 """.trimIndent()
 
-    print(rawString)
-    println()
+    println(rawString)
 
     val json = """
         {
@@ -91,10 +114,13 @@ fun main() {
         }
     """.trimIndent()
 
-    print(json)
-    println()
+    println(json)
+}
 
-    // Шаблоны
+/**
+ * Шаблоны
+ */
+fun stringTemplates() {
     val city = "Paris"
     val temp = "24"
 
@@ -106,11 +132,15 @@ fun main() {
 
     println(fullName)
 
-    println("$language has ${language.length} letters in the name")
+    val language = "Kotlin"
 
-    /**
-     * Получение символов строки
-     */
+    println("$language has ${language.length} letters in the name")
+}
+
+/**
+ * Получение символов строки
+ */
+fun getStringChars() {
     val greeting = "Hello"
 
     val first: Char = greeting[0] // 'H'
@@ -127,11 +157,16 @@ fun main() {
     println("Last char: ${greeting.last()}") // 'o'
     println("Pre-last char: $preLast") // 'l'
     println("Last index: ${greeting.lastIndex}") // 4
+}
+
+/**
+ * Проверка на пустоту
+ */
+fun checkEmpty() {
+    val greeting = "Hello"
 
     println("String is empty: ${greeting.isEmpty()}") // false
     println("String is not empty: ${greeting.isNotEmpty()}") // true
-
-    personInformation()
 }
 
 /**
