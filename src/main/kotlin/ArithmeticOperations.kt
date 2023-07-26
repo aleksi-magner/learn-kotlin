@@ -1,3 +1,5 @@
+import kotlin.math.pow
+
 fun main() {
     // Binary operators
     /**
@@ -53,6 +55,7 @@ fun main() {
      */
 
     sumOfDigits()
+    timeDifference()
 }
 
 /**
@@ -64,4 +67,28 @@ fun sumOfDigits() {
     val number: Int = readln().sumOf { it.digitToInt() }
 
     println(number)
+}
+
+/**
+ * Мы будем рассматривать два момента времени, которые произошли в один и тот же день — часы, минуты и секунды.
+ *
+ * Известно, что второй момент произошёл не раньше первого. Найдите, сколько секунд прошло между двумя моментами.
+ *
+ * Программа получает три целых числа: часы, минуты, секунды первого момента и три целых числа второго момента.
+ *
+ * Выведите количество секунд между этими двумя моментами.
+ */
+fun timeDifference() {
+    val daysAmount = 2
+    val seconds: MutableList<Int> = MutableList(daysAmount) { 0 }
+
+    repeat(daysAmount) { day ->
+        println("Введите с новой строки часы, минуты, секунды:")
+
+        repeat(3) {
+            seconds[day] += readln().toInt() * 60.0.pow(2 - it).toInt()
+        }
+    }
+
+    println(seconds.last() - seconds.first()) // 3661
 }

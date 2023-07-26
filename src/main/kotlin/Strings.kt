@@ -12,6 +12,7 @@ fun main() {
 
     personInformation()
     luckyNumber()
+    createEuphoniousWord()
 }
 
 /**
@@ -332,4 +333,33 @@ fun luckyNumber() {
     val last: Int = input.substring(input.length / 2).sumOf { it.digitToInt() }
 
     println(if (first == last) "YES" else "NO")
+}
+
+/**
+ * Все буквы английского алфавита делятся на гласные и согласные.
+ * Гласные: a, e, i, o, u, y.
+ * Остальные буквы согласные.
+ *
+ * Слово считается благозвучным, если в нём нет трёх и более гласных или согласных подряд. В противном случае он считается неблагозвучным.
+ *
+ * Ваша задача состоит в том, чтобы из неблагозвучных слов составить благозвучные. В слово можно вставлять любые буквы. Выведите минимальное количество символов, необходимое для составления благозвучного слова из заданного.
+ *
+ * Например, слово «schedule» считается неблагозвучным, потому что в нём три согласных подряд: «sch». Чтобы создать благозвучное слово, вам нужно добавить любую гласную между «s» и «c» или между «c» и «h».
+ */
+fun createEuphoniousWord() {
+    val list = listOf(
+        "wwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+        "schedule",
+        "garage",
+        "player",
+        "biiiiig"
+    )
+
+    val pattern = "([aeiouy]{3,}|[^aeiouy]{3,})"
+
+    for (word in list) {
+        val count: Int = Regex(pattern).findAll(word).sumOf { (it.value.length - 1) / 2 }
+
+        println(count) // 14, 1, 0, 1, 2
+    }
 }

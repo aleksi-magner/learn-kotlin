@@ -616,6 +616,8 @@ fun immutableMaps() {
 
     println("bill: ${bill1(priceList3, shoppingList3)}") // 350
     println("bill: ${bill2(priceList3, shoppingList3)}") // 350
+
+    fizzBuzzMap()
 }
 
 /**
@@ -813,6 +815,28 @@ fun addUser(userMap: Map<String, String>, login: String, password: String): Muta
     users.putIfAbsent(login, password)
 
     return users
+}
+
+/**
+ * Даётся Map<String, Int> в качестве входных данных. Перебрать карту и вывести Fizz, если значение делится на три без остатка; вывести Buzz, если значение делится на пять без остатка; во всех остальных случаях выведите FizzBuzz.
+ */
+fun fizzBuzz(map: Map<String, Int>) {
+    for (value in map.values) {
+        val moduloBy3: Int = value % 3
+        val moduloBy5: Int = value % 5
+
+        when {
+            moduloBy3 == 0 -> println("Fizz")
+            moduloBy5 == 0 -> println("Buzz")
+            else -> println("FizzBuzz")
+        }
+    }
+}
+
+fun fizzBuzzMap() {
+    val map: Map<String, Int> = mapOf(Pair("a", 3), Pair("b", 5), Pair("c", 7))
+
+    fizzBuzz(map)
 }
 
 fun arrays() {
