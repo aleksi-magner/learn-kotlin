@@ -1,3 +1,7 @@
+import java.util.*
+import java.io.Reader
+import java.io.FileReader
+import java.io.File
 import java.io.IOException
 
 fun main() {
@@ -94,5 +98,62 @@ fun finallyBlock() {
         number = -1
     } finally {
         println(number)
+    }
+}
+
+@Throws(IOException::class)
+fun readFile() {
+    var reader: Reader? = null
+
+    try {
+        reader = FileReader("file.txt")
+
+        throw RuntimeException("Exception1")
+    } finally {
+        reader?.close() // throws new RuntimeException("Exception2")
+    }
+}
+
+/**
+ * Когда создаётся входной поток, JVM уведомляет ОС о своём намерении работать с файлом.
+ *
+ * Если у процесса JVM достаточно прав и всё в порядке, ОС возвращает файловый дескриптор — специальный индикатор, используемый процессом для доступа к файлу.
+ *
+ * Проблема в том, что количество файловых дескрипторов ограничено. По этой причине важно уведомить ОС о том, что задание выполнено и удерживаемый файловый дескриптор может быть освобождён для дальнейшего повторного использования.
+ *
+ * В предыдущих примерах для этой цели мы вызывали метод close. После вызова JVM освобождает все системные ресурсы, связанные с потоком.
+ *
+ * Лучше всего поместить любой код, относящийся к системным ресурсам, в метод use.
+ */
+fun tryWithResources() {
+    readFile() // FileNotFoundException: file.txt (Нет такого файла или каталога)
+
+    /**
+     * Чтобы не пропускать исключения и более корректно обрабатывать чтение ресурсов, нужно использовать метод use
+     */
+    FileReader("../resources/file1.txt").use { reader1 ->
+        println("Reader 1: $reader1")
+
+        FileReader("../resources/file2.txt").use {
+            println("Reader 2: $it")
+
+            // some code
+        }
+    }
+
+    /**
+     * Однако освобождать следует не только ресурсы, основанные на файлах. Закрытие также имеет решающее значение для других внешних источников, таких как подключение к сети или базе данных. Классы, которые их обрабатывают, имеют метод close и, следовательно, могут быть обёрнуты оператором try-with-resources
+     *
+     * Предположим, что-то пошло не так, содержимое файла — "123 not_number", где второй аргумент — String.
+     *
+     * Это приводит к исключению java.util.InputMismatchException при анализе второго аргумента.
+     *
+     * Метод use гарантирует правильное освобождение ресурсов, связанных с файлами.
+     */
+    Scanner(File("file.txt")).use { scanner ->
+        val first: Int = scanner.nextInt()
+        val second: Int = scanner.nextInt()
+
+        println("arguments: $first $second")
     }
 }
