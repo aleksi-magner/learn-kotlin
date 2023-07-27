@@ -13,6 +13,7 @@ fun main() {
     personInformation()
     luckyNumber()
     createEuphoniousWord()
+    numberOfTens()
 }
 
 /**
@@ -362,4 +363,20 @@ fun createEuphoniousWord() {
 
         println(count) // 14, 1, 0, 1, 2
     }
+}
+
+/**
+ * Читает число и печатает десятки в этом числе.
+ *
+ * Например, число 174 раскладывается как:
+ * 1 * 100 + 7 * 10 + 4 * 1
+ *
+ * Нам нужны десятки числа, т.е. число 7
+ *
+ * Используйте индексы, чтобы решить эту проблему!
+ */
+fun numberOfTens() {
+    val number = "235"
+
+    println(number.getOrElse(number.lastIndex - 1) { '0' })
 }

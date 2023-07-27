@@ -545,4 +545,17 @@ fun lambdaWithReceiver() {
     }
 
     println(student) // Student(name=JOHN, age=21)
+
+    val greeting = "hello"
+
+    val magicString: String = greeting.magic {
+        uppercase().reversed().dropLast(1)
+    }
+
+    println(magicString) // OLLE
 }
+
+/**
+ * Напишите функцию magic, которая работает с лямбдой с приёмником и выполняет любую операцию со строкой
+ */
+fun String.magic(init: String.() -> String): String = this.init()
