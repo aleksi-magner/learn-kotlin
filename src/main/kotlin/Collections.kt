@@ -1,3 +1,4 @@
+import java.util.*
 import kotlin.random.Random
 
 /**
@@ -54,19 +55,21 @@ import kotlin.random.Random
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    immutableLists()
-    mutableLists()
+    // immutableLists()
+    // mutableLists()
+    //
+    // immutableSets()
+    // mutableSets()
+    //
+    // immutableMaps()
+    // mutableMaps()
+    //
+    // arrays()
+    //
+    // orderingElementsInCollection()
+    // retrieveSingleElement()
 
-    immutableSets()
-    mutableSets()
-
-    immutableMaps()
-    mutableMaps()
-
-    arrays()
-
-    orderingElementsInCollection()
-    retrieveSingleElement()
+    collectionsAndNullable()
 }
 
 /**
@@ -1506,4 +1509,172 @@ fun studentsGrades() {
     val notify: String? = if (minGrade != null) "$minGrade:$maxGrade" else minGrade
 
     println(notify) // 5.0:10.0
+}
+
+fun collectionsAndNullable() {
+    /**
+     * Пустая не обнуляемая коллекция
+     *
+     * Простой пустой список. Мы можем справиться с этим, как с обычным списком, и не нужно беспокоиться об исключении NullPointerException. Этот список реален и не нулевой, он просто пуст.
+     */
+    val list: List<String> = listOf()
+
+    println("Empty list: $list")
+
+    /**
+     * Обнуляемая коллекция. Либо коллекция, либо null
+     *
+     * Элементы в таком списке не обнуляемые, они должны быть целыми числами. Но переменная nullableList может быть null.
+     */
+    var nullableList: List<Int>? = listOf(1, 2, 4, 6)
+
+    /**
+     * А когда мы работаем со списком, допускающим значение null, нам приходится использовать оператор безопасного вызова, проверки, оператор Элвиса и т.д.
+     */
+    val nullableListWithCheck1: List<Int> = nullableList ?: listOf()
+
+    println("Nullable list: $nullableList") // [1, 2, 4, 6]
+    println("Nullable list with check: $nullableListWithCheck1") // [1, 2, 4, 6]
+
+    nullableList = null
+
+    val nullableListWithCheck2: List<Int> = nullableList ?: listOf()
+
+    println("Nullable list: $nullableList") // null
+    println("Nullable list with check: $nullableListWithCheck2") // []
+
+    /**
+     * Не обнуляемая коллекция, допускающая элементы null
+     *
+     * В этом случае у нас есть список с элементами null. Он имеет не обнуляемый тип, но элементы внутри обнуляемые.
+     */
+    val listWithNullableElements: List<Int?> = listOf(1, 2, 4, null, null)
+
+    val num1: Int = listWithNullableElements[1] ?: 42
+    val num2: Int = listWithNullableElements[3] ?: 42
+
+    println("Item in list with nullable elements: $num1") // 2
+    println("Item in list with nullable elements: $num2") // 42
+
+    /**
+     * Обнуляемая коллекция, допускающая элементы null
+     */
+    var absolutelyNullableList: List<Int?>? = listOf(1, 2, 4, null, null)
+
+    val num3: Int = absolutelyNullableList?.get(1) ?: 42
+    val num4: Int = absolutelyNullableList?.get(3) ?: 42
+
+    println("Item in nullable list with nullable elements: $num3") // 2
+    println("Item in nullable list with nullable elements: $num4") // 42
+
+    absolutelyNullableList = null
+
+    val num5: Int = absolutelyNullableList?.get(1) ?: 42
+    val num6: Int = absolutelyNullableList?.get(3) ?: 42
+
+    println("Item in nullable list with nullable elements: $num5") // 42
+    println("Item in nullable list with nullable elements: $num6") // 42
+
+    /**
+     * Иногда у вас есть последовательности элементов с нулевым значением, и вам нужно использовать их для создания коллекции без нулевого значения. В этом случае вы можете использовать специальные функции listOfNotNull() и setOfNotNull(), которые помогают нам удалить все нулевые элементы и вернуть коллекции только для чтения с ненулевым типом по умолчанию.
+     */
+    val emptyList: List<Int> = listOfNotNull(null, null, null)
+
+    // [1, 50, 404, 42, 42, 404]
+    val listWithoutNull: List<Int> = listOfNotNull(1, null, 50, 404, 42, null, 42, 404)
+
+    // [1, 50, 404, 42]
+    val setWithoutNull: Set<Int> = setOfNotNull(1, null, 50, 404, 42, null, 42, 404)
+
+    println("Empty list without null: $emptyList") // []
+    println("List without null: $listWithoutNull") // [1, 50, 404, 42, 42, 404]
+    println("Set without null: $setWithoutNull") // [1, 50, 404, 42]
+
+    /**
+     * Функция isNullOrEmpty() возвращает значение true, если коллекция пуста или равна нулю. Во всех остальных случаях возвращает false.
+     */
+    val emptySet: Set<Int>? = setOf()
+    val nullSet: Set<Int>? = null
+    val set = setOf<Int?>(null, null)
+
+    println("--- isNullOrEmpty ---")
+
+    println(emptySet.isNullOrEmpty()) // true потому что коллекция пуста
+    println(nullSet.isNullOrEmpty()) // true потому что коллекция равна null
+    println(set.isNullOrEmpty()) // false потому что в коллекции есть два элемента со значением null
+
+    /**
+     * Функция getOrNull() возвращает один элемент списка или массива, но если этого элемента не существует, возвращает null (не работает с Set).
+     *
+     * Вы можете сказать, что можно использовать просто list[3], но в этом случае мы получим исключение, а getOrNull() действительно возвращает значение в каждом случае.
+     */
+    val list1 = listOf(0, 1, 2)
+
+    println("--- getOrNull ---")
+
+    println(list1.getOrNull(2)) // 2
+    println(list1.getOrNull(3)) // null, нет 4 элемента
+
+    /**
+     * Функция randomOrNull() работает так же, как и предыдущая: возвращает null, если коллекция пуста, и случайный элемент во всех остальных случаях.
+     */
+    val list2 = listOf<Int>()
+
+    println("--- randomOrNull ---")
+
+    println(list1.randomOrNull()) // вернёт какой-то элемент
+    println(list2.randomOrNull()) // null, коллекция пуста
+
+    /**
+     * Функции firstOrNull() и lastOrNull() позволяют нам устанавливать определенные условия. И если есть хотя бы один элемент, удовлетворяющий условию, они его возвращают.
+     */
+    val list3 = listOf(0, 1, 1, 2, 5, 7, 6)
+
+    println("--- firstOrNull & lastOrNull ---")
+
+    val num7 = list3.firstOrNull()
+    val num8 = list3.firstOrNull { it > 3 }
+    val num9 = list3.firstOrNull { it > 13 }
+    val num10 = list3.lastOrNull()
+    val num11 = list3.lastOrNull { it == 1 }
+    val num12 = list3.lastOrNull { it == 10 }
+
+    println(num7) // 0
+    println(num8) // 5
+    println(num9) // null
+    println(num10) // 6
+    println(num11) // 1
+    println(num12) // null
+
+    /**
+     * Минимальные и максимальные элементы с нулевым значением
+     *
+     * - minOrNull()/maxOrNull() - вернуть максимальный или минимальный элемент коллекции или null, если коллекция пуста.
+     *
+     * - minByOrNull()/maxByOrNull() - вернуть первый наибольший или наименьший элемент коллекции, который удовлетворяет условию или null
+     *
+     * - minOfOrNull()/maxOfOrNull() - вернуть значение характеристики элемента, отмеченной в условии, или null
+     *
+     * - minWithOrNull()/maxWithOrNull() - вернуть первый элемент, удовлетворяющий условию, указанному в блоке compareBy {}, или null
+     *
+     * - minOfWithOrNull()/maxOfWithOrNull() - вернуть значение характеристики элемента, помеченного в условии, указанном в блоке compareBy {}, или null
+     */
+    val numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+    println("--- min/max or null ---")
+
+    println("minOrNull: ${numbers.minOrNull()}") // 1
+    println("maxOrNull: ${numbers.maxOrNull()}") // 10
+
+    println("minByOrNull: ${numbers.minByOrNull { it > 3 }}") // 1
+    println("maxByOrNull: ${numbers.maxByOrNull { it > 3 }}") // 4
+
+    println("minOfOrNull: ${numbers.minOfOrNull { it > 3 }}") // false
+    println("maxOfOrNull: ${numbers.maxOfOrNull { it > 3 }}") // true
+
+    println("minWithOrNull: ${numbers.minWithOrNull(compareBy { it > 3 })}") // 1
+    println("maxWithOrNull: ${numbers.maxWithOrNull(compareBy { it > 3 })}") // 4
+
+    println("minOfWithOrNull: ${numbers.minOfWithOrNull(naturalOrder()) { it > 3 }}") // false
+    println("maxOfWithOrNull: ${numbers.maxOfWithOrNull(naturalOrder()) { it > 3 }}") // true
 }
