@@ -55,19 +55,20 @@ import kotlin.random.Random
  * - removeAll(elements) удаляет из вашей коллекции все элементы, содержащиеся в элементах коллекции.
  */
 fun main() {
-    // immutableLists()
-    // mutableLists()
-    //
-    // immutableSets()
-    // mutableSets()
-    //
-    // immutableMaps()
-    // mutableMaps()
-    //
-    // arrays()
-    //
-    // orderingElementsInCollection()
-    // retrieveSingleElement()
+    immutableLists()
+    mutableLists()
+
+    immutableSets()
+    mutableSets()
+
+    immutableMaps()
+    mutableMaps()
+
+    arrays()
+    multiDimensionalArray()
+
+    orderingElementsInCollection()
+    retrieveSingleElement()
 
     collectionsAndNullable()
 }
@@ -480,6 +481,22 @@ fun mutableSets() {
 
     println("To clear or not to clear ${clearOrNotClear(set1.toMutableSet(), 2)}")
     println("To clear or not to clear ${clearOrNotClear(set1.toMutableSet(), 22)}")
+
+    val newSet: MutableSet<String> = mutableSetOf()
+    val oldSet: Set<String> = setOf("parrot", "green", "blue", "ram", "rat", "pig", "cat", "frog", "wolf", "dog", "monkey", "fox", "apple", "Apricot")
+
+    println(solution(newSet, oldSet)) // ["apple", "Apricot"]
+}
+
+/**
+ * Дан пустой набор и набор строк в качестве входных данных. Переберите непустой набор, добавьте все элементы, начинающиеся с A или a, в первый набор и верните его в качестве результата.
+ */
+fun solution(newSet: MutableSet<String>, oldSet: Set<String>): MutableSet<String> {
+    val filtered: List<String> = oldSet.filter { it.lowercase().first() == 'a' }
+
+    newSet.addAll(filtered)
+
+    return newSet
 }
 
 /**
@@ -1140,6 +1157,68 @@ fun isItHere() {
 }
 
 /**
+ * Многомерные массивы
+ */
+fun multiDimensionalArray() {
+    println("--- Creating 2-dimensional arrays ---")
+
+    // Двумерный массив Int с 3 строками и 4 столбцами, где все элементы равны 0
+    val arrayOfStrings2D: Array<Array<String>> = arrayOf(
+        arrayOf("1-1", "1-2", "1-3", "1-4"),
+        arrayOf("2-1", "2-2", "2-3", "2-4"),
+        arrayOf("3-1", "3-2", "3-3", "3-4")
+    )
+
+    println(arrayOfStrings2D.contentDeepToString())
+
+    for (array in arrayOfStrings2D) {
+        println(array.joinToString())
+    }
+
+    val arrayOfNumbers2D: Array<Array<Int>> = arrayOf(
+        arrayOf(0),
+        arrayOf(1, 2),
+        arrayOf(3, 4, 5)
+    )
+
+    for (array in arrayOfNumbers2D) {
+        println(array.joinToString())
+    }
+
+    // Пустой двумерный массив
+    val empty2DInt: Array<Array<Int>> = arrayOf()
+
+    println("--- Accessing elements ---")
+
+    println("Get 3 cell in 2 row: ${arrayOfStrings2D[1][2]}") // 2-3
+
+    println("--- Creating 2D arrays of different types ---")
+
+    val arrayOfChar2D: Array<CharArray> = arrayOf(
+        charArrayOf('A', 'R', 'R'),
+        charArrayOf('A', 'Y', 'S'),
+    )
+
+    println(arrayOfChar2D.contentDeepToString())
+
+    val multiDimensionalArray2D = arrayOf(
+        arrayOf("Practice", "makes", "perfect"),
+        intArrayOf(1, 2)
+    )
+
+    println(multiDimensionalArray2D.contentDeepToString())
+
+    println("--- Multi-dimensional arrays (>2) ---")
+
+    val array3D: Array<Array<Array<Int>>> = arrayOf(
+        arrayOf(arrayOf(0,1), arrayOf(2,3)),
+        arrayOf(arrayOf(4,5), arrayOf(6,7))
+    )
+
+    println(array3D.contentDeepToString())
+}
+
+/**
  * Kotlin предлагает вам возможность определять порядок элементов коллекции различными способами: в естественном, обратном, случайном или пользовательском порядке.
  */
 fun orderingElementsInCollection() {
@@ -1677,4 +1756,17 @@ fun collectionsAndNullable() {
 
     println("minOfWithOrNull: ${numbers.minOfWithOrNull(naturalOrder()) { it > 3 }}") // false
     println("maxOfWithOrNull: ${numbers.maxOfWithOrNull(naturalOrder()) { it > 3 }}") // true
+
+    firstShortestWord()
+}
+
+/**
+ * Верните первое кратчайшее слово, первая буква которого от «a» до «l», или null, если такое слово не существует
+ */
+fun firstShortestWord() {
+    val list: List<String> = listOf("parrot", "green", "blue", "ram", "rat", "pig", "cat", "frog", "wolf", "dog", "monkey", "fox")
+
+    val filtered = list.filter { it.first() in 'a'..'l' }
+
+    println(filtered.minByOrNull { it.length }) // cat
 }
