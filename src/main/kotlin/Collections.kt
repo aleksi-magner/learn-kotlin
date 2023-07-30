@@ -66,10 +66,10 @@ fun main() {
 
     arrays()
     multiDimensionalArray()
+    arrayExceptions()
 
     orderingElementsInCollection()
     retrieveSingleElement()
-
     collectionsAndNullable()
 }
 
@@ -1216,6 +1216,75 @@ fun multiDimensionalArray() {
     )
 
     println(array3D.contentDeepToString())
+}
+
+/**
+ * Когда ваша программа обрабатывает массив, могут возникать различные типы исключений. Чтобы избежать их, вы должны знать о рискованных ситуациях и придерживаться набора часто используемых практик.
+ */
+fun arrayExceptions() {
+    println("--- NullPointerException ---")
+
+    val numbers1: IntArray? = null
+
+    // val size = numbers!!.size // It throws NPE
+    val size = numbers1?.size ?: 0
+
+    println("Size: $size") // 0
+
+    println("--- NegativeArraySizeException ---")
+
+    /**
+     * Если вы попытаетесь создать массив с отрицательным размером, ваш код будет успешно скомпилирован, но соответствующая строка вызовет NegativeArraySizeException во время выполнения.
+     *
+     * Чтобы этого избежать, просто не используйте переменные, которые могут иметь отрицательный размер, при задании размера массива.
+     */
+    val negSize = -1
+
+    // val numbers2 = IntArray(negSize) // It throws NegativeArraySizeException
+
+    println("--- ArrayIndexOutOfBoundsException ---")
+
+    /**
+     * Это вызвано попыткой доступа к несуществующему элементу массива.
+     *
+     * Код выдаст такое же исключение, если мы попытаемся получить доступ к элементу с отрицательным индексом
+     *
+     * Чтобы избежать исключения, мы можем проверить, принадлежит ли данный индекс интервалу [0, size - 1].
+     */
+    val array = intArrayOf(1, 2, 3)
+
+    val n1 = array[2] // 3
+    // val n2 = array[3] // It throws ArrayIndexOutOfBoundsException
+    // val n3 = array[-1]; // It throws ArrayIndexOutOfBoundsException
+
+    val indexes = listOf(-1, 0, 1, 3)
+
+    for (index in indexes) {
+        if (index in array.indices) {
+            println(array[index]) // for 0, 1
+        } else {
+            println("The index is out of bounds.") // for -1, 3
+        }
+    }
+
+    println("--- StringIndexOutOfBoundsException ---")
+
+    /**
+     * Поскольку строку можно рассматривать как последовательность символов, аналогичное исключение может возникнуть при доступе к несуществующему элементу строки.
+     */
+    val string = "string"
+
+    // val ch: Char = string[6] // It throws StringIndexOutOfBoundsException
+
+    val stringIndexes = listOf(-1, 0, 1, 3, 6)
+
+    for (index in stringIndexes) {
+        if (index in string.indices) {
+            println(string[index]) // for 0, 1, 3
+        } else {
+            println("The check works, there is no exception.") // for -1, 6
+        }
+    }
 }
 
 /**
