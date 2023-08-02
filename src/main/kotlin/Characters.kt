@@ -115,6 +115,7 @@ fun main() {
     comparesIgnoringCases()
     comparingNumbersAndCharacters()
     digitsOrNot()
+    vowelOrNo()
 }
 
 /**
@@ -150,4 +151,19 @@ fun digitsOrNot() {
 
         println(char.isDigit())
     }
+}
+
+fun isVowel(char: Char): Boolean = "aeiou".contains(char, ignoreCase = true)
+
+/**
+ * Проверяет, является ли буква основного латинского алфавита гласной. Вход - одна буква.
+ *
+ * Не считайте букву 'y' гласной.
+ *
+ * Ваша функция должна принимать значение типа Char и возвращать логическое значение.
+ */
+fun vowelOrNo() {
+    println(isVowel('a')) // true
+    println(isVowel('A')) // true
+    println(isVowel('b')) // false
 }
