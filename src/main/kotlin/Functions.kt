@@ -59,6 +59,7 @@ fun main() {
     lambdaExpressions()
     testPredicates()
     lambdaWithReceiver()
+    scopeFunctions()
 }
 
 /**
@@ -252,6 +253,18 @@ fun infixFunctions() {
     }
 
     println(listOfShip battle 50) // [Bismarck, Titanic]
+
+    /**
+     * Из списка целых чисел и параметра code должен возвращать сумму элементов, которые делятся на code
+     */
+    val listOfInt = listOf(1, 2, 3, 8, 10, 10, 11, 13, 5)
+
+    infix fun List<Int>.matrix(code: Int): Int = this.sumOf {
+        if (it % code == 0) it else 0
+    }
+
+    println(listOfInt matrix 5) // 25
+
 }
 
 fun getRealGrade(x: Double): Double = x
@@ -559,3 +572,204 @@ fun lambdaWithReceiver() {
  * Напишите функцию magic, которая работает с лямбдой с приёмником и выполняет любую операцию со строкой
  */
 fun String.magic(init: String.() -> String): String = this.init()
+
+data class Musician(var name: String, var instrument: String = "", var band: String = "")
+
+/**
+ * В Kotlin есть пять функций области видимости: let, run, with, apply и also. Они не выполняют никаких конкретных действий, а просто организуют ваш код и выполняют определенные операции в контексте объекта. Эти функции создают временную область для объектов и вызывают код из лямбда-выражений. Внутри лямбды мы можем общаться с объектами, используя ключевые слова it или this
+ */
+fun scopeFunctions() {
+    println("--- apply ---")
+
+    // С функцией области видимости apply
+    Musician("Dave Grohl", "Drums", "Nirvana").apply {
+        println(this) // Musician(name=Dave Grohl, instrument=Drums, band=Nirvana)
+
+        instrument = "Guitar"
+        band = "Foo Fighters"
+
+        println(this) // Musician(name=Dave Grohl, instrument=Guitar, band=Foo Fighters)
+    }
+
+    // Та же реализация без функции области видимости
+    val dave = Musician("Dave Grohl", "Drums", "Nirvana")
+
+    println(dave) // Musician(name=Dave Grohl, instrument=Drums, band=Nirvana)
+
+    dave.instrument = "Guitar"
+    dave.band = "Foo Fighters"
+
+    println(dave) // Musician(name=Dave Grohl, instrument=Guitar, band=Foo Fighters)
+
+    /**
+     * Мы видим, что без apply наш код стал тяжелее и получил новую переменную. При этом в коде с apply у нас операции удобно сгруппированы, а без применения все операции расположены на одном уровне. А если добавить ещё операций, код может стать нечитаемым.
+     */
+
+    /**
+     * `apply` обычно используется для настройки объекта — например, если вы хотите присвоить новые значения методам или параметрам класса.
+     *
+     * Две основные особенности функции apply:
+     * - Объект контекста доступен как this.
+     * - Функция возвращает объект контекста.
+     */
+    val jonny = Musician("Jonny Greenwood").apply {
+        instrument = "Harmonica" // здесь мы также можем использовать this.instrument
+        band = "Pavement"
+    }
+
+    println(jonny) // Musician(name=Jonny Greenwood, instrument=Harmonica, band=Pavement)
+
+    val thom = jonny.copy(name = "Thom York")
+
+    println(jonny) // Musician(name=Jonny Greenwood, instrument=Harmonica, band=Pavement)
+    println(thom) // Musician(name=Thom York, instrument=Harmonica, band=Pavement)
+
+    println("--- also ---")
+
+    /**
+     * Использование also аналогично apply, но рекомендуется выбирать also, когда вы работаете со всем объектом и не заботитесь о его параметрах или методах.
+     *
+     * Две основные характеристики функции also:
+     * - Объект контекста доступен как it.
+     * - Функция возвращает объект контекста.
+     */
+    val instruments = mutableListOf("Guitar", "Harmonica", "Bass guitar")
+
+    instruments
+        .also {
+            println("Right now I can play these instruments: $it") // [Guitar, Harmonica, Bass guitar]
+        }
+        .add("Theremin")
+
+    println(instruments) // [Guitar, Harmonica, Bass guitar, Theremin]
+
+    /**
+     * `also` имеет интересную особенность — вроде бы выполняет операции сразу (на самом деле возвращает контекст до выполнения операций).
+     */
+    var a = 10
+    var b = 5
+
+    a = b.also { b = a }
+
+    println("a = $a, b = $b") // a = 5, b = 10
+
+    println("--- with ---")
+
+    /**
+     * Основные характеристики функции with:
+     * - Объект контекста доступен как this.
+     * - Он возвращает результат лямбда.
+     * - Это не функция расширения.
+     *
+     * Что мы имеем в виду, когда говорим, что with не является функцией расширения? Это означает, что в качестве аргумента передается объект контекста — он заключен в круглые скобки. Однако внутри лямбды наш объект доступен как получатель (this).
+     */
+    val musicians = mutableListOf("Thom York", "Jonny Greenwood", "Colin Greenwood")
+
+    // 'with' is called with the argument [Thom York, Jonny Greenwood, Colin Greenwood]
+    // List contains 3 elements
+    with(musicians) {
+        println("'with' is called with the argument $this")
+        println("List contains $size elements")
+    }
+
+    val firstAndLast = with(musicians) {
+        "First list element - ${first()}," + " last list element - ${last()}"
+    }
+
+    println(firstAndLast) // First list element - Thom York, last list element - Colin Greenwood
+
+    println("--- let ---")
+
+    /**
+     * Основные особенности функции let:
+     * - Контекстный объект доступен как it.
+     * - Он возвращает результат лямбда (последняя строка в лямбде).
+     *
+     * `let` используется в двух общих случаях:
+     * - когда хотим что-то сделать с оператором вызова безопасности `?` и ненулевыми объектами. `it` не может быть null внутри `?.let { }`
+     * - когда хотим ввести локальные переменные с ограниченной областью действия
+     */
+    val str: String? = "Jonny Greenwood"
+
+    fun processNonNullString(string: String) {
+        println(string)
+    }
+
+    // processNonNullString(str) // compilation error: str can be null
+
+    val length = str?.let {
+        println("let() is called on $it") // let() is called on Jonny Greenwood
+
+        processNonNullString(it) // Jonny Greenwood
+
+        it.length // Возвращаемое значение
+    }
+
+    println(length) // 15
+
+    val modifiedFirstItem = musicians.first().let { firstItem ->
+        // The first item of the list is 'Thom York'
+        println("The first item of the list is '$firstItem'")
+
+        if (firstItem.length >= 5) firstItem else "!$firstItem!" // Возвращаемое значение
+    }.uppercase()
+
+    // First item after modifications: 'THOM YORK'
+    println("First item after modifications: '$modifiedFirstItem'")
+
+    println(musicians) // [Thom York, Jonny Greenwood, Colin Greenwood]
+
+    println("--- run ---")
+
+    /**
+     * `run` похож на `with`, но это функция расширения. Таким образом, `run` делает то же самое, что и `with`, но вызывается как `let`.
+     *
+     * Основные особенности функции run:
+     * - Объект контекста доступен как this.
+     * - Он возвращает результат лямбда.
+     *
+     * `run` используется в двух общих случаях:
+     * - когда мы хотим инициализировать новый объект и передать ему результат лямбды.
+     * - когда мы хотим использовать функцию без расширения и выполнить блок из нескольких операторов.
+     */
+
+    /**
+     * Это важно — наш новый объект независим и ценен, в отличие от функции `with`.
+     *
+     * Например, в приведённом ниже коде мы создаём новый объект `result`, передаём новое значение `service` элемента `port` и передаём результат `result` функции `query()` с функцией `prepareRequest()`, объединённой строкой в качестве параметра. Примечание! Значение `service.port` изменено.
+     */
+    class MultiportService(var url: String, var port: Int) {
+        fun prepareRequest(): String = "Default request"
+
+        fun query(request: String): String = "Result for query '$request'"
+    }
+
+    val service = MultiportService("https://example.kotlinlang.org", 80)
+
+    val result = service.run {
+        port = 8080
+
+        query(prepareRequest() + " to port $port")
+    }
+
+    println(result) // Result for query 'Default request to port 8080'
+
+    /**
+     * В этом случае мы не используем объект контекста, а просто организуем некоторый фрагмент кода, связанный с переменной hexNumberRegex.
+     */
+    val hexNumberRegex = run {
+        val digits = "0-9"
+        val hexDigits = "A-Fa-f"
+        val sign = "+-"
+
+        Regex("[$sign]?[$digits$hexDigits]+")
+    }
+
+    // +1234
+    // -FFFF
+    // -a
+    // be
+    for (match in hexNumberRegex.findAll("+1234 -FFFF not-a-number")) {
+        println(match.value)
+    }
+}
