@@ -1,3 +1,5 @@
+import java.awt.Color.blue
+import java.awt.Color.red
 import java.util.*
 import kotlin.random.Random
 
@@ -71,6 +73,7 @@ fun main() {
     orderingElementsInCollection()
     retrieveSingleElement()
     collectionsAndNullable()
+    filteringElements()
 }
 
 /**
@@ -1861,4 +1864,121 @@ fun firstShortestWord() {
     val filtered = list.filter { it.first() in 'a'..'l' }
 
     println(filtered.minByOrNull { it.length }) // cat
+}
+
+val isEven: (Int) -> Boolean = { x -> x % 2 == 0 }
+
+/**
+ * `filter()` принимает предикат и возвращает новую коллекцию с элементами, удовлетворяющими предикату (или условию).
+ *
+ * `filterIndexed()` принимает индекс элемента и сам элемент и возвращает коллекцию, которая соответствует предикату.
+ *
+ * `filterNot()` возвращает коллекцию с элементами, не соответствующими предикату.
+ *
+ * `filterIsInstance()` возвращает коллекцию с элементами типа, указанного в предикате.
+ *
+ * `filterNotNull()` возвращает все элементы, которые не равны null.
+ *
+ * `partition()` разбивает исходную коллекцию на две части: одну с элементами, удовлетворяющими предикату, и другую с остальными элементами исходной коллекции (теми, которые не соответствуют предикату).
+ *
+ * Эти методы доступны во всех базовых коллекциях Kotlin (списки, наборы и карты).
+ */
+fun filteringElements() {
+    val numbers = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+    println("--- List of even numbers ---")
+
+    // [0, 2, 4, 6, 8, 10]
+    println(numbers.filter { x -> x % 2 == 0 })
+    println(numbers.filter { isEven(it) })
+    println(numbers.filter(isEven))
+
+    println("--- List of odd numbers ---")
+
+    // [1, 3, 5, 7, 9]
+    println(numbers.filter { x -> x % 2 != 0 })
+    println(numbers.filterNot { x -> x % 2 == 0 })
+    println(numbers.filterNot { isEven(it) })
+    println(numbers.filterNot(isEven))
+
+    println("--- List even number with index greater than 3 ---")
+
+    // [4, 6, 8, 10]
+    println(numbers.filterIndexed { index, number ->
+        index > 3 && number % 2 == 0
+    })
+
+    println("--- List of words with odd index and starting with \"k\" ---")
+
+    val words = listOf("peter", "kyle", "robert", "kate", "kevin", "anne", "jeremy")
+
+    // [kyle, kate]
+    println(words.filterIndexed { i, word ->
+        i % 2 != 0 && word.startsWith("k")
+    })
+
+    println("--- Filtering and types ---")
+
+    val elements = listOf(null, 0, "string", 3.14, null, 'c', "Luke")
+
+    println("--- Only string elements ---")
+
+    // [string, Luke]
+    println(elements.filter { x -> x is String })
+    println(elements.filterIsInstance<String>())
+
+    println("--- Only integer elements ---")
+
+    println(elements.filterIsInstance<Int>()) // [0]
+
+    println("--- Not null elements ---")
+
+    // [0, string, 3.14, c, Luke]
+    println(elements.filterNot { x -> x == null })
+    println(elements.filterNotNull())
+
+    println("--- Partitioning ---")
+
+    val (even1, odd1) = numbers.partition { x -> x % 2 == 0 }
+    val (even2, odd2) = numbers.partition(isEven)
+
+    // [0, 2, 4, 6, 8, 10]
+    println(even1)
+    println(even2)
+
+    // [1, 3, 5, 7, 9]
+    println(odd1)
+    println(odd2)
+
+    redPillAndBluePill()
+    filteredPalindromeList()
+}
+
+/**
+ * У вас есть список таблеток разного цвета, и вы должны отфильтровать только красные и синие и помочь Нео решить его дилемму.
+ */
+fun redPillAndBluePill() {
+    val input = "blue red orange black"
+    val validPills = listOf("blue", "red")
+
+    val pills = input.split(' ').filter { validPills.contains(it) }
+
+    println(pills) // [blue, red]
+}
+
+/**
+ * У нас есть список слов, и мы должны получить список палиндромов (регистр букв не важен).
+ *
+ * Используя функцию фильтрации, получите список палиндромов.
+ */
+fun filteredPalindromeList() {
+    val input = "kayak deified rotator test repaper"
+
+    val list: List<String> = input.split(' ').filter {
+        val word: String = it.lowercase()
+
+        word.reversed() == word
+    }
+
+    println(list) // [kayak, deified, rotator, repaper]
 }
