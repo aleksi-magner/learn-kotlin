@@ -638,6 +638,7 @@ fun immutableMaps() {
     println("bill: ${bill2(priceList3, shoppingList3)}") // 350
 
     fizzBuzzMap()
+    filterAndMatchLists()
 }
 
 /**
@@ -677,6 +678,28 @@ fun bill1(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
 
 fun bill2(priceList: Map<String, Int>, shoppingList: MutableList<String>): Int {
     return shoppingList.sumOf { priceList[it] ?: 0 }
+}
+
+/**
+ * Есть список URL-адресов веб-сайтов с некоторыми ошибками — заглавными буквами.
+ *
+ * Выведите количество элементов списка, исправьте ошибки в каждом элементе этого списка, сделайте карту с доменами в качестве ключа и длиной соответствующих URL-адресов в качестве значения.
+ */
+fun filterAndMatchLists() {
+    val input = "htTpS://hypeRskIll.org HTTPS://www.jetbrains.com https://github.com"
+
+    val domains = input.split(' ')
+
+    println(domains.size) // 3
+
+    val domainsMap: Map<String, String> = buildMap {
+        for (domain in domains) {
+            put(domain.lowercase(), "[${domain.length}]")
+        }
+    }
+
+    // {https://hyperskill.org=[22], https://www.jetbrains.com=[25], https://github.com=[18]}
+    println(domainsMap)
 }
 
 /**

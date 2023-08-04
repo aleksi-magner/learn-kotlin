@@ -60,6 +60,8 @@ fun main() {
     testPredicates()
     lambdaWithReceiver()
     scopeFunctions()
+
+    manipulatingWithNumbers()
 }
 
 /**
@@ -391,10 +393,12 @@ fun functionReferences() {
 fun lambdaExpressions() {
     val anonymous: (Int, Int) -> Int = fun(a: Int, b: Int): Int = a * b
     val lambda: (Int, Int) -> Int = { a: Int, b: Int -> a * b }
+    val maxLambda: (Int, Int) -> Int = { a: Int, b: Int -> maxOf(a, b) }
     val lambdaWithoutArguments: () -> Int = { 40 + 2 }
 
     println(anonymous(2, 3)) // 6
     println(lambda(2, 3)) // 6
+    println(maxLambda(2, 3)) // 3
     println(lambdaWithoutArguments()) // 42
 
     val originalText = "I don't know... what to say..."
@@ -577,6 +581,40 @@ data class Musician(var name: String, var instrument: String = "", var band: Str
 
 /**
  * В Kotlin есть пять функций области видимости: let, run, with, apply и also. Они не выполняют никаких конкретных действий, а просто организуют ваш код и выполняют определенные операции в контексте объекта. Эти функции создают временную область для объектов и вызывают код из лямбда-выражений. Внутри лямбды мы можем общаться с объектами, используя ключевые слова it или this
+ *
+ * Кратко:
+ *
+ * `apply` используется для настройки объекта.
+ * - Объект контекста доступен как this.
+ * - Функция возвращает объект контекста.
+ *
+ * `also` аналогично `apply`, но рекомендуется выбирать, когда вы работаете со всем объектом и не заботитесь о его параметрах или методах.
+ * - Объект контекста доступен как it.
+ * - Функция возвращает объект контекста.
+ * - Возвращает контекст до выполнения операций.
+ *
+ * `with`
+ * - Объект контекста доступен как this.
+ * - Он возвращает результат лямбда.
+ * - Не является функцией расширения.
+ *
+ * `let` когда хотим:
+ * - Что-то сделать с оператором вызова безопасности `?` и ненулевыми объектами. `it` не может быть null внутри `?.let { }`
+ * - Ввести локальные переменные с ограниченной областью действия
+ *
+ * Особенности:
+ * - Контекстный объект доступен как it.
+ * - Он возвращает результат лямбда (последняя строка в лямбде).
+ *
+ * `run` это функция расширения. Делает то же самое, что и `with`
+ *
+ * Используется когда мы хотим:
+ * - Инициализировать новый объект и передать ему результат лямбды.
+ * - Использовать функцию без расширения и выполнить блок из нескольких операторов.
+ *
+ * Особенности:
+ * - Объект контекста доступен как this.
+ * - Он возвращает результат лямбда.
  */
 fun scopeFunctions() {
     println("--- apply ---")
@@ -771,5 +809,28 @@ fun scopeFunctions() {
     // be
     for (match in hexNumberRegex.findAll("+1234 -FFFF not-a-number")) {
         println(match.value)
+    }
+}
+
+fun multiplyByTwo(number: Int): Int = number * 2
+fun addTen(number: Int): Int = number + 10
+
+/**
+ * Считывает числа и выполняет определённые действия в зависимости от чётности числа.
+ *
+ * Вам дана сама последовательность чисел, разделенная пробелом.
+ *
+ * Умножить нечётное число на 2 (multiplyByTwo) и прибавить 10 к чётному числу (addTen).
+ */
+fun manipulatingWithNumbers() {
+    val input = "1 2"
+
+    val numbers = input.split(' ').map { it.toInt() }
+
+    // 2 12
+    for (number in numbers) {
+        val changedNumber = if (number % 2 == 0) addTen(number) else multiplyByTwo(number)
+
+        print("$changedNumber ")
     }
 }
