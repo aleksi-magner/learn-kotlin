@@ -57,4 +57,22 @@ fun main() {
      *
      * Вывод: Hello, Java
      */
+
+    /**
+     * Скомпилированную программу можно также вызывать с параметрами:
+     * `java -jar filename.jar args`
+     * Аргументы `args` - это массив строк, которые принимает точка входа - функция main
+     * При вызове просто перечисляются через пробел.
+     *
+     * Для запуска программы файл программы должен содержать либо функцию с сигнатурой main(), либо функцию main(args: Array<String>).
+     */
+
+    /**
+     * fun main(args: Array<String>) {
+     *     println(args[0]) // Hello,
+     *     println(args[1]) // Kotlin!
+     * }
+     *
+     * $ java -jar print_args.jar Hello, Kotlin!
+     */
 }
