@@ -60,6 +60,7 @@ fun main() {
     testPredicates()
     lambdaWithReceiver()
     scopeFunctions()
+    pairAndTriple()
 
     manipulatingWithNumbers()
 }
@@ -834,3 +835,104 @@ fun manipulatingWithNumbers() {
         print("$changedNumber ")
     }
 }
+
+/**
+ * Что делать, если мы хотим вернуть несколько значений разных типов? Kotlin предлагает нам два специальных класса, которые помогут нам справиться с этой ситуацией: Pair и Triple.
+ */
+fun pairAndTriple() {
+    println("--- Pair ---")
+
+    val pair = Pair(1, "one")
+
+    println(pair) // (1, one)
+
+    // Properties
+    println(pair.first) // 1
+    println(pair.second) // one
+
+    // Methods
+    println(pair.component1()) // 1
+    println(pair.component2()) // one
+
+    val pair2 = Pair("marks", listOf(8.0, 9.0, 10.0))
+
+    println(pair2) // (marks, [8.0, 9.0, 10.0]) toString() является неявным
+    println(pair2.toString()) // (marks, [8.0, 9.0, 10.0])
+    println(pair2.toList()) // [marks, [8.0, 9.0, 10.0]]
+
+    /**
+     * Кроме того, мы можем использовать метод copy() для копирования объектов Pair и изменения их свойств, используя имя параметра (first и second, например: myCopy = pair.copy(first = "new Value", second = 3)
+     *
+     * С помощью метода copy() вы также можете создать новую пару на основе другой пары или изменить некоторые свойства.
+     *
+     * Вы должны сохранить порядок свойств. Помните: свойства пары неизменяемы и доступны только для чтения. Вы должны создать новую пару, чтобы изменить значения, или использовать функцию копирования, чтобы создать новую пару и присвоить ей любые значения, которые вы хотите, на основе предыдущего объекта.
+     */
+    val other = pair2.copy()
+
+    println(pair2) // (marks, [8.0, 9.0, 10.0])
+    println(other) // (marks, [8.0, 9.0, 10.0])
+
+    val other2 = pair2.copy("other")
+    val grades = pair2.copy(second = listOf(9.0, 7.0, 8.5))
+    val myCopy = pair2.copy(first = "other", second = listOf(1.0, 2.0, 3.0))
+
+    println(pair2) // (marks, [8.0, 9.0, 10.0])
+    println(other2) // (other, [8.0, 9.0, 10.0])
+    println(grades) // (marks, [9.0, 7.0, 8.5])
+    println(myCopy) // (other, [1.0, 2.0, 3.0])
+
+    println("--- Triple ---")
+
+    val triple = Triple(1, "A", true)
+
+    println(triple) // (1, A, true)
+
+    // Properties
+    println(triple.first) // 1
+    println(triple.second) // A
+    println(triple.third) // true
+
+    // Methods
+    println(triple.component1()) // 1
+    println(triple.component2()) // A
+    println(triple.component3()) // true
+
+    val triple2 = Triple("marks", "Kotlin", listOf(8.0, 9.0, 10.0))
+
+    println(triple2) // (marks, Kotlin, [8.0, 9.0, 10.0])
+    println(triple2.toList()) //[marks, Kotlin, [8.0, 9.0, 10.0]]
+
+    val other3 = triple2.copy()
+
+    println(triple2) // (marks, Kotlin, [8.0, 9.0, 10.0])
+    println(other3) // (marks, Kotlin, [8.0, 9.0, 10.0])
+
+    val other4 = triple2.copy("other", third=listOf(7.0, 9.0, 8.5))
+    val course = triple2.copy(second = "Kotlin Triple")
+
+    println(triple2) // (marks, Kotlin, [8.0, 9.0, 10.0])
+    println(other4) // (other, Kotlin, [7.0, 9.0, 8.5])
+    println(course) // (marks, Kotlin Triple, [8.0, 9.0, 10.0])
+
+    val marks = Triple("Anne", 2, listOf(8.0, 7.0, 9.0))
+
+    println(resume(marks)) // (Anne, 8.0)
+
+    println(revert(Pair("home", "car"))) // (car, home)
+}
+
+/**
+ * Вам дается Triple, который представляет имя студента, номер курса и полученные оценки.
+ *
+ * Верните пару в виде резюме с именем учащегося и средним значением оценок.
+ */
+fun resume(marks: Triple<String, Int, List<Double>>): Pair<String, Double> =
+    Pair(marks.first, marks.third.average())
+
+/**
+ * У вас есть пара со строковыми значениями.
+ *
+ * Возвращает новую пару, обратную исходной.
+ */
+fun revert(pair: Pair<String, String>): Pair<String, String> =
+    Pair(pair.second, pair.first)
