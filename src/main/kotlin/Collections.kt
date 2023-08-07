@@ -1519,6 +1519,40 @@ fun arrayDeque() {
 
     println(deque4.firstOrNull()) // null
     println(deque4.lastOrNull()) // null
+
+    hackingMatrix()
+}
+
+/**
+ * Нео пытается взломать Матрицу. У него есть список кодов, но для решения этой задачи он должен сделать следующее: если индекс чётный, взять первый элемент, иначе взять последний.
+ *
+ * Пожалуйста, распечатайте результат, чтобы помочь Нео взломать Матрицу.
+ */
+fun hackingMatrix() {
+    val input = "1 2 3 8 10 10"
+    val list = input.split(' ').map { it.toInt() }
+
+    val deque = ArrayDeque<Int>()
+
+    deque.addAll(list)
+
+    val hackCode = mutableListOf<Int>()
+
+    for (index in 0..<deque.size) {
+        val isEven = index % 2 == 0
+
+        if (isEven) {
+            hackCode.add(deque.first())
+
+            deque.removeFirst()
+        } else {
+            hackCode.add(deque.last())
+
+            deque.removeLast()
+        }
+    }
+
+    println(hackCode.joinToString(" ")) // 1 10 2 10 3 8
 }
 
 /**

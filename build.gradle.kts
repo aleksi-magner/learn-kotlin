@@ -5,7 +5,7 @@ version = "1.0-SNAPSHOT"
 description = "Проект для обучения Kotlin"
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
 }
 
 repositories {
