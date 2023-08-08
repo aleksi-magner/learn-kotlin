@@ -1,5 +1,3 @@
-import java.awt.Color.blue
-import java.awt.Color.red
 import java.util.*
 import kotlin.random.Random
 

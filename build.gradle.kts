@@ -16,6 +16,8 @@ dependencies {
     implementation("com.diogonunes:JCDP:4.0.2")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("io.mockk:mockk:1.13.5")
 }
 
 java {
@@ -36,4 +38,8 @@ tasks.register("helloGradle") {
 
 tasks.test {
     useJUnitPlatform()
+
+    testLogging {
+        events("skipped", "failed") // "passed", "skipped", "failed"
+    }
 }
