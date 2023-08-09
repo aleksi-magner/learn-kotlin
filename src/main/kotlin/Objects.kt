@@ -50,9 +50,11 @@ fun main() {
     defaultConstructor()
     primaryConstructor()
     secondaryConstructor()
+    overridingConstructors()
     initBlock()
     memberFunctions()
     finalMembers()
+    visibilityModifiersForMembers()
     nestedClasses()
 
     createTable()
@@ -375,6 +377,61 @@ fun secondaryConstructor() {
 }
 
 /**
+ * Kotlin не позволяет напрямую переопределять конструкторы. Однако, используя наследование и полиморфизм, мы можем расширять конструкторы суперклассов в подклассах.
+ *
+ * В контексте объектно-ориентированного программирования (ООП) переопределение — это механизм, позволяющий подклассу реализовать метод, уже определённый в его суперклассе.
+ */
+fun overridingConstructors() {
+    open class Person1(val name: String)
+
+    // В этом случае используем конструктор суперкласса, но не переопределяем его
+    class Employee1(name: String, val id: Int) : Person1(name)
+
+    /**
+     * Конструкторы в Kotlin не могут быть переопределены. Однако вы можете определить конструкторы в подклассах, которые используют или «расширяют» конструкторы суперкласса.
+     *
+     * При объявлении подкласса мы можем использовать ключевые слова open, final и override для управления наследованием и полиморфизмом.
+     *
+     * - open позволяет подклассам наследовать или переопределять функции и свойства
+     * - final предотвращает переопределение функций или свойств подклассами
+     * - override используется подклассом для переопределения функций или свойств суперкласса
+     *
+     * Есть несколько распространенных ошибок и проблем, которые могут возникнуть при работе с конструкторами в контексте наследования и полиморфизма.
+     *
+     * Одна из самых распространенных ошибок — не вызывать конструктор суперкласса в подклассе.
+     */
+    open class Person2(open val name: String)
+
+    // Переопределяем свойство name
+    class Employee2(override val name: String, val id: Int) : Person2(name)
+
+    // class Employee(val id: Int) : Person1 // Error: требуется вызов конструктора суперкласса
+
+    open class Person3(val name: String) {
+        fun talk() {
+            println("$name is talking")
+        }
+    }
+
+    // Класс Employee расширяет класс Person, используя его конструктор для установки свойства name
+    // Это пример наследования, когда подкласс (Employee) использует конструктор суперкласса (Person)
+    class Employee3(name: String, val id: Int) : Person3(name) {
+        fun work() {
+            println("$name is working with id $id")
+        }
+    }
+
+    val person = Person3("John")
+
+    person.talk() // John is talking
+
+    val employee = Employee3("Jane", 123)
+
+    employee.talk() // Jane is talking
+    employee.work() // Jane is working with id 123
+}
+
+/**
  * Инициализация
  *
  * Первичные конструкторы не могут содержать никакого кода: они только устанавливают значения свойств класса на основе переданных аргументов.
@@ -483,6 +540,136 @@ fun finalMembers() {
     //         println("I'm trying to override your method!")
     //     }
     // }
+}
+
+/**
+ * Все члены класса — поля, методы и свойства — имеют модификаторы видимости.
+ *
+ * Модификаторы видимости позволяют установить допустимую область действия для членов класса. То есть они определяют контекст, в котором может использоваться данная переменная или метод.
+ *
+ * Модификаторы видимости — это специальные ключевые слова, которые определяют, какую часть вашего кода разрешено использовать.
+ *
+ * В Kotlin есть четыре модификатора доступа: private, protected, internal и public.
+ *
+ * - private — данные доступны только внутри класса;
+ * - protected — то же, что и private, за исключением того, что данные можно увидеть в подклассах;
+ * - internal -- тот, кто видит объявляющий класс, видит его внутренние члены;
+ * - public — данные доступны везде.
+ *
+ * Имейте в виду, что для локальных переменных и функций нельзя установить модификатор видимости. Локальные переменные и функции доступны только внутри функции, в которой они определены.
+ */
+fun visibilityModifiersForMembers() {
+    println("--- Public modifier ---")
+
+    /**
+     * Ключевое слово public используется, чтобы сообщить компилятору, что что-то должно быть доступно всем. Объявив экземпляр класса с модификатором public, вы можете ссылаться на любое из его полей в любом месте программы, где доступен сам объект.
+     */
+    // public class Student {
+    //     public var name: String // Свойство общедоступно и видно везде
+    //
+    // }
+
+    println("--- Private modifier ---")
+
+    /**
+     * Для защиты полей от подделки используется ключевое слово private — оно делает члены класса доступными только внутри самого класса. Теперь эти поля нельзя изменить нигде, кроме как в методах этого класса. Однако получить их значение извне также не получится, а попытка вывода приведёт к ошибке.
+     *
+     * Давайте усложним предыдущий пример, добавив модификатор private и новую переменную id. Если свойства задаются через конструктор, то модификатор видимости также можно указать в конструкторе для свойств:
+     */
+    class Student(val name: String, private val id: Int)
+
+    val mark = Student("Mark", 1)
+
+    println("Name: ${mark.name}") // Name: Mark
+    // println("ID: ${mark.id}") // Cannot access 'id': it is private in 'Student'
+
+    println("--- Protected modifier ---")
+
+    /**
+     * `protected` — это то же самое, что и private, за исключением того, что его можно увидеть в подклассах.
+     */
+    open class Person {
+        protected open val name: String = ""
+        private val age: Int = 0
+    }
+
+    class Student2 : Person() {
+        // override val age = 18 // возраст является частным, и это НЕ будет работать
+        override val name = "Eyad" // это сработает
+    }
+
+    class Teacher {
+        private val person = Person()
+
+        // fun printPerson(): String {
+        //     return person.name // Cannot access 'name': it is protected in 'Person'
+        // }
+    }
+
+    println("--- Internal modifier ---")
+
+    /**
+     * `internal` модификатор означает, что тот, кто видит объявляющий класс, видит его члены с модификатором internal:
+     */
+    class Bank {
+        internal val accountNumber: Long = 5L
+        internal fun getBranch(): String = "Branch is Alex"
+    }
+
+    class BankController {
+        private val bank = Bank()
+
+        fun getUserAccountNumber(): Long {
+            return bank.accountNumber // same module
+        }
+    }
+
+    println("--- Visibility of constructors in a class ---")
+
+    /**
+     * Вы также можете указать модификатор для конструкторов: например, сделать первичный конструктор класса закрытым. Не забудьте добавить явное ключевое слово constructor.
+     *
+     * В этом случае первичный конструктор является закрытым, поэтому он доступен только из того же класса (например, при вызове вторичного конструктора). Соответственно извне для создания объекта этого класса можно использовать только вторичный конструктор
+     */
+    class Student3 private constructor(val name: String) {
+        var age: Int = 0
+
+        constructor(name: String, _age: Int) : this(name) {
+            age = _age
+        }
+    }
+
+    // val anna = Student3("Anna") //Cannot access '<init>': it is private in 'Student'
+    val mark2 = Student3("Mark", 23)
+
+    println("Name: ${mark2.name}  Age: ${mark2.age}")
+
+    println("--- Public and private functions ---")
+
+    /**
+     * Частные (private) функции используются для того, чтобы скрыть реализацию внутренней низкоуровневой логики от остального кода и сделать публичные функции более краткими и читабельными.
+     *
+     * Вот пример с функциями printInfo() и getAge(). Мы установили функцию getAge() как приватную, и эта функция недоступна извне. Тем временем функция printInfo() открыта, и мы можем получить информацию о студенте.
+     */
+    class Student4(
+        private val name: String,
+        private val id: Int,
+        private val age: Int
+    ) {
+
+        fun printInfo() {
+            println("Id: $id Name: $name")
+        }
+
+        private fun getAge() {
+            print("Age: $age ")
+        }
+    }
+
+    val anna = Student4("Anna", 9, 19)
+
+    anna.printInfo() // Id: 9 Name: Anna
+    // anna.getAge() // Cannot access 'getAge': it is private in 'Student'
 }
 
 /**
