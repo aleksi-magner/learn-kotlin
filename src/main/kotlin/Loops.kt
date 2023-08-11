@@ -5,6 +5,7 @@ fun main() {
     whileLoop()
     forLoop()
     iterator()
+    jumpsAndReturns()
 }
 
 fun whileLoop() {
@@ -611,4 +612,168 @@ fun frequencyWordBook() {
     for ((key, value) in map) {
         println("$key $value")
     }
+}
+
+/**
+ * Выражения структурного перехода: break, continue и return.
+ *
+ * Все рассмотренные операторы можно использовать и с циклом while.
+ */
+fun jumpsAndReturns() {
+    println("--- The Break Statement ---")
+
+    /**
+     * Выражение break используется для завершения ближайшего окружающего цикла
+     */
+    val limit = 3
+
+    for (number in 1..10) {
+        if (number == limit) {
+            break
+        }
+
+        print("$number ") // 1 2
+    }
+
+    println("--- The Continue Statement ---")
+
+    /**
+     * `continue` позволяет нам перейти к следующей итерации замыкающего цикла. Другими словами, если вы хотите пропустить текущую итерацию кода цикла с вашим собственным условием, вы можете использовать continue.
+     */
+    val result = StringBuilder()
+
+    for (char in "hello world") {
+        if (char == 'o') {
+            continue
+        }
+
+        result.append(char)
+    }
+
+    println(result.toString()) // hell wrld
+
+    println("--- Inner loops and structural jump expressions ---")
+
+    /**
+     * Часто у вас может быть одна петля внутри другой. Посмотрим, как сломать и продолжить работу в таком случае.
+     */
+    val range: IntRange = 1..4
+
+    // Finished to examine i = 1
+    // i = 2, j = 1
+    // Finished to examine i = 2
+    // i = 3, j = 1
+    // Finished to examine i = 3
+    // i = 4, j = 1
+    // i = 4, j = 3
+    // Finished to examine i = 4
+    for (i in range) {
+        for (j in range) {
+            // Вы хотите игнорировать j = 2
+            if (j == 2) {
+                continue
+            }
+
+            // Вы напечатаете строку, если i больше, чем j
+            if (i <= j) {
+                break
+            }
+
+            println("i = $i, j = $j")
+        }
+
+        println("Finished to examine i = $i")
+    }
+
+    println("--- Labels ---")
+
+    /**
+     * Как видите, break и continue прерывают только один цикл. Но что нам делать, если нам нужно завершить внешний цикл? В этом случае следует использовать метки.
+     *
+     * Технически это просто идентификатор со знаком @ на конце, например: loop@, kotlin@. Вы можете использовать с ним практически любое слово, кроме зарезервированных слов в Kotlin.
+     */
+
+    // i = 1, j = 1
+    // i = 1, j = 2
+    // i = 1, j = 3
+    loop@ for (i in 1..3) {
+        for (j in 1..3) {
+            println("i = $i, j = $j")
+
+            if (j == 3) {
+                break@loop
+            }
+        }
+    }
+
+    // i = 1, j = 1, k = 1
+    // i = 2, j = 1, k = 1
+    // i = 3, j = 1, k = 1
+    loop@ for (i in 1..3) {
+        for (j in 1..3) {
+            for (k in 1..3) {
+                if (k == 2) {
+                    continue@loop
+                }
+
+                println("i = $i, j = $j, k = $k")
+            }
+        }
+    }
+
+    // 1
+    // 2
+    // 4
+    // 5
+    for (i in 1..10) {
+        when (i) {
+            3 -> continue
+            6 -> break
+            else -> println(i)
+        }
+    }
+
+    println("--- The Return Statement ---")
+
+    /**
+     * Оператор return без метки позволяет вернуть результат ближайшей закрывающей функции. Это может быть очень полезно, если мы хотим по какой-то причине выйти из цикла и пропустить оставшийся код цикла или выйти из текущей функции
+     */
+    fun foo() {
+        val number = intArrayOf(1, 2, 3, 4, 5)
+
+        for (it in number) {
+            // Нелокальный возврат непосредственно к вызывающей стороне foo()
+            if (it == 3) {
+                return
+            }
+
+            print(it)
+        }
+
+        println("this point is unreachable") // Не будет вызвано
+    }
+
+    foo() // 12
+
+    println()
+
+    println("foo() is over") // foo() is over
+
+    // i = 1, j = 1
+    // i = 1, j = 2
+    // i = 1, j = 3
+    for (i in 1..10) {
+        for (j in 1..10) {
+            println("i = $i, j = $j")
+
+            // Локальный возврат к вызывающей стороне jumpsAndReturns()
+            if (j == 3) {
+                return
+            }
+        }
+
+        println("this point is unreachable") // Не будет вызвано
+    }
+
+    println("this point is unreachable") // Не будет вызвано
 }
