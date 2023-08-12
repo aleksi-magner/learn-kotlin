@@ -67,6 +67,7 @@ fun main() {
     arrays()
     multiDimensionalArray()
     arrayExceptions()
+    stack()
     arrayDeque()
 
     orderingElementsInCollection()
@@ -1309,6 +1310,76 @@ fun arrayExceptions() {
         } else {
             println("The check works, there is no exception.") // for -1, 6
         }
+    }
+}
+
+/**
+ * В JVM класс Stack моделирует и реализует структуру данных Stack, используя стратегию LIFO (Last-In-First-Out).
+ *
+ * Это класс Java; он не принадлежит к чистым коллекциям Kotlin, поэтому вы должны импортировать его, чтобы иметь возможность его использовать: import java.util.stack
+ *
+ * Лучше использоваться реализацию Kotlin - ArrayDeque, она больше оптимизирована и более производительна.
+ *
+ * Когда вы добавляете элемент в стек, вы кладете его на вершину стека. Когда вы удаляете элемент из стека, вы всегда удаляете самый верхний элемент. Он расширяет класс Vector пятью операциями, которые позволяют рассматривать вектор как стек. Другие существующие методы унаследованы от Vector.
+ *
+ * Операции со стеком:
+ * - push() помещает элемент на вершину стека
+ *
+ * - pop() удаляет объект из вершины стека и возвращает этот объект. Он выдаст EmptyStackException, если этот стек пуст.
+ *
+ * - peek() извлекает первый/верхний элемент стека, не удаляя его из стека. Он выдаст EmptyStackException, если этот стек пуст.
+ *
+ * - empty() возвращает true, если на вершине стека ничего нет; иначе он вернёт false
+ *
+ * - search() возвращает позицию элемента с вершины стека; иначе он вернёт -1.
+ */
+fun stack() {
+    val stack = Stack<Int>()
+
+    // push at top
+    stack.push(1)
+    stack.push(2)
+    stack.push(3)
+
+    println(stack) // [1, 2, 3]
+
+    // Удаляем верхний элемент
+    stack.pop()
+
+    println(stack) // [1, 2]
+
+    // Получаем верхний элемент без удаления
+    println(stack.peek()) // 2
+
+    println(stack) // [1, 2]
+
+    // Ищем позицию элемента в стеке
+    println(stack.search(1)) // 2
+    println(stack.search(2)) // 1
+    println(stack.search(9)) // -1
+
+    // is empty?
+    println(stack.empty()) // false
+
+    stack.pop()
+    stack.pop()
+
+    println(stack) // []
+
+    println(stack.empty()) // true
+
+    /**
+     * Кроме того, мы можем преобразовать список в стек и работать с ним, используя функцию pop()
+     */
+    val listOfNames: List<String> = listOf("John", "Jane", "Mary", "Peter", "Paul", "George")
+    val stackOfNames = Stack<String>()
+
+    stackOfNames.addAll(listOfNames)
+
+    // George Paul Peter Mary Jane John
+    while (stackOfNames.isNotEmpty()) {
+        print(stackOfNames.pop())
+        print(" ")
     }
 }
 
