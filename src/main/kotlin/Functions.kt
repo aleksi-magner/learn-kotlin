@@ -57,6 +57,7 @@ fun main() {
     infixFunctions()
     functionReferences()
     lambdaExpressions()
+    advancedLambdaExpressions()
     testPredicates()
     lambdaWithReceiver()
     scopeFunctions()
@@ -416,6 +417,78 @@ fun lambdaExpressions() {
      * Когда в лямбде есть один параметр, есть возможность его пропустить. Параметр доступен под именем it. Его тип выводится из типа аргумента, передаваемого в лямбду.
      */
     println(originalText.filter { it != '.' }) // I don't know what to say
+}
+
+fun advancedLambdaExpressions() {
+    /**
+     * Иногда код в лямбде недостаточно короток, чтобы уместиться в одну строку, поэтому вам нужно разбить код на строки.
+     *
+     * В таком случае последняя строка внутри лямбды рассматривается как возвращаемое значение лямбда.
+     */
+    val originalText = "I don't know... what to say...123456"
+
+    val textWithoutSmallDigits1 = originalText.filter {
+        val isNotDigit = !it.isDigit()
+        val stringRepresentation = it.toString()
+
+        isNotDigit || stringRepresentation.toInt() >= 5
+    }
+
+    println(textWithoutSmallDigits1) // I don't know... what to say...56
+
+    /**
+     * Кроме того, лямбда может содержать более ранние возвраты.
+     *
+     * В Kotlin «более ранние возвраты» относятся к возможности завершить выполнение лямбда-выражения или функции до достижения конца ее блока с помощью ключевого слова return.
+     */
+    val textWithoutSmallDigits2 = originalText.filter {
+        if (!it.isDigit()) {
+            return@filter true
+        }
+
+        it.toString().toInt() >= 5
+    }
+
+    println(textWithoutSmallDigits2) // I don't know... what to say...56
+
+    /**
+     * Захват переменных в замыкании, также известный как использование захваченной переменной или захваченного значения, относится к процессу включения переменной в лямбда-выражение или анонимную функцию, чтобы ее можно было использовать внутри тела функции
+     */
+    var count = 0
+
+    val changeAndPrint = {
+        count += 1
+
+        println(count)
+    }
+
+    println(count) // 0
+    changeAndPrint() // 1
+
+    count += 10
+
+    changeAndPrint() // 12
+    println(count) // 12
+
+    /**
+     * placeArgument преобразует функцию f, принимающую два аргумента, в функцию, принимающую один аргумент. Мы достигаем этого, создавая лямбду, которая принимает только один аргумент и вызывает данную функцию с этим аргументом и заданным значением. Здесь лямбда фиксирует значение и f
+     */
+    fun placeArgument(value: Int, f: (Int, Int) -> Int): (Int) -> Int = {
+        number -> f(value, number)
+    }
+
+    fun sum(a: Int, b: Int): Int = a + b
+
+    val mul2 = { a: Int, b: Int -> a * b }
+
+    val increment = placeArgument(1, ::sum)
+    val triple = placeArgument(3, mul2)
+
+    println(increment(4)) // 5 = 1 + 4
+    println(increment(40)) // 41 = 1 + 40
+
+    println(triple(4)) // 12 = 3 * 4
+    println(triple(40)) // 120 = 3 * 40
 }
 
 /**

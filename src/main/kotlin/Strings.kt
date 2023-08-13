@@ -242,6 +242,17 @@ fun substrings() {
     val lowercaseString = "Lowercase String"
 
     println(lowercaseString.uppercase()) // LOWERCASE STRING
+
+    exchange()
+}
+
+/**
+ * Читает строку и печатает эту строку, меняя местами первый и последний символы
+ */
+fun exchange() {
+    val input = "Hellow"
+
+    println("${input.last()}${input.substring(1, input.lastIndex)}${input.first()}") // welloH
 }
 
 /**
