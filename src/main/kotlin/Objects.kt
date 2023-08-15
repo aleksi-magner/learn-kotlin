@@ -56,6 +56,7 @@ fun main() {
     finalMembers()
     visibilityModifiersForMembers()
     nestedClasses()
+    inheritance()
 
     createTable()
     animalSounds()
@@ -725,6 +726,55 @@ fun nestedClasses() {
 
     bow.putOnABow() // Bob says: "Meow".
     cat.catBow.putOnABow() // Bob says: "Meow".
+}
+
+/**
+ * Наследование классов
+ */
+fun inheritance() {
+    /**
+     * Если ваш код выглядит так, вы создаете окончательный класс. Это означает, что этот класс не будет доступен для наследования в будущем
+     */
+    class BookFinalClass(val pages: Int, val author: String)
+
+    /**
+     * Если вы действительно уверены, что вам нужно расширить класс Book (родительский класс), добавьте ключевое слово open
+     */
+    open class BookOpenClass(val pages: Int, val author: String)
+
+    // Родительский класс, открытый для наследования
+    open class Book(val pages: Int, val author: String, var cost: Float = 0F) {
+        fun getFullInfo(): String = "$pages pages, $author author, $$cost cost"
+    }
+
+    // Наследование класса Book, создание дочернего класса без дополнительного функционала
+    class Comics(pages: Int, author: String, cost: Float) : Book(pages, author, cost)
+
+    val spidermanBook = Comics(113, "The Universe", 8.99F)
+
+    println(spidermanBook.getFullInfo()) // 113 pages, The Universe author, $8.99 cost
+
+    /**
+     * Мы также можем добавить дополнительные функции в дочерние классы
+     */
+    class Booklet(pages: Int, cost: Float) : Book(pages, "", cost) {
+        fun getUSDCost(): String = "$$cost cost"
+        fun getEuroCost(): String = "€$cost cost"
+    }
+
+    val centralBooklet = Booklet(5, 0.14F)
+
+    println(centralBooklet.getFullInfo()) // 5 pages,  author, $0.14 cost
+    println(centralBooklet.getUSDCost()) // $0.14 cost
+    println(centralBooklet.getEuroCost()) // €0.14 cost
+
+    /**
+     * Использование классов в функциях
+     */
+    fun isBigBook(book: Book): Boolean = book.pages >= 100
+
+    println(isBigBook(spidermanBook)) // true
+    println(isBigBook(centralBooklet)) // false
 }
 
 class Table(rows: Int, columns: Int) {
