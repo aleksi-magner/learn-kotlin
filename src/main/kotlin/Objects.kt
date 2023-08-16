@@ -455,6 +455,27 @@ fun initBlock() {
     val size6 = SizeWithInit(6, 4)
 
     println(size6.area) // 24
+
+    val timer1 = ByteTimer(-300)
+    val timer2 = ByteTimer(300)
+    val timer3 = ByteTimer(42)
+
+    println(timer1.time) // -128
+    println(timer2.time) // 127
+    println(timer3.time) // 42
+}
+
+/**
+ * Если число меньше -128, то время свойства класса ByteTimer должно быть -128. Если оно больше 127, то оно должно быть 127, в противном случае это должно быть его необработанное значение.
+ */
+class ByteTimer(var time: Int) {
+    init {
+        time = when {
+            time < -128 -> -128
+            time > 127 -> 127
+            else -> time
+        }
+    }
 }
 
 /**
@@ -775,6 +796,169 @@ fun inheritance() {
 
     println(isBigBook(spidermanBook)) // true
     println(isBigBook(centralBooklet)) // false
+
+    /**
+     * Производный класс может использовать преимущества нескольких конструкторов базового класса для создания собственной схемы с несколькими конструкторами.
+     *
+     * Базовый класс не имеет параметров конструктора, скобки необходимы для инициализации основного класса:
+     */
+    open class PrimaryConstructor
+
+    class Fiction : PrimaryConstructor()
+
+    /**
+     * Когда базовый класс имеет параметры конструктора, производный класс должен позаботиться о них.
+     *
+     * Kotlin не позволит скомпилировать программу, если базовый класс не инициирован должным образом.
+     */
+    open class Journal(
+        val title: String,
+        val author: String = "Unknown",
+        val genre: String = "Unknown",
+        val isbn: Long = 0
+    )
+
+    /**
+     * В классе ExtJournal есть новое свойство publisher, которое должно быть объявлено с помощью var или val. Все остальные параметры не являются новыми свойствами и используются для инициализации соответствующих свойств базового класса Journal.
+     */
+    class ExtJournal(
+        val publisher: String = "Unknown",
+        title: String,
+        genre: String = "Unknown",
+        author: String = "Unknown",
+        isbn: Long = 0
+    ) : Journal(title, author, genre, isbn)
+
+    /**
+     * Класс NoInfoJournal имеет только 2 параметра, которые используются для инициализации базового класса. Все остальные параметры базового класса принимают значения по умолчанию.
+     */
+    class NoInfoJournal(title: String, author: String = "Unknown") : Journal(title, author)
+
+    /**
+     * Класс FictionJournal имеет только 3 параметра, которые используются для инициализации 3 параметров базового класса. Четвёртый параметр genre явно задается в скобках Book.
+     */
+    class FictionJournal(
+        title: String,
+        author: String = "Unknown",
+        isbn: Long = 0
+    ) : Journal(title, author, genre = "fiction", isbn)
+
+    /**
+     * Базовый класс может иметь несколько конструкторов, которые могут включать первичный конструктор и множество вторичных. Производный класс может использовать один или несколько из них, чтобы инициировать базовый класс путем реализации нескольких конструкторов.
+     */
+    open class Base(val beta: Int, val gamma: Int, var message: String = "") {
+        constructor(beta: Int, message: String = "") : this(beta, 0, message)
+    }
+
+    class Derived(val alpha: Int, beta: Int, gamma: Int, message: String = "") : Base(beta, gamma, message) {
+        constructor(alpha: Int, beta: Int, message: String = "") : this(alpha, beta, 0, message)
+    }
+
+    Base(10) // beta is set
+    Base(10, 20) // beta and gamma are set
+    Base(10, 20, "My message") // beta, gamma, and a message are set
+    Base(10, "My message") // beta and a message are set
+
+    /**
+     * Класс Derived объявляет тот же список параметров, что и класс Base, аналогичный вторичный конструктор, а также новое свойство с именем alpha. Таким образом, класс может быть инициирован теми же способами, что и базовый класс.
+     */
+    Derived(0, 10)
+    Derived(0, 10, 20)
+    Derived(0, 10, 20, "My message")
+    Derived(0, 10, "My message")
+
+    /**
+     * Если мы хотим ограничить способы инициации нашего производного класса, нам следует в дальнейшем использовать вторичные конструкторы.
+     *
+     * В следующем примере мы явно определяем каждый возможный конструктор для класса Derived2, используя вторичные конструкторы. Класс Derived2 добавляет новое свойство с именем alpha, как и в предыдущем примере.
+     *
+     * Каждый вторичный конструктор вызывает конструктор базового класса с помощью ключевого слова super. Здесь у нас не может быть основного конструктора. Также обратите внимание на отсутствие круглых скобок после имен классов.
+     *
+     * Здесь мы определили 4 конструктора для соответствия различным конструкторам класса Base, но мы могли ограничить их только необходимыми. В случае ограничения конструкторов, нужно задать значение по умолчанию для alpha
+     */
+    class Derived2 : Base {
+        val alpha: Int
+
+        constructor(alphaConstr: Int, beta: Int) : super(beta) {
+            alpha = alphaConstr
+        }
+
+        constructor(alphaConstr: Int, beta: Int, gamma: Int) : super(beta, gamma) {
+            alpha = alphaConstr
+        }
+
+        constructor(alphaConstr: Int, beta: Int, gamma: Int, message: String) : super(beta, gamma, message) {
+            alpha = alphaConstr
+        }
+
+        constructor(alphaConstr: Int, beta: Int, message: String) : super(beta, message = message) {
+            alpha = alphaConstr
+        }
+    }
+
+    Derived2(0, 10)
+    Derived2(0, 10, 20)
+    Derived2(0, 10, 20, "My message")
+    Derived2(0, 10, "My message")
+
+    /**
+     * Если у класса есть первичный конструктор, несколько блоков инициализации и несколько вторичных конструкторов, то порядок выполнения следующий:
+     *
+     * - Первичный конструктор, даже если вызывается вторичный, вызывается первым через ключевое слово this;
+     *
+     * - Все блоки init последовательно в том порядке, в котором они появляются;
+     *
+     * - Вторичный конструктор, если этот конструктор был вызван.
+     *
+     * В случае наследования сначала инициируется базовый класс: либо путем вызова его первичного, либо вторичного конструктора через производный класс.
+     *
+     * Итак, порядок следования следующий:
+     *
+     * - Первичный конструктор базового класса, даже если вторичный конструктор базового класса вызывается через производный класс;
+     *
+     * - Блоки init базового класса последовательно в том порядке, в котором они появляются;
+     *
+     * - Блок вторичного конструктора базового класса, если этот конструктор был вызван;
+     *
+     * - Первичный конструктор производного класса, даже если вызывается вторичный конструктор производного класса;
+     *
+     * - Блоки инициализации производного класса, последовательно в порядке их появления;
+     *
+     * - Блок вторичного конструктора производного класса, если этот конструктор был вызван.
+     */
+    open class BaseFull(val message: String, val email: String) {
+        init {
+            println("Base class init")
+        }
+
+        constructor(email: String) : this("No message", email) {
+            println("Base class secondary")
+        }
+    }
+
+    class DerivedFull(email: String) : BaseFull(email) {
+        init {
+            println("Derived class init")
+        }
+
+        constructor() : this("example.com") {
+            println("Derived class secondary")
+        }
+    }
+
+    /**
+     * Инициируется через вторичный конструктор, блоки выполняются в следующем порядке:
+     * - BaseFull class init block;
+     * - BaseFull class secondary block;
+     * - DerivedFull class init block;
+     * - DerivedFull class secondary block.
+     */
+    val myDerived = DerivedFull()
+
+    // Base class init
+    // Base class secondary
+    // Derived class init
+    // Derived class secondary
 }
 
 class Table(rows: Int, columns: Int) {
