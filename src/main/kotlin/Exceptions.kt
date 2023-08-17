@@ -1,3 +1,4 @@
+import jdk.internal.org.objectweb.asm.Handle
 import kotlin.math.pow
 
 fun main() {
@@ -22,6 +23,7 @@ fun main() {
     hierarchyOfExceptions()
     creatingCustomExceptions()
     order()
+    stackTrace()
 
     // Handle exceptions
     println(calculateBrakingDistance("6", "-1")) // 18
@@ -272,6 +274,159 @@ fun order() {
             else -> println("What else can go wrong!")
         }
     }
+}
+
+/**
+ * Трассировка стека - важная функция, которая поможет вам в отладке ваших приложений.
+ *
+ * Показывает стек вызовов в приложении до момента создания сообщения трассировки. Оно появляется в виде сообщения в вашей среде IDE, когда приложение выдаёт ошибку.
+ */
+fun stackTrace() {
+    /**
+     * Пример получения трассировки стека после того, как приложение выдаёт ошибку
+     *
+     * Если мы вводим слово вместо числа, приложение выдаёт ошибку и показывает следующее сообщение трассировки стека:
+     *
+     * Exception in thread "main" java.lang.NumberFormatException: For input string: "Kotlin"
+     * 	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
+     * 	at java.base/java.lang.Integer.parseInt(Integer.java:668)
+     * 	at java.base/java.lang.Integer.parseInt(Integer.java:784)
+     * 	at MainKt.main(Main.kt:6)
+     * 	at MainKt.main(Main.kt)
+     *
+     * 	Во-первых, нам нужно прочитать верхнюю строку, где у нас есть три важные подсказки:
+     *
+     * 	1. Поток, в котором возникло исключение. Если вы помните, когда приложение запускается, оно создаёт основной поток.
+     *
+     * 	2. Класс, отвечающий за тип ошибки. В нашем случае это класс NumberFormatException из пакета java.lang.
+     *
+     * 	3. Сообщение, указывающее, почему было выбрано исключение (здесь ввод строки «Kotlin»). Далее вы увидите, как было сгенерировано это сообщение.
+     *
+     * 	Теперь давайте двигаться дальше и исследовать оставшиеся четыре строки. Вторая строка снизу указывает на строку 6, которая находится в методе main. Это строка программы, выполнение которой привело к исключению. Следующим вызываемым методом был toInt().
+     *
+     * 	Внутри этого метода в строке 784 был вызван другой перегруженный метод parseInt(s: String, radix: Int) из класса Integer.
+     *
+     * 	public actual inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
+     *
+     * 	public static int parseInt(String s) throws NumberFormatException {
+     *    return parseInt(s,10);
+     * }
+     *
+     * Во втором методе parseInt(String s, int radix) в строке 784 приложение выдает исключение, вызывающее метод NumberFormatException.forInputString(String s, int radix).
+     *
+     * if (digit < 0 || result < multmin) {
+     *     throw NumberFormatException.forInputString(s, radix);
+     * }
+     *
+     * Наконец, в четвёртой строке снизу мы видим вызов статического метода forInputString(s, radix) из класса NumberFormatException. Ниже, в строке 64, вы можете увидеть сообщение из приведенного выше примера трассировки стека. Так было сгенерировано сообщение из самой первой строки.
+     *
+     * static NumberFormatException forInputString(String s, int radix) {
+     *     return new NumberFormatException("For input string: \"" + s + "\"" +
+     *                                      (radix == 10 ?
+     *                                       "" :
+     *                                       " under radix " + radix));
+     * }
+     *
+     * Следующая диаграмма представляет стек вызовов из приведённого выше примера. Поскольку стек вызовов представляет собой структуру данных LIFO, метод main(), который был вызван при запуске приложения, находится внизу, и он будет последним напечатанным элементом трассировки стека.
+     *
+     *          Stack Trace Elements
+     * | forInputString(String s, int radix) | NumberFormatException
+     * | parseInt(String s, int radix)       | Integer
+     * | parseInt(String s)                  | Integer
+     * | main()                              |
+     */
+    val input = "Kotlin"
+    val number: Int = input.toInt() // Здесь возможно исключение!
+
+    println(number + 1)
+
+    /**
+     * Что делать, если нужно получить трассировку стека в какой-то конкретный момент?
+     *
+     * Его можно получить без выдачи ошибки, вызвав метод Thread.currentThread().stackTrace.
+     *
+     * Таким образом, он возвращает массив StackTraceElement, и вы можете распечатать трассировку стека, используя цикл.
+     *
+     * Согласно официальной документации Java, класс StackTraceElement описывается как элемент в трассировке стека, представляющий один фрейм стека. То есть каждый элемент, возвращаемый функцией Thread.currentThread().getStackTrace(), представляет собой кадр стека, где элемент, напечатанный вверху, представляет точку выполнения, в которой была сгенерирована трассировка стека.
+     *
+     * Существуют и другие способы получения трассировки стека, такие как вызов методов Throwable().stackTrace или Throwable().printStackTrace().
+     *
+     * Вы можете найти их в документации и изучить самостоятельно.
+     */
+    for (element: StackTraceElement in Thread.currentThread().stackTrace) {
+        println(element)
+    }
+
+    val validInput = "4"
+
+    println("Valid parameter")
+
+    /**
+     * Если мы введём число и приложение не выдаст исключение, сообщение трассировки стека напечатает следующие строки:
+     *
+     * java.base/java.lang.Thread.getStackTrace(Thread.java:2550)
+     * ExceptionsKt.demoStackTrace(Exceptions.kt:387)
+     * ExceptionsKt.stackTrace(Exceptions.kt:374)
+     * ExceptionsKt.main(Exceptions.kt:25)
+     * ExceptionsKt.main(Exceptions.kt)
+     *
+     * Затем будет напечатан результат функции: 5
+     */
+    demoStackTrace(validInput)
+
+    val invalidInput = "Kotlin"
+
+    println("\nInvalid parameter")
+
+    /**
+     * Если мы введём строку и приложение выдаст исключение, сообщение трассировки стека напечатает следующие строки:
+     *
+     * java.base/java.lang.Thread.getStackTrace(Thread.java:2550)
+     * ExceptionsKt.demoStackTrace(Exceptions.kt:387)
+     * ExceptionsKt.stackTrace(Exceptions.kt:380)
+     * ExceptionsKt.main(Exceptions.kt:25)
+     * ExceptionsKt.main(Exceptions.kt)
+     *
+     * Затем будет напечатано исключение:
+     *
+     * Exception in thread "main" java.lang.NumberFormatException: For input string: "Kotlin"
+     * 	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
+     * 	at java.base/java.lang.Integer.parseInt(Integer.java:665)
+     * 	at java.base/java.lang.Integer.parseInt(Integer.java:781)
+     * 	at ExceptionsKt.demoStackTrace(Exceptions.kt:406)
+     * 	at ExceptionsKt.stackTrace(Exceptions.kt:380)
+     * 	at ExceptionsKt.main(Exceptions.kt:25)
+     * 	at ExceptionsKt.main(Exceptions.kt)
+     */
+    demoStackTrace(invalidInput)
+}
+
+fun demoStackTrace(input: String) {
+    /**
+     * Самая полезная функция класса StackTraceElement заключается в том, что он предоставляет методы для упрощения этих строк и получения только необходимой информации. Если вы напечатаете println(element.className) внутри упомянутого цикла, вы получите сообщение трассировки стека в следующем виде:
+     */
+    for (element: StackTraceElement in Thread.currentThread().stackTrace) {
+        println(element)
+
+        println("---")
+
+        println("Details:" +
+            "\nCModule version: ${element.moduleVersion}" +
+            "\nModule name: ${element.moduleName}" +
+            "\nFile name: ${element.fileName}" +
+            "\nClass loader name: ${element.classLoaderName}" +
+            "\nClass name: ${element.className}" +
+            "\nLine number: ${element.lineNumber}" +
+            "\nMethod name: ${element.methodName}" +
+            "\nIs native method: ${element.isNativeMethod}"
+        )
+
+        println("---")
+    }
+
+    val number: Int = input.toInt() // Здесь возможно исключение!
+
+    println(number + 1)
 }
 
 // Ручное создание исключений
