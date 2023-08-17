@@ -19,9 +19,9 @@ fun main() {
      * Ошибка может произойти во время работы программы, даже если она синтаксически верна и скомпилирована без каких-либо проблем.
      */
     exception()
-
     hierarchyOfExceptions()
     creatingCustomExceptions()
+    order()
 
     // Handle exceptions
     println(calculateBrakingDistance("6", "-1")) // 18
@@ -230,6 +230,47 @@ fun creatingCustomExceptions() {
     class MyArithmeticException: ArithmeticException {
         constructor() : super()
         constructor(message: String?) : super(message)
+    }
+}
+
+/**
+ * При обработке исключений порядок выстраивается сверху вниз от более конкретного (производного) класса к более общему.
+ *
+ * Всегда считается лучшей практикой перехватывать исключение супертипа при обработке нескольких исключений. Это помогает нам изящно обрабатывать неизвестные или неожиданные исключения.
+ *
+ * Иногда наш код может столкнуться с исключениями, которых мы не ожидали.
+ *
+ * Перехватывая супертип, мы можем обрабатывать такие исключения, не вызывая сбоя или непредсказуемого поведения нашей программы.
+ */
+fun order() {
+    /**
+     * Переставляя блоки catch и размещая более конкретные исключения первыми, мы обеспечиваем правильное выполнение соответствующего блока catch.
+     */
+    try {
+        val input = "ome"
+
+        println(100 / input.toInt())
+    } catch (error: NumberFormatException) {
+        println("You didn't type an INT number!")
+    } catch (error: ArithmeticException) {
+        println("You typed 0!")
+    } catch (error: Exception) {
+        println("What else can go wrong!")
+    }
+
+    /**
+     * Оператор when может помочь нам написать более лаконичный код для перехвата нескольких исключений в одном блоке catch. Но вам всё равно нужно правильно упорядочивать блоки catch, чтобы более конкретные всегда обрабатывались первыми.
+     */
+    try {
+        val input = "ome"
+
+        println(100 / input.toInt())
+    } catch (error: Exception) {
+        when (error) {
+            is NumberFormatException -> println("You didn't type an INT number!")
+            is ArithmeticException -> println("You typed 0!")
+            else -> println("What else can go wrong!")
+        }
     }
 }
 
