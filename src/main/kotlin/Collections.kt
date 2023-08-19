@@ -1242,6 +1242,18 @@ fun multiDimensionalArray() {
     )
 
     println(array3D.contentDeepToString())
+
+
+    /**
+     * Создание трёхмерного массива 3x3x3, содержащего элементы типа Int и заполненных нулями
+     */
+    val array3x3: Array<Array<IntArray>> =  Array(3) {
+        Array(3) {
+            IntArray(3) { 0 }
+        }
+    }
+
+    println(array3x3.contentDeepToString())
 }
 
 /**
