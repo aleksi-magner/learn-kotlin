@@ -346,6 +346,34 @@ fun mutableLists() {
 
     println("Source variable list: $variableList")
     println("Sort variable list: $sortVariableList")
+
+    shapeShifter()
+}
+
+/**
+ * Представьте, что у вас есть двумерный список inputList. Гарантируется, что он имеет не менее двух вложенных списков.
+ *
+ * Создайте новый двумерный список с двумя вложенными списками — первым и последним списками из inputList — в обратном порядке. Другими словами, последний должен стать первым, и наоборот.
+ */
+fun shapeShifter() {
+    val inputList1 = mutableListOf(
+        mutableListOf('P', 'R', 'O', 'G', 'R', 'A', 'M', 'M', 'I', 'N', 'G'),
+        mutableListOf('I', 'S'),
+        mutableListOf('M', 'A', 'G', 'I', 'C')
+    )
+
+    // [[M, A, G, I, C], [P, R, O, G, R, A, M, M, I, N, G]]
+    println(listOf(inputList1.last().toList(), inputList1.first().toList()))
+
+    val inputList2 = mutableListOf(
+        mutableListOf(1, 2),
+        mutableListOf(3, 4),
+        mutableListOf(5, 6),
+        mutableListOf(7, 8)
+    )
+
+    // [[7, 8], [1, 2]]
+    println(listOf(inputList2.last().toList(), inputList2.first().toList()))
 }
 
 /**
