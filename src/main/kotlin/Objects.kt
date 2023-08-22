@@ -1,3 +1,5 @@
+import kotlin.math.roundToInt
+
 fun main() {
     /**
      * Объект — это часть памяти, которая что-то хранит.
@@ -28,7 +30,7 @@ fun main() {
      */
      println(msg.repeat(3)) // "HiHiHi"
 
-    copingByReference()
+    // copingByReference()
 
     /**
      * Создание нового класса
@@ -57,6 +59,8 @@ fun main() {
     visibilityModifiersForMembers()
     nestedClasses()
     inheritance()
+    polymorphism()
+    overriding()
 
     createTable()
     animalSounds()
@@ -959,6 +963,53 @@ fun inheritance() {
     // Base class secondary
     // Derived class init
     // Derived class secondary
+}
+
+/**
+ * Полиморфизм — это способность объекта или его методов принимать множество форм в зависимости от его типа и параметров того или иного метода.
+ *
+ * Механизм определения нескольких методов с одинаковым именем, но с разными параметрами называется перегрузкой (overloading).
+ */
+fun polymorphism() {}
+
+/**
+ * Переопределение функций-членов в наследуемых классах
+ *
+ * По умолчанию любая переопределённая функция открыта. Это означает, что вы также можете переопределять функции в дочерних классах.
+ *
+ * Кроме того, если вы хотите вызвать родительскую функцию, вы можете использовать super
+ */
+fun overriding() {
+    open class Transport(val cost: Int) {
+        open fun getFullInfo(): String = "$$cost cost"
+
+        fun getTax(): String = "$${(cost * 0.25).roundToInt()} tax"
+    }
+
+    /**
+     * Расширяем класс Transport собственной функцией getFullInfo().
+     *
+     * Если вы забудете ключевое слово override, компилятор предупредит вас, потому что не может быть двух функций getFullInfo() с одинаковыми параметрами.
+     *
+     * Вы также не можете переопределить функцию getTax(), потому что она не открыта.
+     */
+    open class Ship(cost: Int, val color: String) : Transport(cost) {
+        override fun getFullInfo(): String = super.getFullInfo() + ", $color color"
+    }
+
+    val transport = Transport(1000)
+    val ship = Ship(2000, "marine")
+
+    println(transport.getFullInfo()) // $1000 cost
+    println(ship.getFullInfo()) // $2000 cost, marine color
+
+    /**
+     * Есть еще одна полезная особенность, касающаяся открытых функций. Мы можем передавать открытые классы и любые потомки таких классов в функцию как параметры
+     */
+    fun getTransportInfo(transport: Transport): String = "transport info: " + transport.getFullInfo()
+
+    println(getTransportInfo(transport)) // transport info: $1000 cost
+    println(getTransportInfo(ship)) // transport info: $2000 cost, marine color
 }
 
 class Table(rows: Int, columns: Int) {
