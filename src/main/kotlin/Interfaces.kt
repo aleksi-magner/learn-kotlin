@@ -62,6 +62,97 @@ class Parrot : Animal {
     }
 }
 
+/**
+ * Наследование интерфейсов
+ *
+ * Основное правило реализации производных интерфейсов заключается в том, что класс должен реализовывать методы и свойства как из базового, так и из производного интерфейса
+ *
+ * В примере интерфейс Bird является производным от интерфейса Animal, но с добавлением некоторых собственных методов и свойств.
+ */
+interface Bird : Animal {
+    val canFly: Boolean
+    val flyingSpeed: Int
+
+    fun buildNest()
+}
+
+class Cockatoo : Bird {
+    override val numberOfLimbs: Int = 2
+    override val canFly: Boolean = true
+    override val flyingSpeed: Int = 20
+
+    override fun move() {
+        println("Fly")
+    }
+
+    override fun communicate(): String = "Speak"
+
+    override fun buildNest() {
+        println("Collect materials")
+        println("Find good place")
+        println("Build small nest")
+    }
+}
+
+/**
+ * Мы также можем использовать множественное наследование: класс, реализующий несколько разных интерфейсов.
+ */
+interface SimpleBird : Animal {
+    fun buildNest()
+}
+
+interface Flying {
+    val flyingSpeed: Int
+    val flyingManeuverability: Int
+}
+
+class Owl : SimpleBird, Flying {
+    // Flying interface
+    override val flyingSpeed: Int = 100
+    override val flyingManeuverability: Int = 95
+
+    // Bird interface
+    override fun buildNest() {
+        println("Build small nest")
+    }
+
+    // Animal Interface
+    override val numberOfLimbs: Int = 2
+
+    override fun move() {
+        println("Fly")
+    }
+
+    override fun communicate(): String = "Coo"
+}
+
+/**
+ * Точно так же, как классы могут реализовывать несколько интерфейсов, один интерфейс может быть производным от нескольких других.
+ */
+interface FlyingBird : Animal, Flying {
+    fun buildNest()
+}
+
+class Owl2 : FlyingBird {
+    // Flying interface
+    override val flyingSpeed: Int = 100
+    override val flyingManeuverability: Int = 95
+
+    // Bird interface
+    override fun buildNest() {
+        println("Build small nest")
+    }
+
+    // Animal Interface
+    override val numberOfLimbs: Int = 2
+
+    override fun move() {
+        println("Fly")
+    }
+
+    override fun communicate(): String = "Coo"
+}
+
 fun main() {
     val cat = Cat()
 
@@ -82,21 +173,64 @@ fun main() {
     parrot.printNumberOfLimbs() // 2
     parrot.myAnimalMethod() // My method
 
-    // Интерфейсы коллекций
+    val cockatoo = Cockatoo()
+
+    println("Cockatoo age: ${cockatoo.age}") // Cockatoo age: 10
+    println("Cockatoo number of limbs: ${cockatoo.numberOfLimbs}") // Cockatoo number of limbs: 2
+    println("Cockatoo can fly: ${cockatoo.canFly}") // Cockatoo can fly: true
+    println("Cockatoo flying speed: ${cockatoo.flyingSpeed}") // Cockatoo flying speed: 20
+    println("Cockatoo communicate: ${cockatoo.communicate()}") // Cockatoo communicate: Speak
+
+    cockatoo.move() // Fly
+    cockatoo.printNumberOfLimbs() // 2
+    cockatoo.buildNest()
+
+    val owl = Owl()
+
+    println("Owl age: ${owl.age}") // Owl age: 10
+    println("Owl number of limbs: ${owl.numberOfLimbs}") // Owl number of limbs: 2
+    println("Owl flying speed: ${owl.flyingSpeed}") // Owl flying speed: 100
+    println("Owl flying maneuverability: ${owl.flyingManeuverability}") // Owl flying maneuverability: 95
+    println("Owl communicate: ${owl.communicate()}") // Owl communicate: Coo
+
+    owl.move() // Fly
+    owl.printNumberOfLimbs() // 2
+    owl.buildNest() // Build small nest
+
+    val owl2 = Owl2()
+
+    println("Owl2 age: ${owl2.age}") // Owl2 age: 10
+    println("Owl2 number of limbs: ${owl2.numberOfLimbs}") // Owl2 number of limbs: 2
+    println("Owl2 flying speed: ${owl2.flyingSpeed}") // Owl2 flying speed: 100
+    println("Owl2 flying maneuverability: ${owl2.flyingManeuverability}") // Owl flying maneuverability: 95
+    println("Owl2 communicate: ${owl2.communicate()}") // Owl2 communicate: Coo
+
+    owl2.move() // Fly
+    owl2.printNumberOfLimbs() // 2
+    owl2.buildNest() // Build small nest
+
+    collections()
+}
+
+fun addListToCollection(list: MutableCollection<String>, addedList: Collection<String>): MutableCollection<String> {
+    list.addAll(addedList)
+
+    return list
+}
+
+// Интерфейсы коллекций
+fun collections() {
     val oldList: MutableList<String> = "8 12 25 56 192 32 76 21".split(" ").toMutableList()
     val oldSet: MutableSet<String> = oldList.toMutableSet()
 
     val addedList: List<String> = "12 67986 12 889 9898 12 3232".split(" ").toList()
 
-    fun addListToCollection(list: MutableCollection<String>, addedList: Collection<String>): MutableCollection<String> {
-        list.addAll(addedList)
-
-        return list
-    }
-
     addListToCollection(oldList, addedList)
     addListToCollection(oldSet, addedList)
 
-    println(oldList.joinToString(" ")) // 8 12 25 56 192 32 76 21 12 67986 12 889 9898 12 3232
-    println(oldSet.joinToString(" ")) // 8 12 25 56 192 32 76 21 67986 889 9898 3232
+    // 8 12 25 56 192 32 76 21 12 67986 12 889 9898 12 3232
+    println(oldList.joinToString(" "))
+
+    // 8 12 25 56 192 32 76 21 67986 889 9898 3232
+    println(oldSet.joinToString(" "))
 }
