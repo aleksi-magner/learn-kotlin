@@ -74,6 +74,7 @@ fun main() {
     retrieveSingleElement()
     collectionsAndNullable()
     filteringElements()
+    mappingTransformation()
 }
 
 /**
@@ -2332,4 +2333,151 @@ fun filteredPalindromeList() {
     }
 
     println(list) // [kayak, deified, rotator, repaper]
+}
+
+/**
+ * С помощью функций map() и mapIndexed() мы можем создать новую коллекцию, применив лямбда-функцию преобразования к нашей исходной коллекции.
+ *
+ * Если вы примените функцию преобразования к элементам и преобразование не может быть выполнено для некоторых из них, результат для этих элементов будет null.
+ *
+ * Вы можете избежать этих результатов, используя mapNotNull() или mapIndexedNotNull().
+ *
+ * Эти функции представляют собой комбинации map/mapIndexed с filterNotNull.
+ *
+ * Есть функции преобразования, которые помогут нам обработать несколько коллекций.
+ *
+ * Функция flatten() возвращает единый список всех элементов из всех коллекций в данной коллекции.
+ *
+ * Это очень полезно, если у нас есть несколько коллекций и мы хотим получить одну коллекцию, которая их объединит.
+ *
+ * Функция flatMap() принимает функцию, которая сопоставляет элементы одной коллекции с другой и возвращает список всех значений в этих элементах. Это эквивалентно сопоставлению каждого элемента вместе со сведением для получения окончательного результата.
+ *
+ * Это очень полезно, если перед нами стоит задача отображения связей «один ко многим».
+ */
+fun mappingTransformation() {
+    val numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    val words = listOf("anne", "michael", "caroline", "dimitry", "emilio")
+
+    // Mapping
+    println(numbers.map { it * 2 }) // [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    println(words.map { it.uppercase() }) // [ANNE, MICHAEL, CAROLINE, DIMITRY, EMILIO]
+
+    // Mapping with index
+    // [0, 2, 6, 12, 20, 30, 42, 56, 72, 90]
+    println(numbers.mapIndexed { index, value -> value * index })
+
+    // [ANNE, michael, CAROLINE, dimitry, EMILIO]
+    println(words.mapIndexed { index, value ->
+        if (index % 2 == 0) value.uppercase() else value
+    })
+
+    // List of word lengths
+    println(words.map { it.length }) // [4, 7, 8, 7, 6]
+
+    // List of strings of numbers
+    val numbersString = listOf("1", "2", "3", "4", "5a", "6", "7", "8", "9", "10")
+
+    // List of Ints of numbers.
+    // It will return a list of Int? (Int or null)
+    val myNumbersWithNulls = numbersString.map { it.toIntOrNull() }
+    val myNumbersWithoutNulls = numbersString.mapNotNull { it.toIntOrNull() }
+
+    println(myNumbersWithNulls) // [1, 2, 3, 4, null, 6, 7, 8, 9, 10]
+    println(myNumbersWithoutNulls) // [1, 2, 3, 4, 6, 7, 8, 9, 10]
+
+    // List of words
+    val wordsString = listOf("anne", "michael", "caroline", "dimitry", "alicia")
+
+    // map and filter it.
+    // It will return a list of Strings (String or null)
+    val myWordsWithNulls = wordsString.map {
+        if (it.startsWith("a")) {
+            it.uppercase()
+        } else {
+            null
+        }
+    }
+
+    val myWordsWithoutNulls = wordsString.mapNotNull {
+        if (it.startsWith("a")) {
+            it.uppercase()
+        } else {
+            null
+        }
+    }
+
+    println(myWordsWithNulls) // [ANNE, null, null, null, ALICIA]
+    println(myWordsWithoutNulls) // [ANNE, ALICIA]
+
+    // Map
+    val map = mapOf(
+        Pair(1, "one"),
+        Pair(2, "two"),
+        Pair(3, "three"),
+        Pair(4, "four"),
+        Pair(5, "five"),
+    )
+
+    println(map.map { it.key }) // [1, 2, 3, 4, 5]
+    println(map.map { it.value }) // [one, two, three, four, five]
+
+    println(map.mapKeys { it.key * 2 }) // {2=one, 4=two, 6=three, 8=four, 10=five}
+    println(map.mapValues { it.value.uppercase() }) // {1=ONE, 2=TWO, 3=THREE, 4=FOUR, 5=FIVE}
+
+    // Map numbers to words.
+    // key and length of value
+    println(map.mapValues { it.value.length }) // {1=3, 2=3, 3=5, 4=4, 5=4}
+
+    // reversed value where the key is even
+    // {1=one, 2=owt, 3=three, 4=ruof, 5=five}
+    println(map.mapValues {
+        if (it.key % 2 == 0) {
+            it.value.reversed()
+        } else {
+            it.value
+        }
+    })
+
+    // Flatten (flatten/flatMap)
+    val nestedNumbers = listOf(
+        listOf(1, 2, 3),
+        listOf(4, 5, 6),
+        listOf(7, 8, 9)
+    )
+
+    val nestedWords = listOf(
+        listOf("anne", "michael"),
+        listOf("caroline", "dmitry"),
+        listOf("emilio", "francois")
+    )
+
+    println(nestedNumbers.flatten()) // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    println(nestedWords.flatten()) // [anne, michael, caroline, dmitry, emilio, francois]
+
+    // [2, 4, 6, 8, 10, 12, 14, 16, 18]
+    println(nestedNumbers.flatMap { list -> list.map { it * 2 } })
+
+    // [ANNE, MICHAEL, CAROLINE, DMITRY, EMILIO, FRANCOIS]
+    println(nestedWords.flatMap { list -> list.map { it.uppercase() } })
+
+    val listOfMaps = listOf(
+        mapOf(Pair(1, "one"), Pair(2, "two")),
+        mapOf(Pair(3, "three"), Pair(4, "four")),
+    )
+
+    val resMapFlatten = listOfMaps
+        .flatMap { it.entries }
+        .associate { it.toPair() } // it.toPair() | Pair(it.key, it.value) | it.key to it.value
+
+    println(resMapFlatten) // {1=one, 2=two, 3=three, 4=four}
+
+    val listOfListOfList = listOf(
+        listOf(listOf(1, 2, 3), listOf(4, 5, 6)),
+        listOf(listOf(7, 8, 9), listOf(10, 11, 12))
+    )
+
+    /// or .flatten().flatten()
+    val resListFlatten = listOfListOfList.flatMap { it.flatten() }
+
+    println(resListFlatten) // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 }
