@@ -81,4 +81,22 @@ fun main() {
     parrot.move() // Fly
     parrot.printNumberOfLimbs() // 2
     parrot.myAnimalMethod() // My method
+
+    // Интерфейсы коллекций
+    val oldList: MutableList<String> = "8 12 25 56 192 32 76 21".split(" ").toMutableList()
+    val oldSet: MutableSet<String> = oldList.toMutableSet()
+
+    val addedList: List<String> = "12 67986 12 889 9898 12 3232".split(" ").toList()
+
+    fun addListToCollection(list: MutableCollection<String>, addedList: Collection<String>): MutableCollection<String> {
+        list.addAll(addedList)
+
+        return list
+    }
+
+    addListToCollection(oldList, addedList)
+    addListToCollection(oldSet, addedList)
+
+    println(oldList.joinToString(" ")) // 8 12 25 56 192 32 76 21 12 67986 12 889 9898 12 3232
+    println(oldSet.joinToString(" ")) // 8 12 25 56 192 32 76 21 67986 889 9898 3232
 }
