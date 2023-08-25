@@ -75,6 +75,7 @@ fun main() {
     collectionsAndNullable()
     filteringElements()
     mappingTransformation()
+    aggregateOperations()
 }
 
 /**
@@ -2480,4 +2481,110 @@ fun mappingTransformation() {
     val resListFlatten = listOfListOfList.flatMap { it.flatten() }
 
     println(resListFlatten) // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+}
+
+/**
+ * Получение значения на основе содержимого коллекции, например, максимальное значение, среднее значение, объект с максимальным значением свойства и т.д.
+ *
+ * Эти методы известны как «методы агрегирования»:
+ *
+ * - minOrNull() возвращает наименьший элемент коллекции или значение null в пустой коллекции.
+ *
+ * - maxOrNull() возвращает самый большой элемент коллекции или значение null в пустой коллекции.
+ *
+ * - average() возвращает среднее значение элементов в коллекции с числовыми значениями.
+ *
+ * - sum() возвращает сумму всех элементов коллекции с числовыми значениями.
+ *
+ * - count() возвращает количество элементов в коллекции.
+ *
+ * - minByOrNull() с функцией селектора возвращает элемент с наименьшим значением. Он используется вместо minBy(), чтобы избежать исключения.
+ *
+ * - maxByOrNull() с функцией селектора возвращает элемент с наибольшим значением. Он используется вместо maxBy(), которое выдаёт исключение NoSuchElementException, чтобы избежать исключения.
+ *
+ * - minOfOrNull() с функцией селектора возвращает наименьшее возвращаемое значение самого селектора. Это развитие minOf(), которое выдаёт исключение NoSuchElementException, если коллекция пуста.
+ *
+ * - maxOfOrNull() с функцией селектора возвращает наибольшее возвращаемое значение самого селектора. Это развитие метода maxOf(), который выдаёт исключение, если коллекция пуста.
+ *
+ * - sumOf() с функцией селектора возвращает сумму своего применения ко всем элементам коллекции.
+ *
+ * - minWithOrNull() возвращает наименьший элемент согласно компаратору.
+ *
+ * - maxWithOrNull() возвращает наибольший элемент по данным компаратора.
+ *
+ * - minOfWithOrNull() возвращает наименьшее возвращаемое значение селектора согласно компаратору.
+ *
+ * - maxOfWithOrNull() возвращает наибольшее возвращаемое значение селектора согласно компаратору.
+ */
+fun aggregateOperations() {
+    val numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    val words = listOf("anne", "michael", "caroline", "dimitry", "emilio")
+    val emptyWordsList = emptyList<String>()
+
+    println("--- Min and Max ---")
+
+    println(numbers.minOrNull()) // 1
+    println(numbers.maxOrNull()) // 10
+
+    println("--- Average ---")
+
+    println(numbers.average()) // 5.5
+
+    println("--- Sum ---")
+
+    println(numbers.sum()) // 55
+    println(numbers.sumOf { it }) // 55
+    println(words.sumOf { it.length }) // 32
+
+    println("--- Count ---")
+
+    println(numbers.count()) // 10
+    println(words.count()) // 5
+    println(words.count { it.first() == 'a' }) // 1
+    println(words.count { it.length > 5 }) // 4
+    println(emptyWordsList.count()) // 0
+
+    println("--- maxByOrNull / minByOrNull ---")
+
+    println(numbers.minByOrNull { it }) // 1
+    println(numbers.maxByOrNull { it }) // 10
+
+    println(words.minByOrNull { it.length }) // anne
+    println(words.maxByOrNull { it.length }) // caroline
+
+    println(words.minByOrNull { it.length > 5 }) // anne
+    println(words.maxByOrNull { it.length > 5 }) // michael
+
+    println(emptyWordsList.minByOrNull { it.length }) // null
+    println(emptyWordsList.maxByOrNull { it.length }) // null
+
+    // println(emptyWordsList.minBy { it.length })  // NoSuchElementException
+    // println(emptyWordsList.maxBy { it.length })  // NoSuchElementException
+
+    println("--- maxOfOrNull / minOfOrNull ---")
+
+    println(numbers.minOfOrNull { it }) // 1
+    println(numbers.maxOfOrNull { it }) // 10
+    println(words.minOfOrNull { it.length }) // 4
+    println(words.maxOfOrNull { it.length }) // 8
+
+    println(emptyWordsList.minOfOrNull { it.length }) // null
+    println(emptyWordsList.maxOfOrNull { it.length }) // null
+
+    // println(emptyWordsList.minOf { it.length })  // NoSuchElementException
+    // println(emptyWordsList.maxOf { it.length })  // NoSuchElementException
+
+    println("--- maxWithOrNull / minWithOrNull ---")
+
+    println(words.minWithOrNull(compareBy { it.length })) // anne
+    println(words.maxWithOrNull(compareBy { it.length })) // caroline
+    println(words.minWithOrNull(compareBy { it.length > 5 })) // anne
+    println(words.maxWithOrNull(compareBy { it.length > 5 })) // michael
+
+    println("--- maxOfWithOrNull / minOfWithOrNull ---")
+
+    println(words.minOfWithOrNull(naturalOrder()) { it.length }) // 4
+    println(words.maxOfWithOrNull(naturalOrder()) { it.length }) // 8
+    println(words.minOfWithOrNull(naturalOrder()) { it.length > 5 }) // false
+    println(words.maxOfWithOrNull(naturalOrder()) { it.length > 5 }) // true
 }
