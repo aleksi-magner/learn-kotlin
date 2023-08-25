@@ -61,6 +61,7 @@ fun main() {
     inheritance()
     polymorphism()
     overriding()
+    delegation()
 
     createTable()
     animalSounds()
@@ -1010,6 +1011,108 @@ fun overriding() {
 
     println(getTransportInfo(transport)) // transport info: $1000 cost
     println(getTransportInfo(ship)) // transport info: $2000 cost, marine color
+}
+
+interface MyInterface {
+    val msg: String
+
+    fun print()
+}
+
+class MyImplementation : MyInterface {
+    override val msg: String = "MyImplementation sends regards!"
+
+    override fun print() {
+        println(msg)
+    }
+}
+
+interface ICallbackReceiver {
+    fun onBeforeAction()
+    fun onAfterAction()
+    fun action(function: () -> Unit) {
+        onBeforeAction()
+        function()
+        onAfterAction()
+    }
+}
+
+interface ILogger {
+    fun getStubDateTime() = "05.11.2022-14:31:04"
+
+    val format: String
+        get() = "[${getStubDateTime()}]: "
+
+    fun print(message: String)
+}
+
+// Простая реализация интерфейса ILogger
+class BasicLogger : ILogger {
+    override fun print(message: String): Unit = println(format + message)
+}
+
+class ConsoleNotifier(logger: ILogger) : ICallbackReceiver, ILogger by logger {
+    private val onBeforeStr = "OnBefore!"
+    private val onAfterStr = "OnAfter!"
+
+    override fun onBeforeAction() = print(onBeforeStr)
+    override fun onAfterAction() = print(onAfterStr)
+}
+
+/**
+ * Делегирование — это процесс использования определенного объекта вместо реализации
+ */
+fun delegation() {
+    /**
+     * Предположим, что нам нужно создать новый класс, который:
+     * - будет иметь некоторую собственную функциональность
+     * - одновременно будет реализовывать интерфейс MyInterface.
+     *
+     * Мы бы наткнулись на копирование кода: у нас уже есть реализация этого интерфейса, но нам нужен другой класс, который, однако, всё равно должен будет реализовывать этот интерфейс.
+     *
+     * Мы можем закодировать наш новый класс, а когда нам нужно использовать реализацию интерфейса, мы просто ссылаемся на уже существующую реализацию, а Котлин делает всё остальное.
+     *
+     * В примере ниже мы ожидаем реализацию MyInterface в качестве параметра (с именем «base»).
+     * И при наследовании мы заявляем, что MyInterface реализуется ранее полученным параметром с именем «base».
+     *
+     * По сути, в конструкторе этого класса нам требуется что-то, что реализует интерфейс MyInterface, отмеченный двоеточием.
+     * А затем, используя ключевое слово `by`, мы сообщаем производному классу, что всякий раз, когда его просят выполнить что-либо «обещанное» интерфейсом MyInterface, он будет использовать предоставленный объект.
+     */
+    class MyNewClass(base: MyInterface) : MyInterface by base {
+        override val msg = "Delegate sends regards."
+    }
+
+    // Создаём экземпляр класса, реализующего MyInterface
+    val implementation = MyImplementation()
+
+    // Затем передаём этот экземпляр реализации в качестве параметра
+    val delegate = MyNewClass(implementation)
+
+    println(delegate.msg) // Delegate sends regards.
+
+    // Сообщение и первичной реализации интерфейса, несмотря на переопределение при делегировании
+    delegate.print() // MyImplementation sends regards!
+
+    // Использование нескольких делегатов
+    class ExampleParser(notifier: ICallbackReceiver, logger: BasicLogger) : ICallbackReceiver by notifier, ILogger by logger {
+        fun start() = action {
+            parseFiles()
+        }
+
+        fun parseFiles() {
+            print("Parsing...")
+        }
+    }
+
+    val loggerInstance = BasicLogger()
+    val dateTimeNotifier = ConsoleNotifier(loggerInstance)
+
+    val simpleParser = ExampleParser(dateTimeNotifier, loggerInstance)
+
+    // [05.11.2022-14:31:04]: OnBefore!
+    // [05.11.2022-14:31:04]: Parsing...
+    // [05.11.2022-14:31:04]: OnAfter!
+    simpleParser.start()
 }
 
 class Table(rows: Int, columns: Int) {

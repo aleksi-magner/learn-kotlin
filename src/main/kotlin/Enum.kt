@@ -17,6 +17,16 @@ enum class Rainbow(val color: String, val rgb: String) {
     }
 }
 
+enum class DaysOfTheWeek {
+    SUNDAY,
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY;
+}
+
 fun main() {
     val redColor = Rainbow.RED_COLOR
     val color: String = redColor.color
@@ -54,4 +64,11 @@ fun main() {
     println("Экземпляр по имени Enum (valueOf): $indigoColor") // INDIGO_COLOR
     println("Экземпляр по имени Enum (valueOf): ${indigoColor.color}") // Indigo
     println("Экземпляр по имени Enum (valueOf): ${indigoColor.rgb}") // #4B0082
+
+    /**
+     * Печатает имя каждого экземпляра перечисления на новой строке, начиная с SUNDAY.
+     */
+    for (enum in DaysOfTheWeek.entries) {
+        println(enum)
+    }
 }
