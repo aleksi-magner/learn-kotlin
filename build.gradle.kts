@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation("com.diogonunes:JCDP:4.0.2")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
