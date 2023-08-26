@@ -86,4 +86,18 @@ fun workingWithJSON() {
 
     val type = Types.newParameterizedType(List::class.java, Human::class.java, Map::class.java)
     val humanListAdapter = moshi.adapter<List<Human?>>(type)
+
+    val jsonStr =
+        """[{"name":"Ruslan","age":20,"friends":["Victoria","Valery"],
+        "grades":{"Math":"A","Philosophy":"F","Physics":"D"}},
+        {"name":"Victoria","age":35,"friends":["Ruslan","Anastasia"],
+        "grades":{"Math":"B","Philosophy":"C","Physics":"B"}}]""".trimIndent()
+
+    val humanList = humanListAdapter.fromJson(jsonStr)
+
+    // Ruslan has a grade of A in maths
+    // Victoria has a grade of B in maths
+    for (h in humanList!!) {
+        println(h?.name + " has a grade of ${h!!.grades["Math"]} in maths")
+    }
 }
