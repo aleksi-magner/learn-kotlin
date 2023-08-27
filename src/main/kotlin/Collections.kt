@@ -76,6 +76,8 @@ fun main() {
     filteringElements()
     mappingTransformation()
     aggregateOperations()
+    foldAndReduce()
+    groupingCollections()
 }
 
 /**
@@ -2587,4 +2589,258 @@ fun aggregateOperations() {
     println(words.maxOfWithOrNull(naturalOrder()) { it.length }) // 8
     println(words.minOfWithOrNull(naturalOrder()) { it.length > 5 }) // false
     println(words.maxOfWithOrNull(naturalOrder()) { it.length > 5 }) // true
+}
+
+/**
+ * С помощью fold() и reduce() мы можем работать с элементами коллекции как с последовательностью и возвращать накопленный результат.
+ *
+ * - reduce() преобразует данную коллекцию в один результат. Для объединения пары элементов в накопленное значение требуется оператор лямбда-функции. Затем он проходит по коллекции и шаг за шагом выполняет операцию, объединяя накопленное значение со следующим элементом коллекции.
+ *
+ * Выполняет на один шаг меньше, поскольку аккумулятор является первым элементом.
+ * Выдаст исключение UnsupportedOperationException с пустой коллекцией.
+ * Результат операции всегда будет того же типа (или супертипа), что и исходные данные — мы не можем изменить его на другой тип.
+ *
+ * - fold() принимает начальное значение, использует его как накопленное значение на первом шаге и применяет операцию слева направо, объединяя текущее накопленное значение с каждым элементом.
+ *
+ * Выполняет столько операций, сколько элементов в коллекции.
+ * Значение по умолчанию будет итоговым значением при использовании с пустой коллекцией.
+ * Можно изменить тип возвращаемого значения.
+ *
+ * Иногда нам нужно выполнить действия в обратном порядке. Мы можем использовать foldRight() и reduceRight() для применения операций справа налево.
+ *
+ * Однако помните, что аргументы операции меняют свой порядок: сначала идет элемент, а затем накопленное значение.
+ *
+ * Если нужно использовать индексы, можно пользоваться методами reduceIndexed(), foldIndexed(), reduceRightIndexed(), foldRightIndexed()
+ *
+ * Все операции reduce, которые мы представили, вызывают исключение для пустых коллекций. Если мы хотим получить значение null, мы должны использовать те же методы, но заканчивающиеся на *OrNull(): reduceOrNull(), reduceRightOrNull(), reduceIndexedOrNull() и reduceRightIndexedOrNull()
+ *
+ * В некоторых случаях интересно сохранить промежуточное значение аккумулятора. Для этого у нас есть runningFold(), runningReduce(), runningFoldIndexed() и runningReduceIndexed(), которые возвращают список с промежуточными результатами.
+ */
+fun foldAndReduce() {
+    val list = listOf(1, 2, 3, 4, 5)
+
+    println("-- fold sum --")
+
+    // fold использует параметр в качестве начального значения аккумулятора
+    var sum = list.fold(0) { accumulator, element ->
+        println("acc: $accumulator, i: $element, acc + i: ${accumulator + element}")
+
+        accumulator + element
+    }
+
+    println(sum) // 15
+
+    println("-- reduce sum --")
+
+    // reduce использует первый элемент в качестве начального значения аккумулятора
+    sum = list.reduce { accumulator, element ->
+        println("acc: $accumulator, i: $element, acc + i: ${accumulator + element}")
+
+        accumulator + element
+    }
+
+    println(sum) // 15
+
+    println("-- fold multiplication --")
+
+    var product = list.fold(1) { accumulator, element ->
+        println("acc: $accumulator, i: $element, acc * i: ${accumulator * element}")
+
+        accumulator * element
+    }
+
+    println(product) // 120
+
+    println("-- reduce multiplication --")
+
+    product = list.reduce { accumulator, element ->
+        println("acc: $accumulator, i: $element, acc * i: ${accumulator * element}")
+
+        accumulator * element
+    }
+
+    println(product) // 120
+
+    println("-- fold / reduce with empty list --")
+
+    val emptyList = listOf<Int>()
+
+    sum = emptyList.fold(0) { accumulator, element ->
+        println("acc: $accumulator, i: $element, acc + i: ${accumulator + element}")
+
+        accumulator + element
+    }
+
+    println(sum) // 0
+
+    // Выдаст исключение UnsupportedOperationException
+    // sum = emptyList.reduce { accumulator, element ->
+    //     println("acc: $accumulator, i: $element, acc + i: ${accumulator + element}")
+    //
+    //     accumulator + element
+    // }
+
+    println("-- fold / reduce change type --")
+
+    val list2 = listOf("a", "b", "c", "d", "e")
+
+    val string = list2.fold(StringBuilder()) { accumulator, string ->
+        accumulator.append(string)
+    }
+
+    println(string) // abcde
+
+    // Ошибка компиляции, нельзя изменить тип
+    // string = list2.reduce(StringBuilder()) { accumulator, string ->
+    //     accumulator.append(string)
+    // }
+
+    println("-- fold / reduce reverse --")
+
+    sum = list.foldRight(0) { element, accumulator -> accumulator + element }
+
+    println(sum) // 15
+
+    product = list.foldRight(1) { element, accumulator -> accumulator * element }
+
+    println(product) // 120
+
+    println("-- fold / reduce indexed --")
+
+    sum = list.foldIndexed(0) { index, accumulator, element ->
+        if (index % 2 == 0) accumulator + element else accumulator
+    }
+
+    println(sum) // 9
+
+    sum = list.foldRightIndexed(0) { index, element, accumulator ->
+        if (index % 2 == 0) accumulator + element else accumulator
+    }
+
+    println(sum) // 9
+
+    sum = list.reduceIndexed { index, accumulator, element ->
+        if (index % 2 == 0) accumulator + element else accumulator
+    }
+
+    println(sum) // 9
+
+    sum = list.reduceRightIndexed { index, element, accumulator ->
+        if (index % 2 == 0) accumulator + element else accumulator
+    }
+
+    println(sum) // 9
+
+    println("-- runningFold and runningReduce --")
+
+    val runningSum = list.runningFold(0) { accumulator, element ->
+        accumulator + element
+    }
+
+    println(runningSum) // [0, 1, 3, 6, 10, 15]
+
+    val runningProduct = list.runningReduce { accumulator, element ->
+        accumulator * element
+    }
+
+    println(runningProduct) // [1, 2, 6, 24, 120]
+
+    // with index
+    val runningSumWithIndex = list.runningFoldIndexed(0) { index, accumulator, element ->
+        if (index % 2 == 0) accumulator + element else accumulator
+    }
+
+    println(runningSumWithIndex) // [0, 1, 1, 4, 4, 9]
+
+    val runningProductWithIndex = list.runningReduceIndexed { index, accumulator, element ->
+        if (index % 2 == 1) accumulator * element else accumulator
+    }
+
+    println(runningProductWithIndex) // [1, 2, 2, 8, 8]
+}
+
+/**
+ * Функция расширения groupBy() используется для группировки элементов коллекции.
+ *
+ * Принимает лямбда-функцию и возвращает карту, сгруппированную по ключам, с полем значения, содержащим все соответствующие элементы коллекции.
+ *
+ * Вы можете использовать groupBy() со вторым лямбда-аргументом в качестве функции преобразования.
+ *
+ * Результатом является карта, на которой ключи, созданные функцией keySelector, сопоставляются со значениями, а каждое значение является результатом применения функции преобразования valueTransform к каждому элементу группировки.
+ *
+ * Иногда, когда мы работаем с коллекциями, нам хочется применить операцию ко всем группам одновременно.
+ *
+ * Мы можем выполнить эту задачу, используя groupingBy(). Он возвращает экземпляр группировки, который позволяет применять операции ко всем группам ленивым способом: то есть группы создаются до выполнения операции.
+ *
+ * С помощью функции aggregate() мы применяем операцию ко всем элементам в каждой группе и возвращаем результат. Это общий способ выполнения всех операций группировки, если методов fold и reduce недостаточно.
+ *
+ * Мы можем группировать элементы из источника Grouping по ключу и применять операцию к элементам каждой группы последовательно, передавая ранее накопленное значение и текущий элемент в качестве аргументов, и сохранять результаты в новой карте.
+ */
+fun groupingCollections() {
+    val names = listOf("John", "Jane", "Mary", "Peter", "John", "Jane", "Mary", "Peter")
+
+    // Группировка по первому символу имени
+    val groupedNames = names.groupBy { it.first() }
+
+    // {
+    //   J=[John, Jane, John, Jane],
+    //   M=[Mary, Mary],
+    //   P=[Peter, Peter]
+    // }
+    println(groupedNames)
+
+    // Группировка по длине имени и значениями, преобразованными в верхний регистр.
+    val groupedNames2 = names.groupBy(
+        keySelector = { it.length },
+        valueTransform = { it.uppercase() }
+    )
+
+    // {
+    //   4=[JOHN, JANE, MARY, JOHN, JANE, MARY],
+    //   5=[PETER, PETER]
+    // }
+    println(groupedNames2)
+
+    // Группировка по первой букве и подсчёт всех значений
+    val groupedNames3 = names.groupingBy { it.first() }.eachCount()
+
+    println(groupedNames3) // {J=4, M=2, P=2}
+
+    // Группировка по первой букве и складывание (накапливание) длины имен.
+    val groupedNames4 = names
+        .groupingBy { it.first() }
+        .fold(0) { acc, name -> acc + name.length }
+
+    println(groupedNames4) // {J=16, M=8, P=10}
+
+    // Группировка по длине и сокращение до самого длинного имени
+    val groupedNames5 = names
+        .groupingBy { it.length }
+        .reduce { _, acc, name ->
+            if (name.length > acc.length) name else acc
+        }
+
+    println(groupedNames5) // {4=John, 5=Peter}
+
+    // Группировка и использование агрегата для получения размера группы
+    val groupedNames6 = names
+        .groupingBy { it.first() }
+        .aggregate { _, accumulator: Int?, _, first ->
+            if (first) 1 else accumulator!! + 1
+        }
+
+    println(groupedNames6) // {J=4, M=2, P=2}
+
+    // Группировка и использование агрегатов, возврат четного или нечетного размера в зависимости от размера группы.
+    val groupedNames7 = names
+        .groupingBy { it.first() }
+        .aggregate { _, accumulator: Boolean?, element, first ->
+            if (first) {
+                element.length % 2 == 0
+            } else {
+                accumulator!! && element.length % 2 == 0
+            }
+        }
+
+    println(groupedNames7) // {J=true, M=true, P=false}
 }
