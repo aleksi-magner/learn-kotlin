@@ -79,6 +79,7 @@ fun main() {
     foldAndReduce()
     groupingCollections()
     sequences()
+    comparableAndComparator()
 }
 
 /**
@@ -1280,7 +1281,7 @@ fun multiDimensionalArray() {
     /**
      * Создание трёхмерного массива 3x3x3, содержащего элементы типа Int и заполненных нулями
      */
-    val array3x3: Array<Array<IntArray>> =  Array(3) {
+    val array3x3: Array<Array<IntArray>> = Array(3) {
         Array(3) {
             IntArray(3) { 0 }
         }
@@ -3084,4 +3085,130 @@ fun sequences() {
     // Filter: 5,
     // Filter: 6, Mapping: 6, Take: 12
     println(withSequence) // [4, 8, 12]
+}
+
+/**
+ * Comparable и Comparator — это два интерфейса, которые позволяют разработчикам сравнивать объекты одного и того же или разных классов.
+ *
+ * Оба интерфейса обычно используются для сортировки и упорядочивания коллекций объектов на основе одного или нескольких атрибутов.
+ *
+ * Comparable
+ *
+ * Интерфейс Comparable используется для определения естественного порядка объектов.
+ *
+ * Когда класс реализует Comparable, он должен переопределить метод compareTo()
+ *
+ * Этот метод принимает объект того же типа, что и аргумент, и возвращает целочисленное значение. Это целочисленное значение указывает, является ли объект меньше (возвращает –1), равен (возвращает 0) или больше (возвращает 1) другого сравниваемого объекта.
+ *
+ * Класс, реализующий интерфейс Comparable, поддерживает полезные функции расширения, в том числе следующие:
+ *
+ * - coerceAtLeast() – эта функция проверяет, превышает ли вызывающий объект определённый минимальный объект. Он возвращает текущий объект, если он больше; в противном случае он возвращает минимальный объект
+ *
+ * - coerceAtMost() – эта функция проверяет, меньше ли вызывающий объект заданного максимального объекта. Он возвращает текущий объект, если он меньше; в противном случае он возвращает максимальный объект.
+ *
+ * - coerceIn() – эта функция проверяет, находится ли вызывающий объект в определённом диапазоне между минимальным и максимальным значениями. Он возвращает объект, если он находится в пределах диапазона, минимум, если объект меньше минимума, или максимум, если объект больше максимума.
+ *
+ * Comparator
+ *
+ * Интерфейс Comparator используется для определения пользовательского порядка объектов.
+ *
+ * Когда класс реализует Comparator, он должен переопределить метод compare(), который принимает в качестве аргументов два объекта одного типа и возвращает целочисленное значение. Он возвращает ноль, если аргументы равны, отрицательное число, если первый аргумент меньше второго, или положительное число, если первый аргумент больше второго.
+ *
+ * Интерфейс Comparator имеет интересные методы, среди них следующие:
+ *
+ * - reversed() – эта функция принимает компаратор в качестве аргумента и возвращает компаратор с обратным порядком переданного компаратора
+ *
+ * Основное различие между Comparable и Comparator заключается в том, что Comparable определяет естественный порядок объектов, а Comparator определяет пользовательский порядок объектов. При сравнении объектов одного и того же класса рекомендуется реализовать Comparable, чтобы обеспечить для них естественный порядок. Когда сравниваются объекты разных классов или требуется индивидуальный порядок, рекомендуется реализовать Comparator.
+ */
+fun comparableAndComparator() {
+    println("-- Comparable interface --")
+
+    // Переопределение метода compareTo()
+    // Метод compareTo() сравнивает объекты Person по их возрасту, возвращая отрицательное целое число, если возраст текущего объекта меньше возраста объекта other, и положительное целое число, если возраст текущего объекта больше возраста объекта other и ноль, если они равны.
+    data class Person(val name: String, val age: Int) : Comparable<Person> {
+        override fun compareTo(other: Person): Int = this.age - other.age
+    }
+
+    // Теперь, если у нас есть список объектов Person, мы можем отсортировать его по возрасту
+    val people = listOf(
+        Person("Alice", 25),
+        Person("Bob", 30),
+        Person("Charlie", 20)
+    )
+
+    // В этом коде функция sorted() использует естественный порядок, определённый методом compareTo(), для сортировки списка объектов Person
+    val sortedPeople = people.sorted()
+
+    /// [Person(name=Charlie, age=20), Person(name=Alice, age=25), Person(name=Bob, age=30)]
+    println(sortedPeople)
+
+    // coerceAtLeast()
+    val minimum = Person("Jack", 28)
+
+    println(people[0].age.coerceAtLeast(minimum.age)) // 28
+    println(people[1].age.coerceAtLeast(minimum.age)) // 30
+
+    // coerceAtMost()
+    val maximum = Person("Jack", 28)
+
+    println(people[0].age.coerceAtMost(maximum.age)) // 25
+    println(people[1].age.coerceAtMost(maximum.age)) // 28
+
+    // coerceIn()
+    println(25.coerceIn(18..28)) // 25
+    println(15.coerceIn(18..28)) // 18
+    println(30.coerceIn(18..28)) // 28
+
+    println("-- Comparator interface --")
+
+    /**
+     * В этом примере у нас есть класс данных AnyPerson и класс PersonAgeComparator, который реализует интерфейс Comparator<AnyPerson>.
+     *
+     * Метод compare() принимает в качестве аргументов два объекта AnyPerson и сравнивает их по возрасту.
+     *
+     * Если возраст p1 меньше возраста p2, возвращается отрицательное число. Если возраст p1 больше возраста p2, возвращается положительное число. Если возрасты равны, возвращается ноль.
+     */
+    data class AnyPerson(val name: String, val age: Int)
+
+    val people2 = listOf(
+        AnyPerson("Alice", 25),
+        AnyPerson("Bob", 30),
+        AnyPerson("Charlie", 20)
+    )
+
+    // Экземпляр интерфейса Comparator, который сравнивает объекты AnyPerson по их возрасту.
+    val ageComparator = Comparator<AnyPerson> { p1, p2 -> p2.age - p1.age }
+
+    // Функция sortedWith() сортирует список объектов AnyPerson, используя пользовательский порядок, определённый ageComparator.
+    val sortedPeopleWithComparator = people2.sortedWith(ageComparator)
+
+    /// [AnyPerson(name=Bob, age=30), AnyPerson(name=Alice, age=25), AnyPerson(name=Charlie, age=20)]
+    println(sortedPeopleWithComparator)
+
+    // reversed()
+    val sortedPeople2 = people2.sortedWith(ageComparator.reversed())
+
+    /// [AnyPerson(name=Charlie, age=20), AnyPerson(name=Alice, age=25), AnyPerson(name=Bob, age=30)]
+    println(sortedPeople2)
+
+    val people3 = listOf(
+        AnyPerson("Alice", 25),
+        AnyPerson("Bob", 25),
+        AnyPerson("Bob", 30),
+        AnyPerson("Charlie", 30),
+        AnyPerson("Charlie", 20),
+        AnyPerson("Alice", 25)
+    )
+
+    val sortedList = people3.sortedWith(compareBy(AnyPerson::age, AnyPerson::name))
+
+    /// [AnyPerson(name=Charlie, age=20), AnyPerson(name=Alice, age=25), AnyPerson(name=Alice, age=25), AnyPerson(name=Bob, age=25), AnyPerson(name=Bob, age=30), AnyPerson(name=Charlie, age=30)]
+    println(sortedList)
+
+    val sortByName = Comparator<AnyPerson> { p1, p2 -> p1.name.compareTo(p2.name) }
+
+    val sortedPeople3 = people3.sortedWith(sortByName)
+
+    /// [AnyPerson(name=Alice, age=25), AnyPerson(name=Alice, age=25), AnyPerson(name=Bob, age=25), AnyPerson(name=Bob, age=30), AnyPerson(name=Charlie, age=30), AnyPerson(name=Charlie, age=20)]
+    println(sortedPeople3)
 }
