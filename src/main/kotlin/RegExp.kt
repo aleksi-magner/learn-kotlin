@@ -6,6 +6,17 @@ fun main() {
     regexpsAndSplit()
     regexpsAndReplace()
     regexpsAndFind()
+
+    groups()
+    dates()
+    phoneNumbers()
+    email()
+    url()
+
+    replacesAllA()
+    snakeCaseToCamel()
+    nicknameParser()
+    splittingWithSpaces()
 }
 
 fun creatingRegExp() {
@@ -292,5 +303,216 @@ fun regexpsAndFind() {
     // 1997-12-24
     for (matches: MatchResult in matchResult2) {
         println(matches.value)
+    }
+}
+
+/**
+ * Группы имеют то же значение, что и математические выражения: с их помощью мы можем устанавливать новые приоритеты операций.
+ *
+ * Часть регулярного выражения можно заключить в круглые скобки, чтобы создать группу.
+ *
+ * Также мы можем применять к каждой группе кванторы: если задать квантор после скобок, то он будет применяться ко всему содержимому скобки, а не к отдельному символу.
+ */
+fun groups() {
+    val resultWithGroups = Regex("(ho)+").findAll("ho hoho hohoho")
+
+    // ho
+    // hoho
+    // hohoho
+    for (res in resultWithGroups) {
+        println(res.value)
+    }
+}
+
+/**
+ * Начнём с довольно простой и распространённой задачи. Предположим, вам нужно найти все даты в двух разных форматах: yyyy-mm-dd и yyyy/mm/dd.
+ *
+ * Как мы можем сделать это? Нам нужно сопоставить фрагменты текста, которые выглядят следующим образом: 4 цифры, затем один из возможных разделителей (/ или -), затем 2 цифры, а затем тот же разделитель и 2 цифры: `\d{4}(-|\/)\d{2}\1\d{2}`
+ *
+ * - Мы ищем 4 цифры, а затем один из возможных разделителей: `\d{4}(-|\/)`
+ *
+ * - Далее ищем две цифры и тот же разделитель, который уже найден: `\d{2}\1`.
+ * С помощью `\1` мы ссылаемся на первую группу, с которой мы столкнулись в регулярном выражении: `(-|\/)`. Так мы ищем уже идентифицированный разделитель.
+ *
+ * - Наконец, мы ищем две цифры: `\d{2}`
+ */
+fun dates() {
+    val regex = Regex("""\d{4}(-|/)\d{2}\1\d{2}""")
+
+    val dates = regex.findAll("Date 1: 2022-06-06 Date 2: 2021/01/01; date 3: 2020-02-02")
+
+    // 2022-06-06
+    // 2021/01/01
+    // 2020-02-02
+    for (date in dates) {
+        println(date.value)
+    }
+}
+
+/**
+ * Для простоты предположим, что номера телефонов можно записать в одном из следующих форматов: XXX-XXX-XXXX, (XXX)-XXX-XXXX, (XXX)XXXXXXX и XXXXXXXXXX.
+ *
+ * `\(?[\d]{3}\)?-?[\d]{3}-?[\d]{4}`
+ *
+ * - `\(?[\d]{3}\)?-?` соответствует первым трём цифрам, возможным скобкам и разделителю.
+ *
+ * - `[\d]{3}-?` ищет следующие три цифры и возможный разделитель
+ *
+ * - `[\d]{4}` мы сопоставляем последние четыре цифры
+ */
+fun phoneNumbers() {
+    val regex = Regex("""\(?\d{3}\)?-?\d{3}-?\d{4}""")
+
+    val phones = regex.findAll("Ann's phone: 123-345-6789 Dave's phone: (111)-234-5678, and next phone is (101)-234-5000")
+
+    // 123-345-6789
+    // (111)-234-5678
+    // (101)-234-5000
+    for (phone in phones) {
+        println(phone.value)
+    }
+}
+
+/**
+ * Давайте представим, что вам нужно найти все адреса электронной почты, которые встречаются в тексте.
+ *
+ * Правила составления электронных писем регламентированы RFC 5322.
+ *
+ * Стандартный адрес электронной почты выглядит как «login@subdomain.domain».
+ *
+ * Следующее регулярное выражение будет соответствовать большинству адресов электронной почты, составленных в соответствии с этими правилами:
+ *
+ * `([a-z0-9.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})`
+ *
+ * - `([a-z0-9_.-]+)` мы сопоставляем одну или несколько строчных букв от a до z, цифры от 0 до 9, символы подчеркивания, точки и дефисы. Затем в адресе электронной почты идет знак @, который завершает эту группу.
+ *
+ * - `([a-z0-9_.-]+)` очень похож на предыдущий: имя поддомена может состоять из тех же символов. За ним следует точка `\.`
+ *
+ * - `([a-z.]{2,6})` соответствует домену верхнего уровня: любая группа букв или точек длиной от 2 до 6 символов.
+ */
+fun email() {
+    val regex = Regex("""([\w.-]+)@([\w.-]+)\.([a-z.]{2,6})""")
+
+    val matchResult = regex.findAll("We have the following emails: abc@mail.com, joe_blow@address.ing, joe.blow@address.org")
+
+    // abc@mail.com
+    // joe_blow@address.ing
+    // joe.blow@address.org
+    for (matches in matchResult) {
+        println(matches.value)
+    }
+}
+
+/**
+ * Поиск и копирование ссылок из текста вручную может быть утомительным. Но нам не придется этого делать!
+ *
+ * Типичный URL-адрес может выглядеть так: https://www.somesite.com/index.html. Ниже приведено регулярное выражение, соответствующее шаблону:
+ *
+ * `(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?`
+ *
+ * - `(https?:\/\/)?` соответствует первой необязательной части URL-адреса. Он включает буквы «http», возможно «s», двоеточие и две косые черты.
+ *
+ * - `([\da-z\.-]+)\.([a-z\.]{2,6})` соответствует последовательности букв, цифр, дефисов, символов подчеркивания и точек (домены и домен нулевого уровня – от 2 до 6 символов и точек)
+ *
+ * - `([\/\w\.-]*)*` необходим для идентификации файла: набор слов, состоящий из букв, цифр, дефисов, подчеркиваний и точек с косой чертой в конце. Наконец, за ним может следовать косая черта
+ */
+fun url() {
+    val regex = Regex("""(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?""")
+
+    val matchResult = regex.findAll("Jet Brains Website: https://www.jetbrains.com/ And here is information about Hyperskill: https://hi.hyperskill.org/how-we-teach")
+
+    // https://www.jetbrains.com/
+    // https://hi.hyperskill.org/how-we-teach
+    for (matches in matchResult) {
+        println(matches.value)
+    }
+}
+
+/**
+ * Читает строку, затем заменяет в ней все неоднократно встречающиеся буквы «а» на одну «а» (например, «ааААааа» необходимо заменить на один символ «а») и печатает полученный текст.
+ *
+ * Ваш код должен быть нечувствителен к регистру.
+ *
+ * Обратите внимание: вам необходимо заменить одну букву «А» на «а»
+ */
+fun replacesAllA() {
+    val cases = listOf(
+        "And I will aalwaaaaaays love you. I will Aaalways love you.",
+        "Mamaaa, life had just begun, But now I've gone and thrown it all awaaaaAAAay"
+    )
+
+    val answers = listOf(
+        "and I will always love you. I will always love you.",
+        "Mama, life had just begun, But now I've gone and thrown it all away"
+    )
+
+    for (index: Int in cases.indices) {
+        val result: String = cases[index].replace(Regex("[aA]+"), "a")
+
+        println(result == answers[index])
+        println(result)
+    }
+}
+
+/**
+ * Преобразует текст в из snake_case в CamelCase
+ */
+fun snakeCaseToCamel() {
+    val input = "a_modern_prograMming_language_that__makes_developers_happier"
+    val answer = "AModernProgrammingLanguageThatMakesDevelopersHappier"
+
+    var listOfWords = input.split(Regex("_+"))
+
+    if (listOfWords.size > 1) {
+        listOfWords = listOfWords.map {
+            it.lowercase().replaceFirstChar(Char::uppercaseChar)
+        }
+    }
+
+    val result = listOfWords.joinToString("")
+
+    println(result == answer)
+    println(result)
+}
+
+/**
+ * Функция парсинга имени и фамилии из адресов электронной почты.
+ *
+ * Например, если пользователь вводит адрес электронной почты jon.kirbi@gmail.com или jon_kirbi@gmail.com, результатом функции должна быть строка следующего вида: Jon Kirbi.
+ *
+ * Помните, что разделителем имени и фамилии может быть "." или "_".
+ */
+fun nicknameParser() {
+    val emailString = "jon.kirbi@gmail.com"
+
+    val nicknameString: String = emailString.split("@").first()
+
+    val nickname = nicknameString
+        .split(Regex("[._]"))
+        .joinToString(" ") {
+            it.replaceFirstChar(Char::uppercaseChar)
+        }
+
+    println(nickname)
+}
+
+/**
+ * Принимает одну строку и количество подстрок для её разделения. Программа должна разбить строку на подстроки, используя любое количество пробелов (1 или более) в качестве разделителя.
+ */
+fun splittingWithSpaces() {
+    val cases = listOf(
+        "This   is a      text with   many     spaces",
+        "Lorem    ipsum dolor sit, amet,    consectetur"
+    )
+
+    val limits = listOf(0, 3)
+
+    for (index in cases.indices) {
+        val text = cases[index]
+        val limit = limits[index]
+
+        text.split(Regex("\\s+"), limit).forEach {
+            println(it)
+        }
     }
 }
