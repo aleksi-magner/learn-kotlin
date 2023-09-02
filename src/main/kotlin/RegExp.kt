@@ -322,6 +322,20 @@ fun groups() {
     for (res in resultWithGroups) {
         println(res.value)
     }
+
+    val input = "papa paparazzi pan power word apaa dpapapa papas"
+
+    // papa
+    // paparazzi
+    // pan
+    // apaa
+    // dpapapa
+    // papas
+    val result = Regex("\\S*(pa)+\\S*").findAll(input)
+
+    for (res in result) {
+        println(res.value)
+    }
 }
 
 /**

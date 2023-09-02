@@ -47,26 +47,27 @@ fun main() {
     // Создаём экземпляр класса
     val empty = Emptiness()
 
-    writingClassProperties()
-    comparisonObjects()
-    defaultConstructor()
-    primaryConstructor()
-    secondaryConstructor()
-    overridingConstructors()
-    initBlock()
-    memberFunctions()
-    finalMembers()
-    visibilityModifiersForMembers()
-    nestedClasses()
-    inheritance()
-    polymorphism()
-    overriding()
-    delegation()
+    // writingClassProperties()
+    // comparisonObjects()
+    // defaultConstructor()
+    // primaryConstructor()
+    // secondaryConstructor()
+    // overridingConstructors()
+    // initBlock()
+    // memberFunctions()
+    // finalMembers()
+    // visibilityModifiersForMembers()
+    // nestedClasses()
+    // inheritance()
+    // polymorphism()
+    // overriding()
+    // delegation()
+    dataClass()
 
-    createTable()
-    animalSounds()
-
-    typeSafeBuilders()
+    // createTable()
+    // animalSounds()
+    //
+    // typeSafeBuilders()
 }
 
 /**
@@ -1113,6 +1114,55 @@ fun delegation() {
     // [05.11.2022-14:31:04]: Parsing...
     // [05.11.2022-14:31:04]: OnAfter!
     simpleParser.start()
+}
+
+/**
+ * Как сделать простой класс для хранения данных? Помимо хранения информации, он должен иметь возможность сравнивать и копировать объекты. Также было бы очень удобно сразу выводить данные. Обычно для этой функциональности класс должен иметь несколько методов: equals() и hashCode() для сравнения, copy() для копирования, toString() для строкового представления объекта и функции componentN(), соответствующие свойствам в порядке их объявления.
+ *
+ * Но в Котлине вам не нужно реализовывать все эти функции, вы можете просто использовать data class.
+ */
+fun dataClass() {
+    class ClientStandard(val name: String, val age: Int, val gender: String)
+    data class ClientData(val name: String, val age: Int, val gender: String)
+
+    val standard = ClientStandard("Name", 42, "male")
+    val data = ClientData("Name", 42, "male")
+    val john = data.copy(name = "John")
+
+    println(standard) // ObjectsKt$dataClass$ClientStandard@3941a79c
+
+    println(data) // ClientData(name=Name, age=42, gender=male)
+    println(data.component1()) // Name
+    println(data.component2()) // 42
+    println(data.component3()) // male
+
+    println(john) // ClientData(name=John, age=42, gender=male)
+
+    // destructuring
+    val (name, age, gender) = john
+
+    println(name) // John
+    println(age)  // 42
+    println(gender) // male
+
+    data class Some(var age: Int) {
+        val name = "Name"
+
+        fun printName() {
+            println(this.name)
+        }
+    }
+
+    val some = Some(13)
+
+    println(some.age)
+
+    some.age = 30
+
+    println(some.age)
+    println(some.name)
+
+    some.printName()
 }
 
 class Table(rows: Int, columns: Int) {
