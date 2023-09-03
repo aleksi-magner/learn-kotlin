@@ -573,8 +573,91 @@ fun iterator() {
 
     println(words)// i, don't know, John, Claire
 
+    creatingYourOwnIterator()
+
     rollerCoasters()
     frequencyWordBook()
+}
+
+class Message(var text: String, var next: Message? = null)
+
+/**
+ * Наша собственная реализация последовательности сообщений.
+ *
+ * Есть head, который относится к первому сообщению в MessageBox, и tail, — к последнему.
+ *
+ * Если мы хотим выполнить итерацию по MessageBox, мы должны наследовать его от Iterable<Message> и переопределить его функцию iterator(). Эта функция возвращает объект MessageBoxIterator
+ */
+class MessageBox(var head: Message, var tail: Message = head) : Iterable<Message> {
+    fun add(newMessage: Message) {
+        tail.next = newMessage
+        tail = newMessage
+    }
+
+    override fun iterator(): Iterator<Message> = MessageBoxIterator(this)
+}
+
+/**
+ * Поскольку MessageBoxIterator реализует Iterator<Message>, мы должны переопределить методы hasNext() и next(), что позволит нам получить следующий элемент. Мы также объявили переменную current — текущий объект последовательности, на который указывает MessageBoxIterator.
+ *
+ * Как видите, здесь мы используем ключевые слова private и lateinit.
+ *
+ * Первое является модификатором видимости. Этот модификатор запрещает изменение значения логической переменной isAccessed вне класса.
+ *
+ * Как вы помните из темы про Iterator, при создании объекта итератора он указывает на позицию перед первым элементом коллекции.
+ *
+ * isAccessed имеет истинное значение, если мы уже вызвали функцию next() и итератор указывает на какой-то элемент; значение равно false, если мы ещё не получили доступ к коллекции.
+ *
+ * Чтобы объявить ненулевые типы, которые будут инициализированы позже, мы используем ключевое слово lateinit в объявлении переменной.
+ */
+class MessageBoxIterator(val messageBox: MessageBox) : Iterator<Message> {
+    lateinit var current: Message
+
+    private var isAccessed: Boolean = false
+
+    override fun hasNext(): Boolean {
+        if (!isAccessed) {
+            current = messageBox.head
+        }
+
+        return current.next != null
+    }
+
+    override fun next(): Message {
+        if (!isAccessed) {
+            current = messageBox.head
+            isAccessed = true
+        } else {
+            if (current.next == null) {
+                throw NoSuchElementException()
+            }
+
+            current = current.next!!
+        }
+
+        return current
+    }
+}
+
+fun creatingYourOwnIterator() {
+    val messageBox = MessageBox(Message("hello!"))
+
+    messageBox.add(Message("I am from hyperskill"))
+    messageBox.add(Message("which programming language do you study?"))
+
+    val messageIterator = messageBox.iterator()
+
+    // hello!
+    // I am from hyperskill
+    // which programming language do you study?
+    while (messageIterator.hasNext()) {
+        println(messageIterator.next().text)
+    }
+
+    /**
+     * Если мы попытаемся вызвать функцию next() после прохода по всем элементам MessageBox, будет выброшено исключение NoSuchElementException. Это означает, что после перебора всей последовательности итератор больше нельзя использовать, и вам следует создать новый объект Iterator.
+     */
+    // messageIterator.next() // NoSuchElementException
 }
 
 fun checkHeight(iterator: Iterator<Int>) {
