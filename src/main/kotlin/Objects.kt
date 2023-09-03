@@ -1131,12 +1131,12 @@ fun dataClass() {
 
     println(standard) // ObjectsKt$dataClass$ClientStandard@3941a79c
 
-    println(data) // ClientData(name=Name, age=42, gender=male)
-    println(data.component1()) // Name
-    println(data.component2()) // 42
-    println(data.component3()) // male
+    println(data) /// ClientData(name=Name, age=42, gender=male)
+    println(data.component1()) /// Name
+    println(data.component2()) /// 42
+    println(data.component3()) /// male
 
-    println(john) // ClientData(name=John, age=42, gender=male)
+    println(john) /// ClientData(name=John, age=42, gender=male)
 
     // destructuring
     val (name, age, gender) = john
