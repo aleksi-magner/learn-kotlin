@@ -15,11 +15,11 @@ fun main() {
         println("Hello $it")
     }
 
-    sum()
+    sumTask()
     sizeOfParts()
 }
 
-fun sum() {
+fun sumTask() {
     print("Сколько чисел нужно сложить? ")
 
     val amount = readln().toInt()
