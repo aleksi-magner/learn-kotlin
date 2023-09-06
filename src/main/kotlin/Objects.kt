@@ -30,7 +30,7 @@ fun main() {
      */
      println(msg.repeat(3)) // "HiHiHi"
 
-    // copingByReference()
+    copingByReference()
 
     /**
      * Создание нового класса
@@ -47,27 +47,28 @@ fun main() {
     // Создаём экземпляр класса
     val empty = Emptiness()
 
-    // writingClassProperties()
-    // comparisonObjects()
-    // defaultConstructor()
-    // primaryConstructor()
-    // secondaryConstructor()
-    // overridingConstructors()
-    // initBlock()
-    // memberFunctions()
-    // finalMembers()
-    // visibilityModifiersForMembers()
-    // nestedClasses()
-    // inheritance()
-    // polymorphism()
-    // overriding()
-    // delegation()
+    writingClassProperties()
+    comparisonObjects()
+    defaultConstructor()
+    primaryConstructor()
+    secondaryConstructor()
+    overridingConstructors()
+    initBlock()
+    memberFunctions()
+    finalMembers()
+    visibilityModifiersForMembers()
+    nestedClasses()
+    inheritance()
+    polymorphism()
+    overriding()
+    delegation()
     dataClass()
+    destructuring()
 
-    // createTable()
-    // animalSounds()
-    //
-    // typeSafeBuilders()
+    createTable()
+    animalSounds()
+
+    typeSafeBuilders()
 }
 
 /**
@@ -1208,6 +1209,43 @@ fun animalSounds() {
 
     anyAnimal.makeSound() // The animal makes a sound
     myDog.makeSound() // The dog barks
+}
+
+/**
+ * Деструктуризация
+ *
+ * В объявлении деструктуризации используется оператор componentN(), который возвращает n-й элемент класса.
+ *
+ * В коллекциях и data классах уже реализованы операторы componentN(), в своих классах необходимо их реализовывать самостоятельно.
+ */
+fun destructuring() {
+    // Деструктуризация data класса
+    data class UserData(val name: String, val age: Int, val isAdmin: Boolean)
+
+    val anonym = UserData("Anonym", 999, false)
+
+    /// val userName = anonym.component1()
+    /// val userAge = anonym.component2()
+    /// val isAdmin = anonym.component3()
+    val (userName, userAge, admin) = anonym
+
+    println(userName) // Anonym
+    println(userAge) // 999
+    println(admin) // false
+
+    // Деструктуризация не data класса.
+    // Нужно добавить операторы componentN() для деструктурируемых полей
+    class UserBase(val name: String, val age: Int, val isAdmin: Boolean){
+        operator fun component1(): String = name
+        operator fun component2(): Int = age
+        operator fun component3(): Boolean = isAdmin
+    }
+
+    val (name, age, isAdmin) = UserBase("Any user", 42, false)
+
+    println(name) // Any user
+    println(age) // 42
+    println(isAdmin) // false
 }
 
 /**
