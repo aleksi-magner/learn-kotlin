@@ -66,6 +66,7 @@ fun main() {
     destructuring()
     hashCode()
     equals()
+    sealed()
 
     createTable()
     animalSounds()
@@ -1370,6 +1371,63 @@ fun equals() {
     println(person1.equals(person3)) // false
     println(person1 == person2) // true
     println(person1 == person3) // false
+}
+
+open class Person {
+    fun whoAmI(name: String): String = "I am $name"
+}
+
+sealed class Staff1 : Person() {
+    class Teacher(val numberOfLessons: Int) : Staff1()
+    class Manager(val responsibility: String) : Staff1()
+    data object Worker : Staff1()
+}
+
+sealed class Staff2 {
+    class Teacher(val numberOfLessons: Int) : Staff2()
+    class Manager(val responsibility: String) : Staff2()
+    data object Worker : Staff2()
+}
+
+/**
+ * Контейнер для фиксированных подклассов: sealed class или sealed interface.
+ *
+ * - `sealed class CustomError`
+ * - `sealed interface CustomErrors`
+ *
+ * Класс или интерфейс sealed является абстрактным, поэтому его экземпляр не может быть создан.
+ *
+ * Следующий код выдаст ошибку:
+ * - val customError = CustomError()
+ *
+ * Как и в случае с обычными классами, вы можете объявлять конструкторы, но конструкторы в sealed классе должны быть private или protected
+ *
+ * `sealed class CustomError {
+ *     constructor(type: String) {} // protected (default)
+ *     private constructor(type: String, code: Int) {} // private
+ *     public constructor() {} // Public gives error
+ * }`
+ *
+ * Вы также можете использовать первичный конструктор, как и в любом обычном классе.
+ *
+ * `sealed class CustomError(type: String)`
+ */
+fun sealed() {
+    val worker1 = Staff1.Worker
+
+    println(worker1.whoAmI("Worker")) // I am Worker
+
+    fun listTheTasks(staff: Staff2) = when (staff) {
+        is Staff2.Teacher -> println("The teacher has ${staff.numberOfLessons} lessons today")
+        is Staff2.Manager -> println("The manager is doing ${staff.responsibility} today")
+        Staff2.Worker -> println("Worker is fixing the projector for profs in CS, all respect to him.")
+    }
+
+    val teacher = Staff2.Teacher(3)
+    val worker = Staff2.Worker
+
+    listTheTasks(teacher) // The teacher has 3 lessons today
+    listTheTasks(worker) // Worker is fixing the projector for profs in CS, all respect to him.
 }
 
 /**
