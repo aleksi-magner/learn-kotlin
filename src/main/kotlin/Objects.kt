@@ -64,6 +64,8 @@ fun main() {
     delegation()
     dataClass()
     destructuring()
+    hashCode()
+    equals()
 
     createTable()
     animalSounds()
@@ -1246,6 +1248,128 @@ fun destructuring() {
     println(name) // Any user
     println(age) // 42
     println(isAdmin) // false
+}
+
+/**
+ * Хэш-функция — это специальная функция, которую можно использовать для сопоставления данных любого размера со значениями фиксированного размера. Значения, возвращаемые хэш-функцией, называются хеш-значениями, хеш-кодами, дайджестами или просто хэшами.
+ *
+ * Одним из фундаментальных свойств хеш-функций является то, что они всегда возвращают одно и то же значение для одного и того же контента или входной информации.
+ *
+ * В Kotlin hashCode — это 32-битный идентификатор, который хранится в хеш-таблице экземпляра класса.
+ *
+ * Каждый класс должен предоставлять метод hashCode(), который позволяет получить хэш-код, назначенный по умолчанию классом Any.
+ *
+ * Все классы наследуют класс Any для хеширования, хотя обычно его переопределяют, чтобы получить хеш-функцию, которая более конкретно обрабатывает содержащиеся данные.
+ */
+fun hashCode() {
+    println("-- Numbers hash code --")
+
+    val intValue = 32
+    val intValue2 = 64
+    val intValue3 = 32
+
+    println(intValue.hashCode()) // 32
+    println(intValue2.hashCode()) // 64
+    println(intValue3.hashCode()) // 32
+
+    println(intValue.hashCode() == intValue2.hashCode()) // false
+    println(intValue.hashCode() == intValue3.hashCode()) // true
+
+    println("-- Strings hash code --")
+
+    val stringValue = "Hello"
+    val stringValue2 = "Hello"
+    val stringValue3 = "Hello World"
+
+    println(stringValue.hashCode()) // 69609650
+    println(stringValue2.hashCode()) // 69609650
+    println(stringValue3.hashCode()) // -862545276
+
+    println(stringValue.hashCode() == stringValue2.hashCode()) // true
+    println(stringValue.hashCode() == stringValue3.hashCode()) // false
+
+    println("-- Classes hash code --")
+
+    class PersonDefault(val name: String, val age: Int)
+
+    data class PersonData(val name: String, val age: Int)
+
+    class Person(val name: String, val age: Int) {
+        override fun hashCode(): Int = 31 * name.hashCode() + age.hashCode()
+    }
+
+    val personDefault = PersonDefault("John", 32)
+    val personData = PersonData("John", 32)
+    val person1 = Person("John", 32)
+    val person2 = Person("John", 32)
+    val person3 = Person("John", 64)
+
+    println(personDefault.hashCode()) // 1349393271
+    println(personData.hashCode()) // 71750741
+    println(person1.hashCode()) // 71750741
+    println(person2.hashCode()) // 71750741
+    println(person3.hashCode()) // 71750773
+
+    println(person1.hashCode() == person2.hashCode()) // true
+    println(person1.hashCode() == person3.hashCode()) // false
+}
+
+/**
+ * Специальный метод equals() сравнивает два объекта и возвращает true, если они равны.
+ *
+ * Этот метод существует по умолчанию для всех объектов и определен в Any, поэтому мы должны переопределить его, чтобы адаптировать к природе и определению наших классов.
+ */
+fun equals() {
+    println("-- Numbers equals --")
+
+    val intValue = 32
+    val intValue2 = 64
+    val intValue3 = 32
+
+    println(intValue.equals(intValue2)) // false
+    println(intValue.equals(intValue3)) // true
+    println(intValue == intValue2) // false
+    println(intValue == intValue3) // true
+
+    println("-- Strings equals --")
+
+    val stringValue = "Hello"
+    val stringValue2 = "Hello"
+    val stringValue3 = "Hello World"
+
+    println(stringValue.equals(stringValue2)) // true
+    println(stringValue.equals(stringValue3)) // false
+    println(stringValue == stringValue2) // true
+    println(stringValue == stringValue3) // false
+
+    println("-- Classes equals --")
+
+    class PersonDefault(val name: String, val age: Int)
+
+    data class PersonData(val name: String, val age: Int)
+
+    class Person(val name: String, val age: Int) {
+        override fun equals(other: Any?): Boolean = when {
+            this === other -> true
+            other !is Person -> false
+            name != other.name -> false
+            else -> age == other.age
+        }
+    }
+
+    val personDefault = PersonDefault("John", 32)
+    val personData = PersonData("John", 32)
+    val person1 = Person("John", 32)
+    val person2 = Person("John", 32)
+    val person3 = Person("John", 64)
+
+    println(personDefault.equals(personData)) // false
+    println(personDefault.equals(person1)) // false
+    println(personData.equals(person1)) // false
+    println(person1.equals(person2)) // true
+    println(person1.equals(person3)) // false
+    println(person1 == person2) // true
+    println(person1 == person3) // false
 }
 
 /**
