@@ -1700,6 +1700,48 @@ fun orderingElementsInCollection() {
     println(words.sortedDescending()) // [racecar, mom, dad, abracadabra, MANDRAKE]
 
     /**
+     * Чтобы выполнить пользовательскую сортировку элементов коллекции и упорядочить элементы любого типа по вашему усмотрению, Kotlin предлагает следующие функции: sortedBy() и sortedByDescending().
+     */
+    println(words.sortedBy { it.length }) // [mom, dad, racecar, MANDRAKE, abracadabra]
+    println(words.sortedByDescending { it.length }) // [abracadabra, MANDRAKE, racecar, mom, dad]
+
+    println(words.sortedBy { it.first() }) // [MANDRAKE, abracadabra, dad, mom, racecar]
+    println(words.sortedByDescending { it.first() }) // [racecar, mom, dad, abracadabra, MANDRAKE]
+
+    println(words.sortedBy { it.last() }) // [MANDRAKE, abracadabra, dad, mom, racecar]
+    println(words.sortedByDescending { it.last() }) // [racecar, mom, dad, abracadabra, MANDRAKE]
+
+    /**
+     * Иногда естественного порядка недостаточно, и для работы с элементами коллекции необходимо реализовать более конкретный порядок.
+     *
+     * Мы можем определить пользовательскую сортировку, используя интерфейс Comparator.
+     *
+     * Интерфейс Comparator помогает определить метод compare(), который возвращает целочисленный результат сравнения двух значений: ноль, если аргументы равны, отрицательное число, если первый аргумент меньше второго, или положительное число, если первый аргумент больше второго.
+     *
+     * Таким образом, вы можете установить необходимый порядок в коллекции. Мы можем определить функцию compare(), используя лямбду, например, для возврата положительного числа, если первый элемент должен предшествовать второму, если дата должна предшествовать другой дате, если строка должна предшествовать другой строке в соответствии с длиной строки, и так далее.
+     *
+     * Теперь мы можем использовать функцию sortedWith() для возврата списка всех элементов, отсортированных в соответствии с указанным компаратором.
+     */
+    val wordsLengthComparator = Comparator { str1: String, str2: String ->
+        str1.length - str2.length
+    }
+
+    println(words.sortedWith(wordsLengthComparator)) // [mom, dad, racecar, MANDRAKE, abracadabra]
+
+    val middleLetterComparator = Comparator { str1: String, str2: String ->
+        str1[str1.length / 2] - str2[str2.length / 2]
+    }
+
+    println(words.sortedWith(middleLetterComparator)) // [MANDRAKE, dad, abracadabra, racecar, mom]
+
+    /**
+     * Другой альтернативный способ выполнить эту задачу — использовать функцию compareBy(), которая позволяет нам на лету определить нужный нам компаратор с помощью лямбда-функции для настройки сортировки элементов в коллекции с помощью sortedWith().
+     */
+    println(words.sortedWith(compareBy { it.length })) // [mom, dad, racecar, MANDRAKE, abracadabra]
+
+    println(words.sortedWith(compareBy { it[it.length / 2] })) // [MANDRAKE, dad, abracadabra, racecar, mom]
+
+    /**
      * Reverse order
      *
      * Мы можем получить коллекцию в обратном порядке (на основе позиций индекса) с помощью двух функций: reversed() и asReversed().
