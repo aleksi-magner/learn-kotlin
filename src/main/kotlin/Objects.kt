@@ -67,6 +67,7 @@ fun main() {
     hashCode()
     equals()
     sealed()
+    abstractClasses()
 
     createTable()
     animalSounds()
@@ -1428,6 +1429,130 @@ fun sealed() {
 
     listTheTasks(teacher) // The teacher has 3 lessons today
     listTheTasks(worker) // Worker is fixing the projector for profs in CS, all respect to him.
+}
+
+interface Shape {
+    fun calculateArea(): Double
+    fun calculatePerimeter(): Double
+}
+
+/**
+ * Абстрактный класс — это класс, экземпляр которого не может быть создан напрямую, но служит основой для других классов. Он действует как частично реализованный класс, обеспечивая общую структуру и поведение, которые подклассы могут наследовать и развивать.
+ *
+ * - abstract class Animal
+ * - abstract class Animal(val id: Int)
+ *
+ * Абстрактный класс может иметь как абстрактные, так и неабстрактные члены (свойства и методы). Чтобы объявить член абстрактным, вы должны явно использовать ключевое слово abstract.
+ *
+ * Обратите внимание, что абстрактный член не имеет тела (реализации) в своем классе.
+ *
+ * `abstract class Animal(val id: Int) {
+ *     abstract val name: String
+ *
+ *     val age: Int = 7
+ *
+ *     abstract fun makeSound()
+ *
+ *     fun isSleeping(): Boolean = false
+ * }`
+ *
+ * По умолчанию абстрактные классы в Kotlin открыты для расширения, а их абстрактные методы и свойства открыты для переопределения.
+ *
+ * Различия между абстрактным классом и интерфейсом:
+ *
+ * - Создание экземпляра
+ *
+ * Abstract. Не может быть создан напрямую. Предназначен служить основой для наследования подклассов.
+ *
+ * Interface. Не может быть создан напрямую. Определяет контракт методов и свойств, которому должны соответствовать реализующие классы.
+ *
+ * - Конструкторы
+ *
+ * Abstract. Может иметь конструкторы, включая как первичные, так и вторичные. Подклассы отвечают за вызов соответствующего конструктора суперкласса.
+ *
+ * Interface. Не может быть конструкторов. Они только объявляют методы и свойства без какой-либо реализации.
+ *
+ * - Состояние
+ *
+ * Abstract. Может иметь переменные-члены и неабстрактные методы с реализациями по умолчанию. Может хранить состояние и поддерживать внутренние данные.
+ *
+ * Interface. Не может хранить состояние или определять переменные-члены. Сосредоточен исключительно на объявлении поведения.
+ *
+ * - Наследование
+ *
+ * Abstract. Подклассы могут расширять только один абстрактный класс. В Kotlin наследование классов ограничено одним классом, а абстрактные классы позволяют установить иерархию наследования.
+ *
+ * Interface. Реализация классов может реализовывать несколько интерфейсов. Kotlin поддерживает множественное наследование через интерфейсы, позволяя классам реализовывать несколько интерфейсов одновременно.
+ *
+ * - Абстрактные и неабстрактные члены
+ *
+ * Abstract. Может иметь как абстрактные, так и неабстрактные методы и свойства. Подклассы должны предоставлять реализации абстрактных членов, наследуя при этом неабстрактные члены.
+ *
+ * Interface. Может объявлять абстрактные методы или методы, имеющие реализации по умолчанию. Оба типа методов могут быть переопределены путём реализации классов.
+ *
+ * При выборе между абстрактными классами и интерфейсами учитывайте следующие рекомендации:
+ *
+ * - Используйте абстрактные классы, когда вы хотите предоставить реализацию по умолчанию или когда вам нужно поддерживать внутреннее состояние внутри базового класса.
+ *
+ * - Используйте интерфейсы, когда вы хотите определить контракт поведения, который могут реализовать несколько несвязанных классов, или когда вам нужно добиться множественного наследования.
+ */
+fun abstractClasses() {
+    abstract class Animal {
+        abstract fun move()
+        abstract fun makeSound()
+
+        fun eat(): Boolean = false
+        fun sleep(): Boolean = false
+    }
+
+    class Cat : Animal() {
+        override fun move() {
+           println("Walk")
+        }
+
+        override fun makeSound() {
+            println("Meow")
+        }
+    }
+
+    val cat: Animal = Cat()
+
+    cat.move() // Walk
+    cat.makeSound() // Meow
+
+    println(cat.eat()) // false
+    println(cat.sleep()) // false
+
+    /**
+     * В Kotlin также возможно наследовать абстрактный класс от класса open, переопределяя неабстрактный открытый член абстрактным, используя два ключевых слова: abstract override.
+     */
+    open class Polygon {
+        open fun draw() {
+            // Some default polygon drawing method
+        }
+    }
+
+    abstract class WildShape : Polygon() {
+        // Classes that inherit WildShape need to provide their own draw method instead of using the default on Polygon
+        abstract override fun draw()
+    }
+
+    /**
+     * В Kotlin можно использовать абстрактные классы и интерфейсы вместе
+     */
+    abstract class AbstractShape : Shape {
+        // Common behavior or properties for shapes can be implemented here
+    }
+
+    class Rectangle(private val width: Double, private val height: Double) : AbstractShape() {
+        override fun calculateArea(): Double = width * height
+        override fun calculatePerimeter(): Double = 2 * (width + height)
+    }
+
+    class Circle(private val radius: Double) : AbstractShape() {
+        override fun calculateArea(): Double = Math.PI * radius * radius
+        override fun calculatePerimeter(): Double = 2 * Math.PI * radius
+    }
 }
 
 /**
