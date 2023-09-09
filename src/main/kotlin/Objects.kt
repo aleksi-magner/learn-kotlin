@@ -68,7 +68,9 @@ fun main() {
     equals()
     sealed()
     abstractClasses()
+    gettersAndSetters()
 
+    weatherComparison()
     createTable()
     animalSounds()
 
@@ -1168,6 +1170,178 @@ fun dataClass() {
     println(some.name)
 
     some.printName()
+}
+
+/**
+ * Геттеры и сеттеры.
+ *
+ * Позволяют сделать поле объекта только для чтения, реализовать проверку перед назначением значения, реализовать более сложную логику при получении и изменении данных
+ *
+ * Ключевое слово field позволяет брать и устанавливать значение у текущего поля
+ */
+fun gettersAndSetters() {
+    class Client {
+        var name: String = "Unknown"
+            get() {
+                println("Somebody wants to know $field name")
+
+                return field
+            }
+
+            set(value) {
+                println("The name is changing. Old value is $field. New value is $value.")
+
+                field = value
+            }
+    }
+
+    val client = Client()
+
+    // Somebody wants to know Unknown name
+    // Unknown
+    println(client.name)
+
+    // The name is changing. Old value is Unknown. New value is Ann.
+    client.name = "Ann"
+
+    // Somebody wants to know Ann name
+    // Ann
+    println(client.name)
+
+    class Client2(age: Int) {
+        private val defaultAge = 18
+
+        var age: Int = age
+            set(value) {
+                println("Call setter")
+
+                field = if (value in 0..120) value else defaultAge
+            }
+    }
+
+    val client2 = Client2(-23)
+
+    // Сеттер не вызвался при инициализации конструктора
+    println(client2.age) // -23
+
+    // Call setter
+    client2.age = 23
+
+    println(client2.age) // 23
+
+    // Call setter
+    client2.age = -12
+
+    println(client2.age) // 18
+
+    /**
+     * Задействование проверки при инициализации конструктора
+     */
+    class Client3(age: Int) {
+        private val defaultAge = 18
+
+        var age: Int = validateAge(age)
+            set(value) {
+                println("Call setter")
+
+                field = validateAge(value)
+            }
+
+        private fun validateAge(age: Int): Int {
+            return if (age in 0..120) age else defaultAge
+        }
+    }
+
+    val client3 = Client3(-23)
+
+    // Сеттер не вызвался при инициализации конструктора
+    println(client3.age) // 18
+
+    // Call setter
+    client3.age = 23
+
+    println(client3.age) // 23
+
+    // Call setter
+    client3.age = -12
+
+    println(client3.age) // 18
+
+    /**
+     * Если поле только для чтения
+     */
+    class Client4(age: Int) {
+        private val defaultAge = 18
+
+        val age: Int
+
+        init {
+            this.age = if (age in 0..120) age else defaultAge
+        }
+    }
+
+    val clientA = Client4(-23)
+
+    println(clientA.age) // 18
+
+    val clientB = Client4(23)
+
+    println(clientB.age) // 23
+}
+
+/**
+ * Считывает три числа, представляющие температуру в Дубае, Москве и Ханое.
+ *
+ * Печатает название самого холодного города.
+ *
+ * Если введенное число меньше -92 или больше 57, для температуры будет установлено значение по умолчанию, которое представляет собой среднюю температуру в городе:
+ * +5 для Москвы,
+ * +20 для Ханоя
+ * +30 для Дубая.
+ *
+ * Если самая низкая температура наблюдается более чем в одном городе, результат будет «neither».
+ */
+fun weatherComparison() {
+    class City(val name: String) {
+        var degrees: Int = 0
+            set(value) {
+                field = validateDegrees(value)
+            }
+
+        private fun validateDegrees(degrees: Int): Int {
+            if (degrees in -92..57) {
+                return degrees
+            }
+
+            return when (name) {
+                "Moscow" -> 5
+                "Dubai" -> 30
+                "Hanoi" -> 20
+                else -> 0
+            }
+        }
+    }
+
+    val dubai = City("Dubai")
+
+    dubai.degrees = 20
+
+    val moscow = City("Moscow")
+
+    moscow.degrees = 100
+
+    val hanoi = City("Hanoi")
+
+    hanoi.degrees = 35
+
+    val cities: List<City> = listOf(dubai, moscow, hanoi).sortedBy { it.degrees }
+
+    // Moscow
+    if (cities[0].degrees == cities[1].degrees) {
+        println("neither")
+    } else {
+        println(cities.first().name)
+    }
 }
 
 class Table(rows: Int, columns: Int) {
