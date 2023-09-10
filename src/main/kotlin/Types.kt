@@ -79,6 +79,7 @@ fun main() {
 
     typeConversion()
     typeCastAndSmartCast()
+    generics()
 }
 
 // Не возвращает управление, выполнение кода останавливается. Поэтому тип Nothing
@@ -162,9 +163,7 @@ fun typeConversion() {
 }
 
 fun demonstration() {
-    println("\nВведите число, чтобы увидеть преобразования. Например, 1000.0123456789")
-
-    val something = readln() // Например, 1000.0123456789
+    val something = "1000.0123456789"
 
     val d = something.toDouble()
     val f = d.toFloat()
@@ -328,4 +327,142 @@ fun <T> getStringsOnly(list: List<T>): List<String> {
     }
 
     return result.toList()
+}
+
+/**
+ * Параметр типа именуется одной буквой в соответствии с соглашением, чтобы отличить его от обычного имени класса.
+ *
+ * - T – Type;
+ * - S, U, V, etc. – 2nd, 3rd, 4th types;
+ * - E – Element (often used by different collections);
+ * - K – Key;
+ * - V – Value;
+ * - N – Number.
+ */
+fun generics() {
+    println("--- Generics class ---")
+
+    /**
+     * Конструктор принимает переменную «некоторого типа» и устанавливает её в поле.
+     */
+    class Box<T>(t: T) {
+        var value: T = t
+            get() = field
+            set(value) {
+                field = value;
+            }
+
+    }
+
+    val box1: Box<String> = Box("String")
+
+    println(box1.value)
+
+    box1.value = "Some"
+
+    println(box1.value)
+
+    val box2: Box<Int> = Box(42)
+
+    println(box2.value)
+
+    box2.value = 13
+
+    println(box2.value)
+
+    val box3: Box<List<Char>> = Box(listOf('a', 'b', 'c'))
+
+    println(box3.value)
+
+    box3.value = listOf('d', 'e', 'f')
+
+    println(box3.value)
+
+    // Дженерики для нескольких параметров
+    class Three<T, U, V>(var first: T, var second: U, var third: V)
+
+    val obj = Three<String, Int, Int>("abc", 1, 2)
+
+    println(obj.first) // abc
+    println(obj.second) // 1
+    println(obj.third) // 2
+
+    class Pair<T, P>(var first: T, var second: P) {
+        fun changeFirst(newValue: T) {
+            first = newValue
+        }
+
+        fun changeSecond(newValue: P) {
+            second = newValue
+        }
+
+        fun printData() {
+            println("Values: first = $first, second = $second")
+        }
+    }
+
+    val nameLastname: Pair<String, String> = Pair("John", "Smith")
+    val nameAge: Pair<String, Int> = Pair("Kite", 18)
+
+    nameLastname.changeFirst("John")
+    nameLastname.changeSecond("Smith")
+
+    nameAge.changeFirst("Kate")
+    nameAge.changeSecond(19)
+
+    nameLastname.printData() // Values: first = John, second = Smith
+    nameAge.printData() // Values: first = Kate, second = 19
+
+    class RandomCollection<T>(val items: List<T>) {
+        fun get(index: Int): T = items[index]
+        fun length(): Int = items.size
+    }
+
+    val nums: RandomCollection<Int> = RandomCollection(listOf(1, 2, 3, 4))
+
+    // "1 2 3 4 "
+    for (i in 0 ..< nums.length()) {
+        print("${nums.get(i)} ")
+    }
+
+    println()
+
+    class GenericClass<T> {
+        fun <U> someGenericMethod(t: T, u: U): T = t
+    }
+
+    println("--- Generics function ---")
+
+    fun <T> doSomething(t: T): T {
+        return t
+    }
+
+    fun <T, U> multipleDoSomething(t: T, u: U) {
+        // do something
+    }
+
+    fun <T> calculateLength(list: List<T>): Int = list.size
+
+    val list = listOf("hello", "from", "hyperskill")
+
+    println(calculateLength(list)) // 3
+
+    println("--- Generics extension function ---")
+
+    class BiggerBox<T>(var value1: T, var value2: T)
+
+    fun <T> BiggerBox<T>.changeBoxes() {
+        val tmp = this.value1
+
+        this.value1 = this.value2
+        this.value2 = tmp
+    }
+
+    val box = BiggerBox("hyperskill", "kotlin")
+
+    println("${box.value1} and ${box.value2}")// hyperskill and kotlin
+
+    box.changeBoxes()
+
+    println("${box.value1} and ${box.value2}")// kotlin and hyperskill
 }
