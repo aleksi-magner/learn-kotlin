@@ -1,3 +1,6 @@
+import java.awt.print.Book
+import java.nio.file.Watchable
+
 fun main() {
     /**
      * Беззнаковые числа создаются так же, как и любые другие. Для того, чтобы указать, что вы создаете беззнаковый номер, вам нужно добавить к нему суффикс «u» или «U».
@@ -80,6 +83,9 @@ fun main() {
     typeConversion()
     typeCastAndSmartCast()
     generics()
+    typeBounds()
+
+    convertingAnObjectList()
 }
 
 // Не возвращает управление, выполнение кода останавливается. Поэтому тип Nothing
@@ -460,9 +466,66 @@ fun generics() {
 
     val box = BiggerBox("hyperskill", "kotlin")
 
-    println("${box.value1} and ${box.value2}")// hyperskill and kotlin
+    println("${box.value1} and ${box.value2}") // hyperskill and kotlin
 
     box.changeBoxes()
 
-    println("${box.value1} and ${box.value2}")// kotlin and hyperskill
+    println("${box.value1} and ${box.value2}") // kotlin and hyperskill
+}
+
+class StorageGeneric<T : Book>
+open class Book
+class Magazine : Book()
+class Stone
+interface Watchable
+
+/**
+ * Ограничение типов в дженериках
+ *
+ * Переменные типа могут иметь несколько границ, но внутри угловых скобок можно указать только одну верхнюю границу.
+ *
+ * Когда вы используете несколько границ, первым типом должен быть класс или интерфейс. Следующие типы должны быть интерфейсами
+ */
+fun typeBounds() {
+    val storage1 = StorageGeneric<Book>()
+    val storage2 = StorageGeneric<Magazine>()
+    // val storage3 = StorageGeneric<Stone>(Stone) // compile-time error
+
+    fun <T : Book> sortByDate(list: List<T>) {
+        // ...
+    }
+
+    var listOne: List<Magazine> = listOf();
+    var listTwo: List<String> = listOf();
+
+    sortByDate(listOne) // OK, because Magazine is a subtype of Book
+    // sortByDate(listTwo) // Error: String is not a subtype of Book
+
+    fun <T> sortByDateWithAny(list: List<T>)
+        where T : Book, T : Watchable {
+            // ...
+        }
+}
+
+inline fun <reified T, R> convertList(list: List<T>, crossinline transform: (T) -> R): List<R> {
+    return list.map(transform)
+}
+
+/**
+ * Преобразование списка объектов одного типа в список объектов другого типа встречается довольно часто.
+ *
+ * Напишите универсальную функцию convertList, которая может конвертировать список объектов из одного типа в другой, используя функцию, переданную в качестве параметра.
+ *
+ * В вашей функции используйте два параметра типа reified — T и R. T представляет тип элементов во входном списке, а R представляет тип элементов в выходном списке.
+ *
+ * Функция преобразования принимает элемент типа T и преобразует его в элемент типа R.
+ */
+fun convertingAnObjectList() {
+    val list: List<Char> = listOf('1', '2', '3')
+
+    val transform = { char: Char -> char.digitToInt() }
+
+    val result: List<Int> = convertList(list, transform).map { it + 2 }
+
+    println(result)
 }
