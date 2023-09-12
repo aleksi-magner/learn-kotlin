@@ -84,6 +84,8 @@ fun main() {
     typeCastAndSmartCast()
     generics()
     typeBounds()
+    typeAliases()
+    variance()
 
     convertingAnObjectList()
 }
@@ -505,6 +507,237 @@ fun typeBounds() {
         where T : Book, T : Watchable {
             // ...
         }
+}
+
+open class ClassWithVeryLongName
+typealias SomeClass = ClassWithVeryLongName
+
+typealias Password = String
+
+class Pet {
+    class Kitten(name: String) {
+        private var kittenName: String = name
+        fun getName(): String = kittenName
+    }
+}
+
+typealias Kitten = Pet.Kitten
+
+class BoxForSomeDessert<T>(var dessert: T) {
+    fun getDessertFromBox(): T = dessert
+}
+
+typealias DessertBox<T> = BoxForSomeDessert<T>
+
+/**
+ * Псевдонимы типов предоставляют альтернативные имена для существующих типов — как стандартных, так и пользовательских. Если имя типа слишком длинное, рекомендуется ввести другое, более короткое имя и использовать вместо него новое.
+ *
+ * Псевдонимы типов должны быть верхнего уровня! Вы не можете разместить их внутри классов или функций.
+ *
+ * Псевдонимы можно также использовать в импортах:
+ * `import Pet.Kitten as Kitten`
+ *
+ * Следует помнить, что псевдонимы типов не вводят новые типы. Они эквивалентны соответствующим исходным типам.
+ */
+fun typeAliases() {
+    class Some : SomeClass()
+
+    val myPassword: Password = "hyperskill"
+
+    val kitten: Kitten = Kitten("Fluffy")
+
+    println(kitten.getName()) // Fluffy
+    println(kitten.getName().length) // 6
+
+    /// compile-time error: The integer literal does not conform to the expected type String
+    // val kitten2: Kitten = Kitten(6)
+
+    class Tart(var name: String)
+
+    var tartBox1: DessertBox<Tart> = DessertBox(Tart("tastytart"))
+    var tartBox2: BoxForSomeDessert<Tart> = BoxForSomeDessert(Tart("tastytart"))
+    var tartBox3: DessertBox<Tart> = BoxForSomeDessert(Tart("tastytart"))
+
+    println(tartBox1.getDessertFromBox().name) // tastytart
+    println(tartBox2.getDessertFromBox().name) // tastytart
+    println(tartBox3.getDessertFromBox().name) // tastytart
+}
+
+interface Comparator<in T> {
+    fun compare(e1: T, e2: T): Int
+}
+
+/**
+ * В контексте универсальных типов (дженериков) в программировании вариативность (дисперсия) означает возможность использовать более производный (или менее производный) тип, чем указано изначально.
+ *
+ * Разница применяется, когда у вас есть связь типов между двумя типами, и вы хотите поддерживать эту связь при использовании этих классов в качестве универсальных параметров.
+ *
+ * Различают три вида дисперсии:
+ *
+ * - Инвариант (Invariant): универсальный класс называется инвариантным по параметру типа, если для двух разных типов A и B Class<A> не является ни подтипом, ни супертипом Class<B>. Другими словами - не сохраняют отношения подтипов между типами.
+ *
+ * - Ковариантность (Covariance): универсальный класс называется ковариантным по параметру типа, если выполняется следующее: Class<A> является подтипом Class<B>, если A является подтипом B (сохраняемое отношение подтипирования).
+ *
+ * - Контравариантность (Contravariance): универсальный класс называется контравариантным по параметру типа, если выполняется следующее: Class<A> является подтипом Class<B>, если B является подтипом A (обратные отношения подтипирования).
+ */
+fun variance() {
+    open class Animal
+    class Dog : Animal()
+    class Cat : Animal()
+
+    println("--- Invariance ---")
+
+    /**
+     * Универсальные типы по умолчанию инвариантны, что означает, что они не сохраняют отношения подтипов между типами.
+     *
+     * Это не позволяет нам совершать ошибки, например, помещать Cat в Box<Dog> только потому, что Cat и Dog являются подтипами Animal.
+     *
+     * Это режим по умолчанию, в котором вы можете как создавать, так и потреблять значения.
+     *
+     * Например, MutableList<Dog> не является подтипом MutableList<Animal> или наоборот, поскольку вы можете создавать (get()) и потреблять (add()) значения, и он инвариантен.
+     */
+    class Box<T>
+
+    val d: Animal = Dog() // Dog подтип Animal, ОК
+
+    /**
+     * Несмотря на то, что Dog является подтипом Animal, Box<Dog> не является подтипом Box<Animal>, и наоборот
+     */
+    // val bd: Box<Animal> = Box<Dog>() // Error: Type mismatch
+    // val bp: Box<Dog> = Box<Animal>() // Error: Type mismatch
+
+    /**
+     * Аналогично, хотя Int является подтипом Number, Box<Int> не является подтипом Box<Number>, и наоборот
+     */
+    // val bn: Box<Number> = Box<Int>() // Error: Type mismatch
+    // val bi: Box<Int> = Box<Number>() // Error: Type mismatch
+
+    println("--- Covariance (out) ---")
+
+    /**
+     * Отношения сохраняются в том же направлении, когда классы используются в качестве общих параметров.
+     *
+     * Если Dog является подтипом Animal, Box<Dog> является подтипом Box<Animal>.
+     *
+     * Обычно это допускается, когда универсальный параметр используется только в «выходных» позициях (например, возвращаемых значениях), но не во «входных» позициях (например, в параметрах метода).
+     *
+     * Например, интерфейс List в Kotlin представляет собой коллекцию, доступную только для чтения. Это означает, что если Dog является подтипом Animal, то List<Dog> является подтипом List<Animal>. Такие классы или интерфейсы называются ковариантными.
+     *
+     * Вы можете прочитать элемент только в определенной позиции в списке (используя метод get()) и использовать его значение.
+     *
+     * Список определяется модификатором out (List<out T>, List<Animal>), который используется для объявления класса как ковариантного по определённому параметру типа.
+     */
+    val animals: List<Animal> = listOf(Dog(), Cat())
+    val dogs: List<Dog> = listOf(Dog(), Dog())
+    val cats: List<Cat> = listOf(Cat(), Cat())
+    val animalsFromDogs: List<Animal> = dogs
+
+    /**
+     * Класс Box определён как ковариантный
+     *
+     * Обратите внимание: когда вы определяете класс с ковариацией с помощью ключевого слова out, это ограничивает использование типа T внутри класса.
+     *
+     * Вы можете использовать T только как тип возвращаемого значения, а не как тип параметра. Это связано с тем, что это может привести к нарушению инвариантов класса.
+     *
+     * Например, если бы вы могли добавить Cat в Box<Dog>, это уже не был бы Box<Dog>. Ключевое слово out сообщает компилятору, что универсальный класс (или интерфейс) создаёт значения типа T и никогда не использует их, обеспечивая безопасность типов.
+      */
+    class Box2<out T>
+
+    val dog: Dog = Dog()
+    val dogBoxOut: Box2<Dog> = Box2<Dog>()
+    val animalBoxOut: Box2<Animal> = dogBoxOut
+
+    println("--- Contravariance (in) ---")
+
+    /**
+     * Отношения сохраняются в противоположном направлении, когда классы используются в качестве общих параметров. Если Dog является подтипом Animal, Box<Animal> является подтипом Box<Dog>. Обычно это допускается, когда общий параметр используется только во «входных» позициях, но не в «выходных», например, в параметрах методов.
+     *
+     * Обратите внимание: когда вы определяете класс с контравариантностью с помощью ключевого слова in, это ограничивает использование типа T внутри класса.
+     *
+     * Мы объявляем класс Box с модификатором in для параметра типа T. Это позволяет нам присваивать Box<Animal> переменным типа Box<Dog> и Box<Cat>, поскольку Animal является суперклассом как Dog, так и Cat. Это возможно, поскольку мы используем контравариантность, которая позволяет нам назначать более общий тип (Box<Animal>) более конкретному типу (Box<Dog> или Box<Cat>).
+     *
+     * Ключевое слово in сообщает компилятору, что универсальный класс (или интерфейс) потребляет значения типа T и никогда не создаёт их, обеспечивая безопасность типов.
+     *
+     * Обратите внимание, что при контравариантности вы можете использовать параметр типа T только в качестве входных данных (в параметрах функции), а не в качестве выходных данных (в возвращаемых типах).
+     */
+    class Box3<in T>
+
+    val dogBoxIn: Box3<Dog> = Box3<Animal>()
+    val catBoxIn: Box3<Cat> = Box3<Animal>()
+
+    /**
+     * Давайте рассмотрим пример интерфейса Comparator.
+     *
+     * Компаратор — хороший пример контравариантности, поскольку он потребляет объекты (для их сравнения), но не производит их.
+     *
+     * Вот как вы можете определить контравариантный компаратор в Котлине:
+     */
+    open class AnimalIn {
+        open fun feed() = println("Feeding an animal")
+    }
+
+    class DogIn : AnimalIn() {
+        override fun feed() = println("Feeding a dog")
+    }
+
+    val animalComparator: Comparator<AnimalIn> = object : Comparator<AnimalIn> {
+        override fun compare(e1: AnimalIn, e2: AnimalIn): Int {
+            // Comparison logic goes here
+            return 0
+        }
+    }
+
+    val dogComparator: Comparator<DogIn> = animalComparator
+
+    println("--- Type projections: use-site ---")
+
+    /**
+     * Use-site даёт возможность указывать модификаторы отклонения в точке использования, а не в определении класса или интерфейса.
+     *
+     * Представьте, что вам нужно скопировать MutableList с классами Animals, Dogs и Cats. Помните, что MutableList инвариантен. Вы можете использовать use-site для объявления ограничений.
+     *
+     * В этом примере у нас есть классы Animal, Dog и Cat. У нас также есть функция copyAnimals, которая принимает два параметра: source с типом MutableList<out Animal> (ковариантный) и destination с типом MutableList<in Animal> (контравариантный).
+     *
+     * Функция copyAnimals копирует элементы из списка source в список destination с помощью функции addAll. Поскольку source объявлен с отклонением от места использования (out Animal), он позволяет читать элементы типа Animal из списка. А поскольку destination объявлено с вариацией места использования (in Animal), оно позволяет записывать в список элементы типа Animal.
+     *
+     * Затем мы дважды вызываем функцию copyAnimals: сначала с Dog в качестве источника и Animal в качестве места назначения, а затем с Cat в качестве источника и Animal в качестве места назначения. Это позволяет нам копировать объекты Dog и Cat в список Animal.
+     */
+    fun copyAnimals(source: MutableList<out Animal>, destination: MutableList<in Animal>) {
+        destination.addAll(source)
+    }
+
+    val dogsUse: MutableList<Dog> = mutableListOf(Dog(), Dog())
+    val catsUse: MutableList<Cat> = mutableListOf(Cat(), Cat())
+
+    val animalsUse: MutableList<Animal> = mutableListOf()
+
+    copyAnimals(dogsUse, animalsUse)
+    copyAnimals(catsUse, animalsUse)
+
+    println(animalsUse)
+
+    println("--- Type projections: star projection ---")
+
+    /**
+     * Звездная проекция — это функция Kotlin, которая позволяет работать с универсальными типами, когда точный аргумент типа неизвестен или не имеет значения. Он обозначается символом * и в определенных сценариях может использоваться вместо аргумента определенного типа. Звездчатая проекция полезна, когда вы хотите работать с универсальным типом таким образом, чтобы он учитывал любой аргумент типа, удовлетворяющий определенным ограничениям. Это обеспечивает большую гибкость и универсальность кода, который не зависит от аргумента конкретного типа.
+     */
+    class Box4<T>(val item: T)
+
+    /**
+     * Функция printItems принимает в качестве параметра список Box<*> (звездообразной проекции). Внутри функции мы перебираем поля и печатаем элемент, содержащийся в каждом поле. Поскольку точный аргумент типа неизвестен, мы можем выполнять только операции чтения над элементами. Поскольку аргумент типа неизвестен или не имеет значения в этом контексте, мы используем звездчатую проекцию (Box<*>) для размещения экземпляров Box<Dog> и Box<Cat>. Код способен обрабатывать различные подтипы Animal, не полагаясь на конкретный аргумент типа. Звездчатую проекцию можно использовать с классом Box<T>, что обеспечивает гибкость и универсальность при работе с универсальными типами, где точный аргумент типа неизвестен или не имеет значения.
+     */
+    fun printItems(boxes: List<Box4<*>>) {
+        for (box: Box4<*> in boxes) {
+            println(box.item)
+        }
+    }
+
+    val dogBox = Box4(Dog())
+    val catBox = Box4(Cat())
+
+    val boxes: List<Box4<*>> = listOf(dogBox, catBox)
+
+    printItems(boxes)
 }
 
 inline fun <reified T, R> convertList(list: List<T>, crossinline transform: (T) -> R): List<R> {
