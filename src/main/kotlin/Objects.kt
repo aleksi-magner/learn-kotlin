@@ -69,6 +69,8 @@ fun main() {
     sealed()
     abstractClasses()
     gettersAndSetters()
+    objectDeclarations()
+    companionObject()
 
     weatherComparison()
     createTable()
@@ -1287,6 +1289,151 @@ fun gettersAndSetters() {
     val clientB = Client4(23)
 
     println(clientB.age) // 23
+}
+
+/**
+ * В Kotlin класс описывает общую структуру, экземпляр которой можно создавать несколько раз и разными способами. Иногда нам нужен только один экземпляр, ни больше, ни меньше. Это может помочь вам организовать вашу кодовую базу и собрать вместе похожие методы.
+ *
+ * Котлин предоставляет специальную структуру для объявления синглтона: объявление объекта (object declaration). Это специальный класс с ключевым словом object, создающим синглтон.
+ */
+class Player
+
+object PlayingField {
+    val list = arrayOf(Player(), Player())
+
+    fun getAllPlayers(): Array<Player> = list
+    fun isPlayerInGame(player: Player): Boolean = false
+}
+
+class SomePlayer(val id: Int) {
+    object Properties {
+        const val DEFAULT_SPEED = 7
+
+        fun calcMovePenalty(cell: Int): Int = 42
+    }
+}
+
+class AnyPlayer(val id: Int) {
+    object Properties {
+        val defaultSpeed = 7
+
+        fun calcMovePenalty(cell: Int): Int = cell * 2 * defaultSpeed
+    }
+
+    object Factory {
+        fun create(playerId: Int): AnyPlayer = AnyPlayer(playerId)
+    }
+}
+
+fun objectDeclarations() {
+    val players = PlayingField.getAllPlayers()
+
+    if (players.size < 2) {
+        return println("The game cannot be continued without players")
+    }
+
+    for (player in players) {
+        if (!PlayingField.isPlayerInGame(player)) {
+            println("Current player lost. Next...")
+        }
+    }
+
+    println(SomePlayer.Properties.DEFAULT_SPEED) // 7
+    println(SomePlayer.Properties.calcMovePenalty(13)) // 42
+
+    println(AnyPlayer.Properties.defaultSpeed) // 7
+    println(AnyPlayer.Factory.create(13).id) // 13
+}
+
+/**
+ * Объект-компаньон (companion object) — это синглтон, прикрепленный к внешнему классу, и, следовательно, к нему невозможно получить доступ без доступа к внешнему классу.
+ *
+ * Это позволяет нам понять, что текущий объект каким-то образом связан с внешним классом.
+ *
+ * Например, мы можем сохранить скорость по умолчанию для всех игроков в объекте-компаньоне Player. Это также означает, что каждый экземпляр Player содержит ссылку на сопутствующий объект и каждый раз будет возвращать его экземпляр.
+ */
+class CompanionPlayer(val id: Int) {
+    companion object {
+        val defaultSpeed = 7
+
+        fun calcMovePenalty(cell: Int): Int = cell * 2 * defaultSpeed
+    }
+}
+
+/**
+ * Companion действительно тесно связан с внешним классом. Вы можете свободно использовать свойства и функции объекта companion во внешнем классе.
+ */
+class Deck1 {
+    companion object {
+        val size = 10
+        val height = 2
+
+        fun volume(bottom: Int, height: Int) = bottom * height
+    }
+
+    val square = size * size // 100
+    val volume = volume(square, height) // 200
+}
+
+/**
+ * Но что произойдет, если у внешнего класса есть свойство с тем же именем, что и у сопутствующего объекта? Что ж, в этом случае свойства класса будут затмевать свойства компаньона.
+ */
+class Deck2 {
+    companion object {
+        val size = 10
+    }
+
+    val size = 2
+    val square = size * size // 4
+}
+
+/**
+ * В этом случае, если вы хотите использовать свойство компаньона, вы должны использовать имя компаньона или, если оно не было названо, имя по умолчанию Companion:
+ */
+class Deck3 {
+    companion object {
+        val size = 10
+    }
+
+    val size = 2
+    val square = Companion.size * Companion.size // 100
+}
+
+class CompanionPlayer2(val id: Int) {
+    companion object Properties {
+        val defaultSpeed = 7
+        fun calcMovePenalty(cell: Int): Int = cell * defaultSpeed
+    }
+
+    object Factory {
+        fun create(playerId: Int): CompanionPlayer2 = CompanionPlayer2(playerId)
+    }
+}
+
+
+/**
+ * Для каждого класса доступен только один объект-компаньон. Это означает, что вы не можете создать несколько сопутствующих объектов для класса, поскольку Kotlin не поддерживает такое поведение, даже если у них разные имена.
+ *
+ * Есть еще одно ограничение: мы не можем создать объект-компаньон внутри другого синглтона (или объекта-компаньона), поскольку это нарушает принцип глобального доступа.
+ *
+ * Как видите, когда вы используете собъект-компаньон, вам также не нужно создавать экземпляр класса, чтобы получить эту функцию или поле!
+ *
+ * В Котлине это один вложенный объект, который содержит все методы и поля, общие для всего класса.
+ */
+fun companionObject() {
+    /**
+     * Как видите, если мы опустим имя сопутствующего объекта, мы все равно сможем получить к нему доступ через объявление внешнего класса. Если мы хотим его как-то использовать, мы можем определить его вручную.
+     */
+    println(CompanionPlayer.defaultSpeed) // 7
+
+    /**
+     * Если у объекта-компаньона нет имени, мы также можем использовать имя по умолчанию Companion:
+     */
+    println(CompanionPlayer.Companion.defaultSpeed) // 7
+
+    println(CompanionPlayer2.Properties.defaultSpeed) // 7
+    println(CompanionPlayer2.defaultSpeed) // 7
+    println(CompanionPlayer2.Factory.create(13).id) // 13
 }
 
 /**
