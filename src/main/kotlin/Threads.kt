@@ -45,7 +45,19 @@ fun main() {
 
     customThreads()
 
+    /**
+     * Иногда необходимо управлять жизненным циклом потока, пока он работает, а не просто запустить его и оставить в покое.
+     *
+     * Два часто используемых метода в многопоточном программировании: sleep() и join().
+     *
+     * Оба метода могут вызывать исключение InterruptedException.
+     */
+    sleeping()
+    joining()
+    exceptions()
+
     simpleMultiThreadedProgram()
+    calcDistinctCharacters()
 }
 
 /**
@@ -170,3 +182,209 @@ fun simpleMultiThreadedProgram() {
         }
     }
 }
+
+/**
+ * Метод Thread.sleep() заставляет текущий выполняющийся поток приостановить выполнение на указанное количество миллисекунд.
+ *
+ * Это эффективный способ предоставления процессорного времени другим потокам приложения или другим приложениям, которые могут работать на компьютере.
+ */
+fun sleeping() {
+    println("Started. Before sleeping")
+
+    // приостановить текущий поток на 2000 миллисекунд или 2 секунды
+    Thread.sleep(2000)
+
+    println("Finished. After sleeping")
+}
+
+/**
+ * Метод join заставляет текущий поток ждать завершения другого потока, в котором был вызван этот метод.
+ */
+fun joining() {
+    // Строка «The end» не будет напечатана до тех пор, пока поток не завершится.
+    class HelloThread(name: String) : Thread(name) {
+        override fun run() {
+            println("Run $name thread")
+        }
+    }
+
+    val thread: Thread = HelloThread("join-thread")
+
+    println("The start")
+
+    thread.start()
+
+    println("Do something useful")
+
+    // В качестве параметра передаётся время в миллисекундах, которое используется, чтобы избежать слишком долгого или даже бесконечного ожидания в случае зависания потока.
+    thread.join(20000) // Ждёт пока поток умрёт или продолжает выполнение через заданное время
+
+    println("The end")
+
+    /**
+     * Класс Worker разработан для решения «сложной задачи», моделируемой методом sleep
+     *
+     * Основной поток ожидает worker и не может напечатать сообщение "The program stopped" до тех пор, пока worker не завершится или не будет превышено время ожидания.
+     *
+     * Мы точно знаем лишь то, что «Starting a task» предшествует «The task is finished», и «Do something useful» предшествует «The program stopped».
+     */
+    class Worker : Thread() {
+        override fun run() {
+            println("Starting a task")
+
+            sleep(2000) // Имитация решения сложной задачи
+
+            println("The task is finished")
+        }
+    }
+
+    val worker = Worker()
+
+    worker.start()
+
+    Thread.sleep(100)
+
+    println("Do something useful")
+
+    worker.join(3000) // waiting for the worker
+
+    println("The program stopped")
+
+    /**
+     * Есть несколько возможных выводов.
+     *
+     * Первый возможный вывод (задача завершается до превышения таймаута):
+     *
+     * Starting a task
+     * Do something useful
+     * The task is finished
+     * The program stopped
+     *
+     * Второй возможный вывод (задача завершается до превышения таймаута):
+     *
+     * Do something useful
+     * Starting a task
+     * The task is finished
+     * The program stopped
+     *
+     * Третий возможный вывод:
+     *
+     * Do something useful
+     * Starting a task
+     * The program stopped
+     * The task is finished
+     *
+     * Четвёртый возможный вывод:
+     *
+     * Starting a task
+     * Do something useful
+     * The program stopped
+     * The task is finished
+     */
+}
+
+val mainThreadId: Long = Thread.currentThread().threadId()
+
+class SlowStringProcessor(val input: String) : Thread() {
+    @Volatile
+    var numberOfUniqueCharacters: Int = 0
+        private set
+
+    override fun run() {
+        val currentId: Long = currentThread().threadId()
+
+        if (currentId == mainThreadId) {
+            throw RuntimeException("You must start a new thread!")
+        }
+
+        try {
+            sleep(2000)
+        } catch (error: Exception) {
+            throw RuntimeException("Do not interrupt the processor", error)
+        }
+
+        numberOfUniqueCharacters = input
+            .split("")
+            .filter { it != "" }
+            .toTypedArray()
+            .distinct()
+            .size
+    }
+}
+
+fun calcDistinctCharacters() {
+    val processor = SlowStringProcessor("multithreading")
+
+    processor.start()
+    processor.join(3000)
+
+    println(processor.numberOfUniqueCharacters) // 12
+}
+
+/**
+ * Если один из потоков вашей программы выдаёт исключение, которое не перехватывается ни одним методом в стеке вызовов, поток будет завершен. Если такое исключение возникает в однопоточной программе, вся программа остановится, поскольку JVM завершит работающую программу, как только не останется потоков, не являющихся демонами.
+ *
+ * `fun main() {
+ *     print(2 / 0)
+ * }`
+ *
+ * Эта программа выводит:
+ *
+ * Exception in thread "main" java.lang.ArithmeticException: / by zero
+ *     at ExampleKt.main(example.kt:6)
+ *     at ExampleKt.main(example.kt)
+ *
+ * Process finished with exit code 1
+ *
+ * Код 1 означает, что процесс завершился с ошибкой.
+ *
+ * Если ошибка произойдёт внутри нового потока, который мы создали, весь процесс не будет остановлен:
+ *
+ * `fun main() {
+ *     val thread = CustomThread()
+ *     thread.start()
+ *     thread.join() // wait for the thread with an exception to terminate
+ *     println("I am printed!") // this line will be printed
+ * }
+ *
+ *
+ * class CustomThread : Thread() {
+ *     override fun run() {
+ *         println(2 / 0)
+ *     }
+ * }`
+ *
+ * Несмотря на неперехваченное исключение, программа будет успешно завершена.
+ *
+ * Exception in thread "Thread-2" java.lang.ArithmeticException: / by zero
+ *     at CustomThread.run(example.kt:14)
+ * I am printed!
+ *
+ * Process finished with exit code 0
+ *
+ * Код 0 означает, что процесс успешно завершён.
+ *
+ * Что произойдёт, если в основном потоке произойдёт ошибка, а код пользовательского потока правильный? Давайте посмотрим:
+ *
+ * `fun main() {
+ *     thread(block = {
+ *         println("Hello from the custom thread!")
+ *     })
+ *     print(2 / 0)
+ *     println("Hello from the main thread!")
+ * }`
+ *
+ * Вывод программы будет следующим:
+ *
+ * Exception in thread "main" java.lang.ArithmeticException: / by zero
+ * 	at Thread_excKt.main(thread_exc.kt:7)
+ * 	at Thread_excKt.main(thread_exc.kt)
+ * Hello from custom thread!
+ *
+ * Process finished with exit code 1
+ *
+ * В результате процесс завершился с ошибкой (код выхода 1). Код после print(2/0) не выполнился, но блок кода в пользовательском потоке выполнился.
+ *
+ * Таким образом, несмотря на исключение в основном потоке, пользовательские потоки всегда работают корректно, даже если программа завершается с ошибкой.
+ */
+fun exceptions() {}
