@@ -75,6 +75,7 @@ fun main() {
     weatherComparison()
     createTable()
     animalSounds()
+    shapeArea()
 
     typeSafeBuilders()
 }
@@ -1752,7 +1753,7 @@ fun sealed() {
     listTheTasks(worker) // Worker is fixing the projector for profs in CS, all respect to him.
 }
 
-interface Shape {
+interface ShapeInterface {
     fun calculateArea(): Double
     fun calculatePerimeter(): Double
 }
@@ -1861,7 +1862,7 @@ fun abstractClasses() {
     /**
      * В Kotlin можно использовать абстрактные классы и интерфейсы вместе
      */
-    abstract class AbstractShape : Shape {
+    abstract class AbstractShape : ShapeInterface {
         // Common behavior or properties for shapes can be implemented here
     }
 
@@ -2015,4 +2016,45 @@ fun typeSafeBuilders() {
     }
 
     printTree(tree)
+}
+
+sealed class Shape {
+        data class Rectangle(val width: Double, val height: Double) : Shape()
+        data class Square(val side: Double) : Shape()
+        data class Circle(val radius: Double) : Shape()
+        data class Triangle(val base: Double, val height: Double) : Shape()
+        data class Pentagon(val side: Double) : Shape()
+}
+
+fun calculateArea(shape: Shape): Double = when (shape) {
+    is Shape.Rectangle -> shape.width * shape.height
+    is Shape.Square -> shape.side * shape.side
+    is Shape.Circle -> Math.PI * shape.radius * shape.radius
+    is Shape.Triangle -> (shape.base * shape.height) / 2
+    is Shape.Pentagon -> 1 / 4.0 * Math.sqrt(5 * (5 + 2 * Math.sqrt(5.0))) * shape.side * shape.side
+}
+
+/**
+ * Есть sealed класс Shape. Объявите функцию calculationArea(), которая принимает sealed класс в качестве параметра и возвращает площадь с типом Double.
+ */
+fun shapeArea() {
+    val rectangle = Shape.Rectangle(4.0, 2.5)
+
+    println("Rectangle area: ${calculateArea(rectangle)}") // 10.0
+
+    val square = Shape.Square(2.5)
+
+    println("Square area: ${calculateArea(square)}") // 6.25
+
+    val circle = Shape.Circle(2.5)
+
+    println("Circle area: ${calculateArea(circle)}") // 19.634954084936208
+
+    val triangle = Shape.Triangle(4.0, 2.5)
+
+    println("Triangle area: ${calculateArea(triangle)}") // 5.0
+
+    val pentagon = Shape.Pentagon(2.5)
+
+    println("Pentagon area: ${calculateArea(pentagon)}") // 10.752983753681043
 }
