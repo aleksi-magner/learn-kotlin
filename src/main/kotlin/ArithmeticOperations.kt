@@ -145,6 +145,8 @@ fun mathLibrary() {
     println("Round 4.15 to Int: ${round(4.15).toInt()}") // 4
     println("Round 3.5: ${round(3.5)}") // 4.0
     println("Round 4.5: ${round(4.5)}") // 4.0
+    println("Round 4.51: ${round(4.51)}") // 5.0
+    println("Round 4.501: ${round(4.501)}") // 5.0
     println("Round 4.75: ${round(4.75)}") // 5.0
 
     /**
