@@ -1173,6 +1173,18 @@ fun dataClass() {
     println(some.name)
 
     some.printName()
+
+    data class Box(val height: Int, val length: Int, val width: Int) {
+        var size: Int = height + length + width
+
+        override fun toString(): String {
+            return "Box(height=$height, width=$width, size=$size)"
+        }
+    }
+
+    val box1 = Box(3,  21,  6)
+
+    println(box1) // Box(height=3, width=6, size=30)
 }
 
 /**
