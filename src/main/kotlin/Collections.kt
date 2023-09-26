@@ -2258,6 +2258,7 @@ fun collectionsAndNullable() {
     println("maxOfWithOrNull: ${numbers.maxOfWithOrNull(naturalOrder()) { it > 3 }}") // true
 
     firstShortestWord()
+    biggestOne()
 }
 
 /**
@@ -2269,6 +2270,17 @@ fun firstShortestWord() {
     val filtered = list.filter { it.first() in 'a'..'l' }
 
     println(filtered.minByOrNull { it.length }) // cat
+}
+
+/**
+ * Список строк нужно отфильтровать по целым числам и найти среди них максимальное значение
+ */
+fun biggestOne() {
+    val list = "12 4.00 Kraken pull push 43 12345 cat power".split(" ")
+
+    val maxInt: Int? = list.mapNotNull { it.toIntOrNull() }.maxOrNull()
+
+    println(maxInt) // 12345
 }
 
 val isEven: (Int) -> Boolean = { x -> x % 2 == 0 }

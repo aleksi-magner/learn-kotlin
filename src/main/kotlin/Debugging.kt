@@ -98,4 +98,128 @@ fun main() {
  *
  * Также стоит отметить, что для строки кода с точкой останова результат работы этой строки пока неизвестен. Таким образом, после того, как код прерывается в точке останова, вы можете видеть только результаты всех предыдущих строк до точки останова.
  */
-fun debugging() {}
+fun debugging() {
+    println("--- If expressions ---")
+
+    whateverIF()
+
+    println("--- Loops ---")
+
+    whateverLoop()
+
+    println("--- Tasks ---")
+
+    fibonacci()
+    bitwiseAndIntegers()
+    divisorsFinding()
+    primesAndHowFindThem()
+}
+
+fun whateverIF() {
+    var greeting = "Hello world"
+
+    // Если бы условие не выполнилось, программа не остановилась бы в отмеченной точке
+    if (greeting.contains("e")) {
+        greeting += "!" // breakpoint,  greeting == "Hello world"
+
+        println(greeting)
+    }
+
+    println("Shutting down")
+}
+
+/**
+ * Чтобы не перебирать весь цикл, можно добавить дополнительное условие для останова.
+ *
+ * Щелкните правой кнопкой мыши точку останова и укажите условие: c == 'H'.
+ *
+ * Условие — это просто логическое выражение, которое должно иметь значение true, чтобы программа остановилась на этой точке останова.
+ *
+ * Обратите внимание, что программа оценивает условие в контексте кода, в котором установлена точка останова.
+ *
+ * Например, условие `c == 'H'` не будет работать для точки останова вне цикла, поскольку переменная `c` там не видна.
+ */
+fun whateverLoop() {
+    val rangeStart = 'C'
+    val rangeEnd = 'Y'
+    val findLetter = 'Q'
+
+    for (c in rangeStart..rangeEnd) {
+        if (c == findLetter) { // breakpoint, c == 'H'
+            println("Character $findLetter is within range $rangeStart–$rangeEnd")
+
+            return
+        }
+    }
+
+    println("Character $findLetter is not within range $rangeStart–$rangeEnd")
+}
+
+/**
+ * Каково значение переменной current в конце 20-й итерации (i == 19)?
+ */
+fun fibonacci() {
+    var prev = 0
+    var current = 1
+
+    for (i in 0..24) {
+        val swap = prev
+
+        prev = current
+
+        current += swap
+
+        println(current) // breakpoint, 10946
+    }
+}
+
+/**
+ * Ниже вы можете увидеть код, использующий побитовые операции.
+ *
+ * По умолчанию отладчик отображает переменные как целые числа. Однако в этом случае гораздо удобнее видеть их в бинарном формате.
+ *
+ * Для этого щелкните правой кнопкой мыши переменную на панели «Переменные» (Variables) отладчика и выберите «Просмотреть как» > «Двоичный» (View as > Binary) (чтобы вернуться к представлению по умолчанию, выберите «Просмотр как» > «Примитивный» (View as > Primitive)).
+ *
+ * В качестве ответа введите двоичное представление переменной result, которая появится в отладчике с префиксом 0b.
+ */
+fun bitwiseAndIntegers() {
+    var number1 = 38
+    var number2 = 54
+
+    number1 = number1 shl 2
+    number2 = number2 shr 1
+
+    var result = number2 xor number1 // 0b10000011
+} // breakpoint, 0b10000011
+
+/**
+ * Используя данный код и отладчик, найдите наименьший делитель числа 5977 (кроме 1, конечно).
+ */
+fun isPrime(number: Int): Boolean {
+    for (i in 2..(number / 2)) {
+        if (number % i != 0) {
+            continue
+        } else {
+            return false // breakpoint, 43
+        }
+    }
+
+    return true
+}
+
+fun divisorsFinding() {
+    val result = isPrime(5977) // 43
+}
+
+/**
+ * Используя приведенный ниже код и отладчик, найдите наибольшее простое число, меньшее 459.
+ */
+fun primesAndHowFindThem() {
+    var greatestPrimeInRange = 2
+
+    for (number in 2..1000) {
+        if (isPrime(number) && number > greatestPrimeInRange) {
+            greatestPrimeInRange = number // breakpoint, 457
+        }
+    }
+}
