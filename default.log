@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2023-09-27T20:33:59.989784438Z</date>
+  <millis>1695846839989</millis>
+  <nanos>784438</nanos>
+  <sequence>4</sequence>
+  <logger>Main</logger>
+  <level>INFO</level>
+  <class>DebuggingKt</class>
+  <method>logging</method>
+  <thread>1</thread>
+  <message>Info log message</message>
+</record>
+<record>
+  <date>2023-09-27T20:33:59.992586285Z</date>
+  <millis>1695846839992</millis>
+  <nanos>586285</nanos>
+  <sequence>6</sequence>
+  <logger>Main</logger>
+  <level>INFO</level>
+  <class>DebuggingKt</class>
+  <method>logging</method>
+  <thread>1</thread>
+  <message>Info Log</message>
+</record>
+</log>

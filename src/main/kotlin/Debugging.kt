@@ -1,3 +1,16 @@
+import java.util.logging.Level
+import java.util.logging.Logger
+
+import java.util.logging.FileHandler
+import java.util.logging.Handler
+import java.util.logging.LogRecord
+import java.util.logging.XMLFormatter
+
+import java.util.logging.Filter
+
+import org.slf4j.Logger as LogbackLogger
+import org.slf4j.LoggerFactory
+
 /**
  * Отладка — это процесс поиска и исправления ошибок в программе.
  *
@@ -79,6 +92,8 @@ fun main() {
     // val cat3 = Cat("Many", 0)
 
     debugging()
+    logging()
+    logback()
 }
 
 /**
@@ -113,6 +128,12 @@ fun debugging() {
     bitwiseAndIntegers()
     divisorsFinding()
     primesAndHowFindThem()
+
+    val password = modifyString("my password is 12345")
+
+    println(password)
+
+    fibonacciSum()
 }
 
 fun whateverIF() {
@@ -222,4 +243,354 @@ fun primesAndHowFindThem() {
             greatestPrimeInRange = number // breakpoint, 457
         }
     }
+}
+
+/**
+ * С помощью отладчика узнайте значение переменной modifiedString непосредственно перед выполнением строки, отмеченной // breakpoint.
+ */
+fun modifyString(initialString: String): String{
+    var modifiedString = initialString
+
+    modifiedString = modifiedString.removeRange(2, 10)
+
+    if (modifiedString.contains(" ")) {
+        modifiedString += "ABC"
+    }
+
+    modifiedString = modifiedString.substringAfter(" ") + modifiedString.substringBefore(" ")
+
+    if (modifiedString.contains("a")) {
+        modifiedString.plus("1248")
+    }
+
+    modifiedString = modifiedString.replaceFirst(" ", "$")
+
+    if (modifiedString.length < 15) {
+        modifiedString = modifiedString.reversed()
+    }
+
+    modifiedString += "18B20" // breakpoint, dymCBA54321$si
+
+    modifiedString = modifiedString.substringAfter("1") + modifiedString.substringBefore("5")
+
+    modifiedString.dropLast(4)
+
+    return  modifiedString
+}
+
+/**
+ * Ниже приведен код, который вычисляет числа Фибоначчи и их сумму в бесконечном цикле. Используя отладчик, найдите значение fibonacciSum, когда переменная fibonacciCurrent впервые станет больше 1000 и будет добавлена к сумме.
+ */
+fun fibonacciSum() {
+    var fibonacciPrevious = 1
+    var fibonacciCurrent = 1
+    var fibonacciSum = fibonacciPrevious + fibonacciCurrent
+
+    while(true) { // breakpoint, fibonacciSum == 4180
+        val tmp = fibonacciPrevious + fibonacciCurrent
+
+        fibonacciPrevious = fibonacciCurrent
+        fibonacciCurrent = tmp
+        fibonacciSum += fibonacciCurrent
+    }
+}
+
+object Main {
+    @JvmStatic
+    // Аргументы опциональны
+    fun main(args: Array<String>) {
+        val logger = Logger.getLogger(Main::class.java.name)
+
+        logger.log(Level.WARNING, "Hello ${logger.name}") // WARNING: Hello Main
+    }
+}
+
+class FilterExample : Filter {
+    override fun isLoggable(record: LogRecord): Boolean {
+        return record.level === Level.INFO
+    }
+}
+
+/**
+ * Логирование — это записи программного приложения, которые мы сохраняем в файл или отображаем в консоли.
+ *
+ * Эти записи могут описывать что угодно: событие в приложении, значение переменной, ошибку или исключение в приложении. Журналы в основном используются для целей отладки.
+ *
+ * Пакет java.util.logging отвечает за предоставление разработчикам возможностей ведения журналов в стандартном SDK Java.
+ *
+ * При работе с журналированием Java необходимо изучить несколько компонентов: класс Logger, класс FileHandler, класс ConsoleHandler, SimpleFormatter, XMLFormatter, Level, LogRecord и LogManager.
+ *
+ * Класс Logger — наиболее важный и фундаментальный компонент пакета ведения журналов.
+ *
+ * Стандартной практикой является создание экземпляра журнала для каждого класса.
+ *
+ * Класс Logger представляет несколько методов для печати сообщений журнала.
+ *
+ * Каждое сообщение журнала связано с определённым уровнем журнала. Java использует Info в качестве уровня журнала по умолчанию.
+ *
+ * В пакете журналирования Java имеется семь уровней журналирования. В списке ниже они показаны от самой высокой до самой низкой степени серьёзности.
+ * Класс Logger содержит методы, для которых не требуется указывать уровень журнала в качестве атрибута.
+ *
+ *  Log level   | Value | Method
+ * - SEVERE     | 1000  | severe()
+ * - WARNING    | 900   | warning()
+ * - INFO       | 800   | info()
+ * - CONFIG     | 700   | config()
+ * - FINE       | 500   | fine()
+ * - FINER      | 400   | finer()
+ * - FINEST     | 300   | finest()
+ *
+ *
+ * Следующими важными компонентами пакета журналирования являются обработчики (handlers) и средства форматирования (formatters), которые часто работают вместе.
+ *
+ * Обработчики несут ответственность за отправку реальных журналов во внешний мир.
+ *
+ * В пакете java.util.logging есть абстрактный класс Handler.
+ *
+ * Он расширен пятью конкретными классами. Двумя наиболее важными классами среди них являются ConsoleHandler и FileHandler.
+ *
+ * ConsoleHandler записывает сообщения журнала в System.err, а FileHandler записывает сообщения журнала в файл.
+ *
+ * Обычно обработчик использует форматтер для форматирования сообщения журнала. В пакете журналирования есть два типа форматтеров. Это SimpleFormatter и XMLFormatter.
+ *
+ * Конечно, оба они расширяют абстрактный класс Formatter в пакете журналирования.
+ *
+ *
+ * Фильтры
+ *
+ * Когда мы разрабатываем программное приложение, мы записываем как можно больше сообщений журнала. Но мы не хотим, чтобы все сообщения журнала выполнялись при каждом запуске приложения: это будет тратить ресурсы и может привести к созданию неоправданно длинных файлов журнала. Поэтому мы используем фильтры.
+ *
+ * Допустим, вы хотите печатать только информационные сообщения. Для этого сначала вам необходимо создать собственный класс фильтра, реализовав интерфейс фильтра в пакете журналирования.
+ *
+ * Итоги:
+ *
+ * Во-первых, java.util.logging является частью Java SDK и отвечает за предоставление разработчикам возможностей ведения журналов.
+ *
+ * Экземпляры Logger отвечают за создание сообщений журнала. Обычно мы создаём экземпляр регистратора для каждого класса, в который собираемся добавлять журналы.
+ *
+ * Обработчики отвечают за отправку сообщений журнала из приложения.
+ *
+ * Если вы хотите распечатать сообщения журнала на консоль, используйте ConsoleHandler.
+ *
+ * Если вы хотите записывать сообщения журнала в файл, используйте FileHandler.
+ *
+ * Средства форматирования форматируют сообщения журнала.
+ *
+ * Если вы хотите регистрировать сообщения в формате XML, используйте XMLFormatter.
+ *
+ * Наконец, фильтры, которые помогают контролировать, какие журналы должны выполняться при запуске приложения.
+ */
+fun logging() {
+    println("--- log() ---")
+
+    // Создаём экземпляр регистратора
+    val logger = Logger.getLogger(Main::class.java.name)
+
+    // Вызываем метод log(), чтобы распечатать сообщение журнала
+    // Метод log() принимает два аргумента: первый аргумент — объект уровня, а второй — сообщение.
+    // Level.WARNING — это константа из класса Level в пакете журналирования.
+
+    // сент. 27, 2023 12:42:36 PM Main main
+    // WARNING: Hello Main
+    logger.log(Level.WARNING, "Hello ${logger.name}") // WARNING: Hello Main
+
+    // Отдельный метод под каждый уровень
+
+    // сент. 27, 2023 12:42:36 PM DebuggingKt logging
+    // SEVERE: Severe Log message
+    logger.severe("Severe Log message")
+
+    // сент. 27, 2023 12:42:36 PM DebuggingKt logging
+    // WARNING: Warning Log message
+    logger.warning("Warning Log message")
+
+    //сент. 27, 2023 12:42:36 PM DebuggingKt logging
+    // INFO: Info Log message
+    logger.info("Info Log message")
+
+    logger.config("Config Log message")
+    logger.fine("Fine Log message")
+    logger.finer("Finer Log message")
+    logger.finest("Finest Log message")
+
+    println("--- Handlers and formatters ---")
+
+    /**
+     * В корне будет создан файл журнала с именем default.log, который будет содержать текст XML
+     */
+    val fileHandler: Handler = FileHandler("default.log")
+
+    logger.addHandler(fileHandler)
+
+    fileHandler.formatter = XMLFormatter()
+
+    // сент. 27, 2023 11:26:55 PM DebuggingKt logging
+    // INFO: Info log message
+    logger.info("Info log message")
+
+    println("--- Filters ---")
+
+    val filter: Filter = FilterExample()
+
+    logger.filter = filter
+
+    /**
+     * Когда этот код будет выполнен, будет напечатано только сообщение информационного журнала
+     */
+    logger.severe("Severe Log")
+    logger.info("Info Log")
+    logger.warning("Warning Log")
+
+    handlerClasses()
+}
+
+/**
+ * Дан список уровней журнала, разделённых пробелами.
+ *
+ * Найдите общее целое значение данного набора уровней журнала.
+ */
+fun handlerClasses() {
+    val list = "info severe".split(" ")
+
+    val sum = list.sumOf {
+        Level.parse(it.uppercase()).intValue()
+    }
+
+    println(sum)// 1800
+}
+
+/**
+ * Как видите, мы не ссылаемся напрямую ни на один класс Logback. Вместо этого мы вызываем классы и интерфейсы SLF4J, а SLF4J, в свою очередь, делегирует операции журналирования Logback.
+ */
+class ExampleLogback {
+    /**
+     * При создании регистратора мы используем метод getLogger, который принимает в качестве аргумента либо класс, либо строку.
+     *
+     * В обоих случаях аргумент используется как имя регистратора. Если регистратор с таким именем уже существует, метод возвращает тот же регистратор, а если регистратора с таким именем нет, создается новый.
+     */
+    private val log1: LogbackLogger = LoggerFactory.getLogger(Example::class.java)
+    private val log2: LogbackLogger = LoggerFactory.getLogger("com.example.Example")
+
+    init {
+        /**
+         * Объект Logger имеет ряд методов, а именно trace, debug, info, warn и error для вывода сообщения соответствующего уровня запроса журнала.
+         */
+        // 00:51:37.012 [main] INFO Example -- Information from LOG_1
+        log1.info("Information from LOG_1")
+
+        // 00:51:37.018 [main] WARN com.example.Example -- Warning from LOG_2
+        log2.warn("Warning from LOG_2")
+
+        // 00:51:37.018 [main] INFO Example -- Are the loggers the same? false
+        log1.info("Are the loggers the same? {}", log1 === log2)
+    }
+}
+
+
+/**
+ * Logback - популярная библиотека журналирования
+ *
+ * Она является преемником библиотеки журналирования Log4j и основана на аналогичных концепциях. Logback работает быстро как при синхронном, так и при асинхронном журналировании и предлагает множество полезных функций, что делает его хорошим выбором для проекта любого масштаба.
+ *
+ * Наиболее важное различие между использованием средства ведения журнала Logback и простой печатью сообщения в System.out заключается в том, что у каждого средства ведения журнала есть контекст.
+ *
+ * Контекст журнала позволяет включать или отключать определённые сообщения журнала и отвечает за создание экземпляров журнала и организацию их иерархии.
+ *
+ * Чтобы начать работу с Logback, нужно добавить зависимость logback-classic.
+ *
+ * `dependencies {
+ *     testImplementation("ch.qos.logback:logback-classic:1.4.11")
+ * }`
+ *
+ * Эта библиотека будет транзитивно извлекать две другие зависимости: slf4j-api и logback-core.
+ *
+ * SLF4J (Simple Logging Facade for Java) — это фасад или абстракция для различных библиотек журналирования, включая Logback. Он предоставляет простой API для ведения журналов, и Logback реализует его изначально. Вы можете вызвать регистратор SLF4J с Logback в качестве базовой реализации без каких-либо накладных расходов.
+ *
+ * Библиотека logback-core закладывает основу для Logback и предоставляет для использования несколько готовых классов.
+ *
+ * Таких, как:
+ *
+ * - ConsoleAppender, который добавляет события журнала в System.out или System.err;
+ *
+ * - FileAppender, который добавляет события журнала в файл;
+ *
+ * - RollingFileAppender, который добавляет события журнала в файл и может изменить цель журнала на другой файл при выполнении определённого условия.
+ *
+ * Библиотека logback-classic предоставляет классы, позволяющие отправлять данные во внешние системы.
+ *
+ * Таких, как:
+ *
+ * - SMTPAppender, который собирает данные в пакеты и отправляет содержимое пакета на указанный пользователем адрес электронной почты после возникновения указанного пользователем события;
+ *
+ * - DBAppender, который добавляет данные в таблицы базы данных.
+ *
+ * По умолчанию каждая строка журнала содержит следующие элементы: метку времени, имя потока, уровень запроса журнала, имя средства ведения журнала и сообщение журнала.
+ *
+ * Точная настройка конфигурации логгера
+ *
+ * Чтобы настроить регистраторы в Logback, вы можете использовать XML-файл или файл Groovy.
+ *
+ * Мы настроим наш регистратор с помощью XML-файла. Вам нужно будет создать файл logback.xml и поместить его в папку ресурсов. Вот как будет выглядеть файл основных настроек:
+ *
+ * `<configuration>
+ *     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+ *         <encoder>
+ *             <pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+ *         </encoder>
+ *     </appender>
+ *
+ *     <root level="info">
+ *         <appender-ref ref="console" />
+ *     </root>
+ * </configuration>`
+ *
+ * Все настройки логгера записываются между тегами <configuration>.
+ *
+ * Далее идёт тег <appender>.
+ *
+ * Appender — инструмент, позволяющий настроить, где и как будут записываться логи.
+ *
+ * Параметр name указывает имя приложения, а параметр class указывает класс, который будет реализовывать приложение.
+ *
+ * Тег <encoder> определяет формат, в котором будут записываться журналы. Сообщение журнала в формате, который мы определили выше, будет выглядеть так:
+ *
+ * 01:15:54 INFO  com.example.Example - Customized message format
+ *
+ * Тег <root> относится к предопределённому корневому регистратору. Здесь мы указали уровень журнала level="info", и к нему был привязан аппендер <appender-ref ref="console" />.
+ *
+ * В верхней строке настроек вы можете заметить, что мы использовали ConsoleAppender. Это приложение позволяет выводить логи в консоль.
+ *
+ * Еще одно стандартное приложение — FileAppender. Как можно догадаться по названию, это приложение позволяет записывать логи в файл.
+ *
+ * `<configuration>
+ *     <appender name="file" class="ch.qos.logback.core.FileAppender">
+ *         <file>${user.dir}/logs/example.log</file>
+ *         <encoder>
+ *             <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+ *         </encoder>
+ *     </appender>
+ *
+ *     <root level="info">
+ *         <appender-ref ref="file" />
+ *     </root>
+ * </configuration>`
+ *
+ * Это самая примитивная настройка FileAppender. Новинкой в ​​настройках является тег <file>, в котором мы указываем, где находится файл и куда мы хотим вести запись логов. Не волнуйтесь, если этого файла нет — он будет создан при запуске приложения. Благодаря ${user.dir} файл журнала появится в основной папке проекта.
+ *
+ * Logback позволяет настроить уровень журнала для отдельных пакетов и классов.
+ *
+ * Для этого вам нужно будет перейти к файлу logback.xml, а затем указать имя и уровень параметров. В параметре name укажите путь к пакету или классу в вашем проекте, а в параметре level укажите необходимый вам уровень логирования.
+ *
+ * `<logger name="com.example.ExampleLogback" level="warn"/>`
+ *
+ * Каждый регистратор будет выводить только те сообщения, уровень запроса журнала которых выше или равен уровню регистратора.
+ *
+ * В Logback существует иерархия, основанная на именах. То есть, если у нас есть регистратор с именем `com.logback.first`, он будет родительским для регистратора с именем `com.logback.first.second`, который является родительским для `com.logback logger.first.second.third`.
+ *
+ * Это означает, что вы можете определить уровни ведения журнала для целых пакетов. На вершине каждой иерархии находится корневой регистратор.
+ */
+fun logback() {
+    println("--- Basic logging ---")
+
+    ExampleLogback()
 }

@@ -16,6 +16,8 @@ dependencies {
     implementation("com.diogonunes:JCDP:4.0.2")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
 
+    implementation("ch.qos.logback:logback-classic:1.4.11")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.20-RC")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("io.mockk:mockk:1.13.5")
