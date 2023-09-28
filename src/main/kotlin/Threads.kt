@@ -1,3 +1,5 @@
+import kotlin.concurrent.thread
+
 /**
  * Kotlin изначально был разработан со встроенной поддержкой многопоточности. Потоки поддерживаются на уровне JVM, уровне языка (специальные ключевые слова) и уровне стандартной библиотеки.
  *
@@ -57,6 +59,7 @@ fun main() {
     exceptions()
     sharedData()
     synchronization()
+    thinThreads()
 
     simpleMultiThreadedProgram()
     calcDistinctCharacters()
@@ -568,4 +571,30 @@ fun synchronization() {
             println("Значение успешно изменено!")
         }
     }
+}
+
+fun addNumbers(numbers: StringBuffer) {
+    for (i in 0..<100_000) {
+        numbers.append(i.toString().first())
+    }
+}
+
+/**
+ * StringBuffer не поддерживает многопоточность, поэтому результат всегда меньше 200 000.
+ * Для синхронности операции из разных потоков используем StringBuffer
+ */
+fun thinThreads() {
+    val numbers = StringBuffer(200_000)
+
+    val thread = thread(start = false, name = "Thread 1") {
+        addNumbers(numbers)
+    }
+
+    thread.start()
+
+    addNumbers(numbers)
+
+    thread.join()
+
+    println("Thin threads: ${numbers.length}")
 }
