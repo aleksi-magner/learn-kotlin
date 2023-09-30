@@ -1,3 +1,7 @@
+import java.math.BigInteger
+import java.math.BigDecimal
+import java.math.RoundingMode
+
 import kotlin.math.*
 
 fun main() {
@@ -46,6 +50,21 @@ fun main() {
     println(-8)  // -8
     println(-(100 + 4)) // -104
 
+    // BigInteger
+    val a: BigInteger = (-9999999999999999).toBigInteger()
+    val b: BigInteger = 10000000000000000.toBigInteger()
+    val c: BigInteger = 20000000000000000.toBigInteger()
+    val d: BigInteger = 9999999999999999.toBigInteger()
+
+    val result: BigInteger = (-a) * b + c - d
+
+    println(result) // 100000000000000000000000000000001
+
+    val exbibyte: BigDecimal = 1.toBigDecimal()
+    val bits = exbibyte * 2.toBigDecimal().pow(63)
+
+    println(bits) // 9223372036854775808
+
     // Приоритеты
     /**
      * 1. Скобки
@@ -58,6 +77,8 @@ fun main() {
 
     sumOfDigits()
     timeDifference()
+    percentageBigNumbers()
+    roundAndPower()
 }
 
 /**
@@ -210,4 +231,40 @@ fun timeDifference() {
     }
 
     println(seconds.last() - seconds.first()) // 3661
+}
+
+/**
+ * Считывает два больших натуральных числа и вычисляет процентную долю каждого числа в их сумме. При расчёте следует игнорировать дробную часть процента.
+ */
+fun percentageBigNumbers() {
+    val a1: BigInteger = "2".toBigInteger()
+    val b1: BigInteger = "3".toBigInteger()
+
+    val sum1 = a1 + b1
+
+    println(a1 * 100.toBigInteger() / sum1) // 40
+    println(b1 * 100.toBigInteger() / sum1) // 60
+
+    val a2: BigInteger = "985703706758760345756".toBigInteger()
+    val b2: BigInteger = "38573952062739408530852".toBigInteger()
+
+    val sum2 = a2 + b2
+
+    println(a2 * 100.toBigInteger() / sum2) // 2
+    println(b2 * 100.toBigInteger() / sum2) // 97
+}
+
+/**
+ * Прочтите целые числа: power и mode, а также большое рациональное число number.
+ *
+ * Округлите number в сторону минимального значения (floor) до десятичных знаков mode, затем возведите его в степень power и выведите результат.
+ */
+fun roundAndPower() {
+    val power1 = 2
+    val mode1 = 0
+    val number1: BigDecimal = "67.45354675".toBigDecimal()
+
+    val result = number1.setScale(mode1, RoundingMode.FLOOR).pow(power1)
+
+    println(result) // 4489
 }
