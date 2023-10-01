@@ -137,4 +137,21 @@ fun main() {
 
     println(p3 < p4) // false
     println(p3 <= p4) // true
+
+    listOfStudentGrades()
+}
+
+operator fun List<Double>.invoke(markLimit: Double): Double {
+    return this.filter { it > markLimit }.average()
+}
+
+/**
+ * Получите среднюю оценку студентов, сдавших экзамен.
+ *
+ * Вы должны перегрузить функцию вызова с помощью markLimit, чтобы получить среднее значение всех оценок, превышающих этот предел.
+ */
+fun listOfStudentGrades() {
+    val listOfGrades = listOf(5.5, 4.6, 3.0, 2.5, 10.0, 9.9, 8.75)
+
+    println(listOfGrades(5.0)) // 8.5375
 }

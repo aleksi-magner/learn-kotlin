@@ -50,21 +50,6 @@ fun main() {
     println(-8)  // -8
     println(-(100 + 4)) // -104
 
-    // BigInteger
-    val a: BigInteger = (-9999999999999999).toBigInteger()
-    val b: BigInteger = 10000000000000000.toBigInteger()
-    val c: BigInteger = 20000000000000000.toBigInteger()
-    val d: BigInteger = 9999999999999999.toBigInteger()
-
-    val result: BigInteger = (-a) * b + c - d
-
-    println(result) // 100000000000000000000000000000001
-
-    val exbibyte: BigDecimal = 1.toBigDecimal()
-    val bits = exbibyte * 2.toBigDecimal().pow(63)
-
-    println(bits) // 9223372036854775808
-
     // Приоритеты
     /**
      * 1. Скобки
@@ -74,6 +59,8 @@ fun main() {
      */
 
     mathLibrary()
+    bigNumbers()
+    roundingModeBigNumbers()
 
     sumOfDigits()
     timeDifference()
@@ -187,6 +174,132 @@ fun mathLibrary() {
     println("Сторона треугольника: $c") // 5.999999999999999, неточный, но правильный результат
 
     println(heronFormula(3, 4, 5)) // 6.0
+}
+
+fun bigNumbers() {
+    val a: BigInteger = (-9999999999999999).toBigInteger()
+    val b: BigInteger = BigInteger("10000000000000000")
+    val c: BigInteger = BigInteger.valueOf(20000000000000000)
+    val d: BigInteger = "9999999999999999".toBigInteger()
+
+    val result: BigInteger = (-a) * b + c - d
+
+    println(result) // 100000000000000000000000000000001
+
+    val exbibyte: BigDecimal = BigDecimal(1)
+    val bits: BigDecimal = exbibyte * 2.toBigDecimal().pow(63)
+
+    println(bits) // 9223372036854775808
+
+    // Функция divAndRemainder возвращает массив, состоящий из двух чисел: результата целочисленного деления и остатка.
+    val (division, remainder) = 110.toBigInteger().divideAndRemainder(9.toBigInteger())
+
+    println("division: $division") // 12
+    println("remainder: $remainder") // 2
+
+    // Функция gcd возвращает наибольший общий делитель двух чисел.
+    val eight: BigInteger = BigInteger.valueOf(8)
+    val six: BigInteger = BigInteger.valueOf(6)
+
+    println(eight.gcd(six)) // 2
+
+    // Average
+    val bigNumbers1 = arrayOf(
+        BigDecimal(4),
+        BigDecimal(2),
+        BigDecimal(6)
+    )
+
+    val average1: BigDecimal = bigNumbers1.sumOf { it } / BigDecimal(bigNumbers1.size)
+    val roundedAverage1 = average1.setScale(0, RoundingMode.DOWN)
+
+    println("Average: $roundedAverage1") // 4
+
+    val bigNumbers2 = arrayOf(
+        BigDecimal("34364356335.00000001"),
+        BigDecimal(-6),
+        BigDecimal("100000000000000000000.000000000000001")
+    )
+
+    val average2: BigDecimal = bigNumbers2.sumOf { it } / BigDecimal(bigNumbers2.size)
+    val roundedAverage2 = average2.setScale(0, RoundingMode.DOWN)
+
+    println("Average: $roundedAverage2") // 33333333344788118776
+}
+
+/**
+ * Когда нам нужно настроить точность (количество цифр после точки), на помощь приходит setScale(). Это позволяет нам регулировать точность больших дробных чисел:
+ * `bigDecimal.setScale(newScale, RoundingMode)`
+ *
+ * Первый параметр — newScale. Он устанавливает количество цифр после десятичной точки.
+ *
+ * Второй параметр — roundingMode — позволяет нам управлять режимом округления.
+ *
+ * Чтобы его использовать, необходимо выполнить импорт: `import java.math.RoundingMode`
+ *
+ * В таблице ниже перечислены все возможные режимы округления BigDecimal вместе с их краткими описаниями.
+ *
+ * - CEILING - Округление в сторону положительной бесконечности. Если результат положительный, поведение аналогично UP; если оно отрицательное, ведёт себя как DOWN
+ *
+ * - DOWN - Округление к нулю. Никогда не увеличивает цифру до отброшенной дроби (т.е. усекает)
+ *
+ * - FLOOR - Округление в сторону отрицательной бесконечности. Если результат положительный, поведение аналогично DOWN; если оно отрицательное, ведёт себя как UP
+ *
+ * - HALF_DOWN - Округление в сторону «ближайшего соседа», если оба соседа не равноудалены, в этом случае округление в меньшую сторону. Ведёт себя так же, как UP, если отброшенная дробь > 0.5; в противном случае ведёт себя как DOWN.
+ *
+ * - HALF_EVEN - Округление в сторону «ближайшего соседа», если только оба соседа не равноудалены, в этом случае округление в сторону чётного соседа. Ведёт себя так же, как HALF_UP, если цифра слева от отброшенной дроби нечётная; ведёт себя как HALF_DOWN, если она чётная. Обратите внимание, что это режим округления, который статистически минимизирует совокупную ошибку при многократном применении в последовательности вычислений. Иногда его называют «банкирским округлением» и в основном используют в США. Этот режим округления аналогичен политике округления, используемой для арифметических операций с плавающей запятой и двойной арифметики в Java.
+ *
+ * - HALF_UP - Округление в сторону «ближайшего соседа», если оба соседа не равноудалены, в этом случае округление в большую сторону. Ведёт себя так же, как UP, если отброшенная дробь ≥ 0.5; в противном случае ведёт себя как DOWN. Режим округления, который обычно преподают в школе.
+ *
+ * - UP - Округление от нуля. Всегда увеличивает цифру, предшествующую ненулевой отброшенной дроби
+ *
+ * - UNNECESSARY - Режим округления, позволяющий утверждать, что запрошенная операция имеет точный результат, поэтому округление не требуется. Если этот режим округления указан для операции, которая даёт неточный результат, создаётся ArithmeticException.
+ *
+ * Обратите внимание, что UNNECESSARY добавит к числу несущественные нули, если вы указали слишком много цифр в setScale(). Но если вы укажете слишком мало цифр, произойдет ошибка.
+ */
+fun roundingModeBigNumbers() {
+    // Получение текущей точности числа (количество символов после запятой)
+    val fractionalNumber: BigDecimal = 1234.5678.toBigDecimal()
+
+    println(fractionalNumber.scale()) // 4
+
+    val modes = arrayOf("CEILING", "DOWN", "FLOOR", "HALF_DOWN", "HALF_EVEN", "HALF_UP", "UP", "UNNECESSARY")
+
+    val numbers = doubleArrayOf(3.5, 2.5, 1.6, 1.1, 1.0, -1.0, -1.1, -1.6, -2.5, -3.5)
+
+    println()
+
+    val header = buildString {
+        append(String.format("%-11s ", "Number"))
+
+        for (mode in modes) {
+            append(String.format("| %-11s ", mode))
+        }
+    }
+
+    println(header)
+
+    numbers.forEach {
+        val row = buildString {
+            append(String.format("%-11s ", it))
+
+            val bigDecimal = BigDecimal(it)
+
+            for (mode in modes) {
+                val td = try {
+                    bigDecimal.setScale(0, RoundingMode.valueOf(mode)).toString()
+                } catch (error: Exception) {
+                    "Error"
+                }
+
+                append(String.format("| %-11s ", td))
+            }
+        }
+
+        println(row)
+    }
+
+    println()
 }
 
 /**
