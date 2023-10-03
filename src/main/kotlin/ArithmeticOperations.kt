@@ -67,6 +67,8 @@ fun main() {
     timeDifference()
     percentageBigNumbers()
     roundAndPower()
+    leastCommonMultiple()
+    quadraticEquation()
 }
 
 /**
@@ -346,6 +348,45 @@ fun binary() {
     // - 1
     // ---
     // 101
+
+    println("--- Decimal to binary by division ---")
+
+    // Преобразование десятичного числа в двоичного с помощью деления.
+    // Нужно делить десятичное число на 2 пока делится, а остаток и будет часть двоичного числа (с конца к началу)
+    //
+    // На примере числа 42 -> 101010
+    //
+    // Действие | Частное | Остаток
+    // 42 / 2   | 21      | 0
+    // 21 / 2   | 10      | 1
+    // 10 / 2   | 5       | 0
+    // 5 / 2    | 2       | 1
+    // 2 / 2    | 1       | 0
+    // 1 / 2    | 0       | 1
+    //
+    // 010101.reverse() -> 101010
+
+    println("--- Decimal to binary by subtraction ---")
+
+    // Преобразование десятичного числа в двоичного с помощью вычитания.
+    // Сначала нам нужно найти наибольшую степень двойки, которая всё ещё меньше исходного числа.
+    //
+    // На примере числа 42 -> 101010
+    //
+    // Наибольшая степень двойки 32.
+    // Теперь перечислим все меньшие степени двойки в одну таблицу:
+    // 32 | 16 | 8 | 4 | 2 | 1
+    // 1  | 0  | 1 | 0 | 1 | 0
+    //
+    // В первый столбец мы поместили цифру 1, потому что в 42 может поместиться только одна цифра 32.
+    // 42 - 32 = 10
+    // Теперь посмотрим на второй столбец и решим, сколько 16 может поместиться в результате вычитания (то есть 10). Ответ 0.
+    // Следующее число 8, более перспективно: 10 больше 8.
+    // 10 - 8 = 2
+    // Следующее число 4, может поместиться 0 раз в 2
+    // Следующее число 2, может поместиться 1 раз в 2
+    // 2 - 2 = 0
+    // Следующее число 1, может поместиться 0 раз в 0
 }
 
 /**
@@ -426,4 +467,75 @@ fun roundAndPower() {
     val result = number1.setScale(mode1, RoundingMode.FLOOR).pow(power1)
 
     println(result) // 4489
+}
+
+/**
+ * Считывает два больших положительных целых числа и вычисляет наименьшее положительное число, которое делится на них обоих.
+ */
+fun leastCommonMultiple() {
+    val a: BigInteger = "6".toBigInteger()
+    val b: BigInteger = "8".toBigInteger()
+
+    // gcd() вычисляет наибольший общий делитель
+    val result = a * b / a.gcd(b)
+
+    println("Least common multiple (LCM): $result") // 24
+}
+
+fun solveQuadraticEquation(a: Double, b: Double, c: Double): List<Double> {
+    val roots = mutableListOf<Double>()
+
+    val discriminant: Double = b * b - 4 * a * c
+
+    when {
+        // 2 разных корня
+        discriminant > 0 -> {
+            val root1: Double = (-b + sqrt(discriminant)) / (2 * a)
+            val root2: Double = (-b - sqrt(discriminant)) / (2 * a)
+
+            roots.add(root1)
+            roots.add(root2)
+        }
+
+        // Комплексные корни
+        discriminant < 0 -> {
+            val realPart = -b / (2 * a)
+            val imagPart = sqrt(-discriminant) / (2 * a)
+
+            println("Discriminant < 0. Корни квадратного уравнения: $realPart + ${imagPart}i и $realPart - ${imagPart}i")
+        }
+
+        // 2 одинаковых корня
+        else -> {
+            val root: Double = -b / (2 * a)
+
+            roots.add(root)
+            roots.add(root)
+        }
+    }
+
+    return roots.sorted().toList()
+}
+
+/**
+ * Существуют действительные числа a, b, c, где a ≠ 0.
+ *
+ * Решите квадратное уравнение `(a * x^2) + (b * x) + c = 0` и выведите все его корни.
+ */
+fun quadraticEquation() {
+    val cases = arrayOf(
+        doubleArrayOf(1.0, -1.0, -2.0), // > 0, -1.0 2.0
+        doubleArrayOf(1.0, -7.5, 3.0), // > 0, 0.423966 7.07603
+        doubleArrayOf(1.0, 6.0, 5.0), // > 0, -5.0, -1.0
+        doubleArrayOf(1.0, -6.0, 9.0), // == 0, 3.0, 3.0
+        doubleArrayOf(1.0, -3.0, 10.0), // < 0
+    )
+
+    cases.forEach {
+        val (a, b, c) = it
+
+        val result = solveQuadraticEquation(a, b, c)
+
+        println("Quadratic equation: ${result.joinToString(" ")}")
+    }
 }
