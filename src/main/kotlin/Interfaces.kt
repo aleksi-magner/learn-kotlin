@@ -216,6 +216,7 @@ fun main() {
     owl2.buildNest() // Build small nest
 
     collections()
+    interfaceComposition()
 }
 
 fun addListToCollection(list: MutableCollection<String>, addedList: Collection<String>): MutableCollection<String> {
@@ -239,4 +240,134 @@ fun collections() {
 
     // 8 12 25 56 192 32 76 21 67986 889 9898 3232
     println(oldSet.joinToString(" "))
+}
+
+interface FirstInterface {
+    fun f() { println("First") }
+    fun g() { println("First g") }
+}
+
+interface SecondInterface {
+    fun f() { println("Second") }
+    fun g() { println("Second g") }
+}
+
+// Класс наследует два разных интерфейса с одинаковыми методами.
+// Пример того, как указывать из какого интерфейса брать нужный метод, в случае конфликтов
+class ThirdClass : FirstInterface, SecondInterface {
+    override fun f() {
+        super<FirstInterface>.f()
+        super<SecondInterface>.f()
+    }
+
+    override fun g() {
+        super<SecondInterface>.g()
+    }
+}
+
+/**
+ * Предположим, мы хотим создать игру. Например, персонажи в нашей игре имеют 3 параметра:
+ *
+ * - Level - насколько они сильны
+ *
+ * - Enemy - является ли персонаж врагом или союзником
+ *
+ * - Class - что персонаж может делать, например, сражаться мечом или произносить заклинания
+ *
+ * Следуя принципам наследования, мы могли бы реализовать это следующим образом:
+ */
+interface Level {
+    fun getLevel(): Int
+}
+
+interface Enemy {
+    fun isEnemy(): Boolean
+}
+
+interface Class {
+    fun getClass(): String
+}
+
+/**
+ * И для каждого символа нам пришлось бы написать довольно много кода
+ *
+ * Мы создали персонажа 10-го уровня, который является Врагом для игрока и принадлежит к классу Воин.
+ *
+ * Для каждого нового персонажа нам нужно будет вручную установить все эти параметры. Как насчёт того, чтобы попытаться повторно использовать одни и те же параметры для оптимизации процесса?
+  */
+class DangerousEnemyWarrior : Level, Enemy, Class {
+    override fun getLevel(): Int = 10
+    override fun isEnemy(): Boolean = true
+    override fun getClass(): String = "Warrior"
+}
+
+// Нам нужно создать все эти объекты только один раз
+object Dangerous : Level {
+    override fun getLevel(): Int = 10
+}
+
+object NotDangerous : Level {
+    override fun getLevel(): Int = 1
+}
+
+object Foe : Enemy {
+    override fun isEnemy(): Boolean = true
+}
+
+object Friend : Enemy {
+    override fun isEnemy(): Boolean = false
+}
+
+object Warrior : Class {
+    override fun getClass(): String = "Warrior"
+}
+
+object Wizard : Class {
+    override fun getClass(): String = "Wizard"
+}
+
+// И тогда мы сможем использовать их столько раз, сколько захотим!
+class DangerousKotlinEnemyWarrior : Level by Dangerous, Enemy by Foe, Class by Warrior
+
+class NotDangerousFriendlyWizard : Level by NotDangerous, Enemy by Friend, Class by Wizard
+
+
+/**
+ * Наследование как шаблон проектирования имеет свои недостатки. Есть альтернатива этому, которая предполагает повторное использование того же кода и называется композицией.
+ *
+ * Парадигма для более эффективной реализации известна как композиция.
+ *
+ * Вместо того, чтобы реализовывать множество интерфейсов и переопределять все их методы и поля, мы можем заранее создать их реализации и хранить их как отдельные сущности. Затем мы можем просто составить из этих «кирпичиков» нужный объект.
+ *
+ * И именно здесь в игру вступает делегирование, поскольку в Котлине это очень удобный способ ссылаться на существующую реализацию вместо того, чтобы предоставлять ее там, где это необходимо.
+ */
+fun interfaceComposition() {
+    val myClass = ThirdClass()
+
+    // First
+    // Second
+    myClass.f()
+
+    // Second g
+    myClass.g()
+
+    // Наследование
+    val inheritedClass = DangerousEnemyWarrior()
+
+    println(inheritedClass.getClass()) // Warrior
+    println(inheritedClass.isEnemy()) // true
+    println(inheritedClass.getLevel()) // 10
+
+    // Композиция
+    val character1 = DangerousKotlinEnemyWarrior()
+
+    println(character1.getClass()) // Warrior
+    println(character1.isEnemy()) // true
+    println(character1.getLevel()) // 10
+
+    val character2 = NotDangerousFriendlyWizard()
+
+    println(character2.getClass()) // Wizard
+    println(character2.isEnemy()) // false
+    println(character2.getLevel()) // 1
 }
