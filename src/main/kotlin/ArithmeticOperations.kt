@@ -543,23 +543,31 @@ fun bitwiseAndBitShiftOperators() {
     println("SHR | USHR: $shrNumber2 | $ushrNumber2") // -3 | 2147483645
 
     // Начиная с Kotlin 1.6, вы можете использовать rotateLeft() и rotateRight() для сдвига на определённое количество указанных битов:
-    val value1 = 25
+    val value1 = 25 // 0 000 0000 0001 1001
 
+    // 0 000 0000 0011 0010 -> 50
     println(value1 shl 1) // 50
     println(value1.rotateLeft(1)) // 50
 
+    // 0 000 0000 0110 0100 -> 100
     println(value1 shl 2) // 100
     println(value1.rotateLeft(2)) // 100
 
     // RotateRight() странным образом изменил наше значение. В чём дело? Это происходит потому, что тип Int представляет собой 32-битное целое значение.
-    println(value1 shr 1) // 12
+    // 1 000 0000 0000 1100 -> -32756 (16 бит)
+    println(value1 shr 1) // 12 -> 0 000 0000 0000 1100
     println(value1 ushr 1) // 12
     println(value1.rotateRight(1)) // -2147483636
+    println(value1.toByte().rotateRight(1)) // -116
+    println(value1.toShort().rotateRight(1)) // -32756
     println(value1.toLong().rotateRight(1)) // -9223372036854775796
 
-    println(value1 shr 2) // 6
+    // 0 100 0000 0000 0110
+    println(value1 shr 2) // 6 -> 0 000 0000 0000 0110
     println(value1 ushr 2) // 6
     println(value1.rotateRight(2)) // 1073741830
+    println(value1.toByte().rotateRight(2)) // 70
+    println(value1.toShort().rotateRight(2)) // 16390
     println(value1.toLong().rotateRight(2)) // 4611686018427387910
 
     // Подробное объяснение как происходит сдвиг

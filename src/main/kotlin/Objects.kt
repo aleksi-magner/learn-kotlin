@@ -2031,11 +2031,11 @@ fun typeSafeBuilders() {
 }
 
 sealed class Shape {
-        data class Rectangle(val width: Double, val height: Double) : Shape()
-        data class Square(val side: Double) : Shape()
-        data class Circle(val radius: Double) : Shape()
-        data class Triangle(val base: Double, val height: Double) : Shape()
-        data class Pentagon(val side: Double) : Shape()
+    data class Rectangle(val width: Double, val height: Double) : Shape()
+    data class Square(val side: Double) : Shape()
+    data class Circle(val radius: Double) : Shape()
+    data class Triangle(val base: Double, val height: Double) : Shape()
+    data class Pentagon(val side: Double) : Shape()
 }
 
 fun calculateArea(shape: Shape): Double = when (shape) {

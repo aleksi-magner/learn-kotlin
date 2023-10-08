@@ -18,6 +18,8 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.4.11")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.20-RC")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("io.mockk:mockk:1.13.5")
