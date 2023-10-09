@@ -37,9 +37,6 @@ fun main() {
     println(8.78 / 3.97)  // 2.2115869017632237
     println(8.78 / 3)  // 2.9266666666666663
 
-    println(10 % 3) // 1
-    println(12 % 4) // 0
-
     println(1 + 3 * 4 - 2) // 11
     println((1 + 3) * (4 - 2)) // 8
 
@@ -58,18 +55,67 @@ fun main() {
      * 4. Сложение, вычитание
      */
 
-    mathLibrary()
-    bigNumbers()
-    roundingModeBigNumbers()
-    binary()
-    bitwiseAndBitShiftOperators()
+    moduloDivision()
 
-    sumOfDigits()
-    timeDifference()
-    percentageBigNumbers()
-    roundAndPower()
-    leastCommonMultiple()
-    quadraticEquation()
+    // mathLibrary()
+    // bigNumbers()
+    // roundingModeBigNumbers()
+    // binary()
+    // bitwiseAndBitShiftOperators()
+    //
+    // sumOfDigits()
+    // timeDifference()
+    // percentageBigNumbers()
+    // roundAndPower()
+    // leastCommonMultiple()
+    // quadraticEquation()
+}
+
+fun moduloDivision() {
+    // 29 % 8
+    // 29 / 8 = 3.625
+    //
+    // dividend = (divisor * quotient) + remainder
+    // remainder = dividend − (divisor * quotient)
+    // remainder = 29 − (8 * 3)
+    // remainder = 29 − 24
+    // remainder = 5
+
+    println("--- Modulo division with positive numbers ---")
+
+    // 10 / 3 = 3.333
+    // dividend = (divisor * quotient) + remainder
+    // remainder = dividend − (divisor * quotient)
+    // remainder = 10 − (3 * 3)
+    // remainder = 10 − 9
+    // remainder = 1
+    println(10 % 3) // 1
+
+    // 12 / 4 = 3
+    // dividend = (divisor * quotient) + remainder
+    // remainder = dividend − (divisor * quotient)
+    // remainder = 12 − (4 * 3)
+    // remainder = 12 − 12
+    // remainder = 0
+    println(12 % 4) // 0
+
+    println("--- Modulo division with negative numbers ---")
+
+    // -42 / 10 = -4.2
+    // dividend = (divisor * quotient) + remainder
+    // remainder = dividend − (divisor * quotient)
+    // remainder = -42 − (10 * -4)
+    // remainder = -42 − -40
+    // remainder = -2
+    println((-42) % 10) // -2
+
+    // 42 / -10 = -4.2
+    // dividend = (divisor * quotient) + remainder
+    // remainder = dividend − (divisor * quotient)
+    // remainder = 42 − (-10 * -4)
+    // remainder = 42 − 40
+    // remainder = 2
+    println(42 % (-10)) // 2
 }
 
 /**

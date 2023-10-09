@@ -14,6 +14,8 @@ fun main() {
     filesAndDirectories()
     methodsForIterating()
     fileCopying()
+
+    findAllEmptyDirectories()
 }
 
 fun getFileURL(filename: String): String = listOf("src", "main", "resources", filename).joinToString(File.separator)
@@ -547,4 +549,26 @@ fun fileCopying() {
      * Обратите внимание, что если вам нужно перезаписать папки и файлы, вам также необходимо добавить параметр overwrite
      */
     // dirIn.copyRecursively(dirOut, overwrite = true)
+}
+
+/**
+ * Найти все пустые директории в resources/basedir
+ */
+fun findAllEmptyDirectories() {
+    println("--- Find all empty directories ---")
+
+    val fileName: String = getFileURL("basedir/")
+    val directory = File(fileName)
+
+    val emptyDirectories = mutableListOf<String>()
+
+    if (directory.exists()) {
+        directory.walk(FileWalkDirection.TOP_DOWN).forEach {
+            if (it.isDirectory && it.listFiles()!!.isEmpty()) {
+                emptyDirectories.add(it.name)
+            }
+        }
+    }
+
+    println(emptyDirectories.joinToString(" "))
 }
