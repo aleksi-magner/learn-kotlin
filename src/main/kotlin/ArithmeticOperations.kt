@@ -57,18 +57,18 @@ fun main() {
 
     moduloDivision()
 
-    // mathLibrary()
-    // bigNumbers()
-    // roundingModeBigNumbers()
-    // binary()
-    // bitwiseAndBitShiftOperators()
-    //
-    // sumOfDigits()
-    // timeDifference()
-    // percentageBigNumbers()
-    // roundAndPower()
-    // leastCommonMultiple()
-    // quadraticEquation()
+    mathLibrary()
+    bigNumbers()
+    roundingModeBigNumbers()
+    binary()
+    bitwiseAndBitShiftOperators()
+
+    sumOfDigits()
+    timeDifference()
+    percentageBigNumbers()
+    roundAndPower()
+    leastCommonMultiple()
+    quadraticEquation()
 }
 
 fun moduloDivision() {
