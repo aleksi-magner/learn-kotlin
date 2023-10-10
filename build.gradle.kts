@@ -22,6 +22,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.20-RC")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     testImplementation("io.mockk:mockk:1.13.5")
 }
 
