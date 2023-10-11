@@ -210,6 +210,9 @@ inline fun <reified T> exampleFunction1(obj: Any) {
     }
 }
 
+// Фильтрация списка по типам
+inline fun <reified T> filterByType(list: List<Any>): List<T> = list.filterIsInstance<T>()
+
 /**
  * Мы можем привести объект к параметру типа, используя оператор as с параметром типа в угловых скобках. Однако если объект не является экземпляром параметра типа, будет выброшено исключение ClassCastException.
  *
